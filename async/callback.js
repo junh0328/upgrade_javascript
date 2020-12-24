@@ -1,15 +1,74 @@
 'use strict';
 
-/*
-    자바스크립트는 동기적인 언어이다.
-    호이스팅이 된 후에 코드가 작성한 순서에 맞춰 동기적으로 실행된다는 말이다.
-    var, function과 같은 선언들이 코드의 제일 위로 올라가는 것을 호이스팅이라고 한다.
-
-    여기서 비동기 함수란 동기 함수와 다르게 호이스팅된 코드 사이에서 언제 실행될지 모르는 함수를 비동기 함수라고 한다.
-    
-*/
 console.log('1');
-setTimeout(function () {
+setTimeout(() => {
   console.log('2');
 }, 1000);
 console.log('3');
+
+// Synchronous callback
+function printImmediately(print) {
+  print();
+}
+
+printImmediately(() => {
+  console.log('hello');
+});
+// Asynchronous callback
+function printWithDelay(print, timeout) {
+  setTimeout(print, timeout);
+}
+
+printWithDelay(() => {
+  console.log('async callback');
+}, 2000);
+
+// Callback Hell example
+class UserStorage {
+  loginUser(id, password, onSuccess, onError) {
+    setTimeout(() => {
+      if (
+        (id === 'ellie' && password === 'dream') ||
+        (id === 'coder' && password === 'academy')
+      ) {
+        onSuccess(id);
+      } else {
+        onError(new Error('not found'));
+      }
+    }, 2000);
+  }
+
+  getRoles(user, onSuccess, onError) {
+    setTimeout(() => {
+      if (user === 'ellie') {
+        onSuccess({ name: 'ellie', role: 'admin' });
+      } else {
+        onError(new Error('no access'));
+      }
+    }, 1000);
+  }
+}
+
+const userStorage = new UserStorage();
+const id = prompt('enter your id');
+const password = prompt('enter your passrod');
+userStorage.loginUser(
+  id,
+  password,
+  (user) => {
+    userStorage.getRoles(
+      user,
+      (userWithRole) => {
+        alert(
+          `Hello ${userWithRole.name}, you have a ${userWithRole.role} role`
+        );
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  },
+  (error) => {
+    console.log(error);
+  }
+);
