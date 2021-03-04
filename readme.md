@@ -9,3 +9,7 @@
 ## <a href="./SECTION04/readme.md">섹션 4 바로가기</a><br/>
 
 ## <a href="./SECTION05/readme.md">섹션 5 바로가기</a><br/>
+
+## <a href="./SECTION06/readme.md">섹션 6 바로가기</a><br/>
+
+## <a href="./SECTION07/readme.md">섹션 7 바로가기</a><br/>
