@@ -1,4 +1,4 @@
-# SECTION 1
+# SECTION 1, 기본 문법
 
 ## 🌟 문장
 
@@ -178,3 +178,6 @@ console.log(book);
 ...
 >>> {title: "책", page: 223}
 ```
+
+<hr/>
+<a href="../SECTION02/readme.md">다음 섹션으로</a>

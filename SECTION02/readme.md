@@ -1,4 +1,4 @@
-# SECTION 2
+# SECTION 2, 연산자
 
 ## 🌟 연산자 (Operator)
 
@@ -112,3 +112,5 @@ exp 위치의 표현식을 먼저 평가<br/>
 exp 표현식 기준이므로 true 라면 뒤에 false 표현식을 건너 뛴다.
 
 <hr/>
+
+<a href="../SECTION03/readme.md">다음 섹션으로</a>
