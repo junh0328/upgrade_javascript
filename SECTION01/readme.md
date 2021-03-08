@@ -49,7 +49,7 @@ var book = '책';
 문자 타입 : var value = "sports";
 ```
 
-### typeof dustkswk
+### typeof 연산자
 
 데이터(값) 타입 변환<br/>
 typeof value에 데이터를 작성<br/>

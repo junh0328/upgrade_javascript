@@ -168,13 +168,13 @@ console.log(obj2)
 
 - 빌트인 오브젝트에서 바로 호출
 - 오브젝트에 연결
-- Object.create()
+- <b>Object.create()</b>
 
 메소드
 
-- 오브젝트의 prototype에 연결
-- Object.prototype.toString()
 - 프로토타입이 존재하는 인스턴스에서 호출하는 함수는 메소드라고 부른다.
+- 오브젝트의 prototype에 연결
+- <b>Object.prototype.toString()</b>
 
 ### 함수, 메소드 호출
 

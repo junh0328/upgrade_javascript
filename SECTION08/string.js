@@ -6,6 +6,13 @@ console.log(value2.replace('a', '바꿈'));
 console.log(value2.replace(/a/, '바꿈'));
 console.log(value2.replace(/a/g, '바꿈'));
 
+var value3 = 'sports';
+var result = value3.concat('축구');
+var result2 = result.concat('재밌니?').concat('진짜?');
+
+console.log(result);
+console.log(result2);
+
 // cd SECTION08
 // node string.js 로 콘솔값 확인
 
