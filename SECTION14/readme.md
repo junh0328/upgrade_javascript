@@ -217,3 +217,7 @@ Book.prototype.concat = function () {
 var oneInstance = new Book(data);
 console.log(oneInstance.concat());
 ```
+
+<hr/>
+
+<a href="../SECTION15/readme.md">다음 섹션으로</a>

@@ -214,3 +214,7 @@ console.log(result);
 {point: "123"}
 // 일반적인 형변환과 같이 Object 안에 작성된 String 타입의 숫자는 변환하지 않습니다.
 ```
+
+<hr/>
+
+<a href="../readme.md" >처음으로</a>
