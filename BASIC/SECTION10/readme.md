@@ -171,6 +171,59 @@ console.log(result);
 
 ### toString()
 
+### bind()
+
+```js
+
+const module = {
+  x: 42,
+  getX: function () {
+    return this.x;
+  },
+};
+
+const unboundGetX = module.getX;
+console.log(unboundGetX());
+// The function gets invoked at the global scope
+// expected output: undefined
+
+const boundGetX = unboundGetX.bind(module);
+console.log(boundGetX());
+// expected output: 42
+
+>>>
+undefined
+42
+
+
+```
+
+<p>
+bind() 함수는 새로운 바인딩한 함수를 만듭니다. 바인딩한 함수는 원본 함수 객체를 감싸는 함수로, ECMAScript 2015에서 말하는 특이 함수 객체입니다. 바인딩한 함수를 호출하면 일반적으로 래핑된 함수가 호출 됩니다.
+</p>
+
+```js
+this.x = 9;
+var module = {
+  x: 81,
+  getX: function () {
+    return this.x;
+  },
+};
+
+module.getX(); // 81
+
+var retrieveX = module.getX;
+retrieveX();
+// 9 반환 - 함수가 전역 스코프에서 호출됐음
+
+// module과 바인딩된 'this'가 있는 새로운 함수 생성
+// 신입 프로그래머는 전역 변수 x와
+// module의 속성 x를 혼동할 수 있음
+var boundGetX = retrieveX.bind(module);
+boundGetX(); // 81
+```
+
 <hr/>
 
 ## Argument 오브젝트
@@ -211,3 +264,7 @@ console.log(result);
 <hr/>
 
 <a href="../SECTION11/readme.md">다음 섹션으로</a>
+
+```
+
+```
