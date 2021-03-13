@@ -107,6 +107,7 @@ sports = {
 > var sports = function(){...};
 
 ```js
+case 1:
 function book() {
   debugger;
   log(title);
@@ -140,6 +141,56 @@ book() 함수를 호출 했을 때,
     - var title = "JS BOOk";
     - var readBook = function(){};
     - getBook();
+*/
+```
+
+```js
+case 2:
+
+function book() {
+  debugger;
+  console.log(title);
+  console.log(readBook);
+  console.log(getBook);
+
+  var title = 'JS BOOK';
+  function getBook() {
+    return title;
+  }
+  function readBook() {}
+  getBook();
+}
+
+book();
+>>>
+undefined
+[Function: readBook]
+[Function: getBook]
+
+/*
+함수 선언식으로 작성할 경우 readBook() 함수 또한 호이스팅에 의해 올라와 undefined가 아닌, 해당 함수를 반환하는 것으로 출력된다.
+*/
+```
+
+```js
+function book() {
+  debugger;
+
+  var title = 'JS BOOK';
+  const getBook = function () {
+    return title;
+  };
+  const readBook() = function{}
+  getBook();
+
+  console.log(title);
+  console.log(readBook);
+  console.log(getBook);
+}
+
+book();
+/*
+함수 표현식으로 작성할 경우 호이스팅이 되지 않으므로, 콘솔 로그를 더 밑에서 선언해줘야 정상적으로 작동한다.
 */
 ```
 

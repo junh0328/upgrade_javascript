@@ -7,3 +7,7 @@
 ### 👉🏼 <a href="./SECTION03/readme.md">섹션 3, Arguments 바로가기</a><br/>
 
 ### 👉🏼 <a href="./SECTION04/readme.md">섹션 4, Scope 바로가기</a><br/>
+
+### 👉🏼 <a href="./SECTION05/readme.md">섹션 5, this 바로가기</a><br/>
+
+### 👉🏼 <a href="./SECTION06/readme.md">섹션 6, 클로저 바로가기</a><br/>

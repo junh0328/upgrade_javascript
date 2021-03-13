@@ -8,7 +8,7 @@ Identifier Resolution (식별자 해결)
 
 Context는 묶음, 하나의 덩어리라고 본다. <br/>
 
-<img src ="./image/executingContext.png" alt="executingContext" width="80%">
+<img src ="../image/executingContext.png" alt="executingContext" width="80%">
 
 book() 함수가 호출되면
 
