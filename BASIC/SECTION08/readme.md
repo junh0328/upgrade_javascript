@@ -142,7 +142,7 @@ console.log(obj.valueOf());
 ```js
 var value = "ABC";
 
-console.log(value);
+console.log(value.length);
 
 >>>
 3
@@ -230,7 +230,8 @@ __proto__: toString(); // 빌트인 object 오브젝트의 toString()
 - 오브젝트의 함수를 호출합니다.
 
 ```js
-var value = 123;
+var value = 123; // 따로 타입 설정이 안돼있네? 숫자로 작성했으니, Number 오브젝트로 생성하자
+console.log(typeof value); // number
 value.toString();
 
 '123'.toString();

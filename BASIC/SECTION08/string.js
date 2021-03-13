@@ -1,3 +1,14 @@
+var valueA = 123;
+console.log(typeof valueA);
+
+var valueB = 'Sports';
+var lowerValue = valueB.toLowerCase();
+console.log('match 함수 사용 :');
+console.log(lowerValue.match(/s/g));
+
+var value0 = 'ABC';
+console.log(value0.length);
+
 var value = '황준영김';
 console.log(value.indexOf('백'));
 

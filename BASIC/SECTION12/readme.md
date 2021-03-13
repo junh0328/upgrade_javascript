@@ -53,7 +53,7 @@ JS의 모든 타입의 값, 오브젝트 사용 가능<br/>
 
 ```js
 var list = [12, 34, 56];
-for (var k = 0; (k = list.length); k++) {
+for (var k = 0; (k < list.length); k++) {
   console.log(list[k]);
 
   >>>
@@ -67,11 +67,13 @@ for (var k = 0; (k = list.length); k++) {
 
 ```js
 var list = [[12, 34, 56]];
-for (var k = 0; k = list.length; k++) {
+for (var k = 0; k < list.length; k++) {
   var one = list[k];
-  for(var m = 0; m < one.length; m++>){
+  for (var m = 0; m < one.length; m++) {
     console.log(one[m]);
   }
+}
+
 
   >>>
   12
@@ -307,7 +309,7 @@ console.log(result);
 
 ```Js
 var origin = [1,2,3,4,5];
-var result = origin.slice(1,3); // 인덱스 1번부터 length 가 3개
+var result = origin.slice(1,3); // 인덱스 1번부터 인덱스 3번 전까지
 
 >>> [2,3]
 
