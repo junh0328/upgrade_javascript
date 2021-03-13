@@ -70,19 +70,21 @@ console.log(result);
 
 ## 🌟 함수 형태
 
-함수 선언문
+함수 선언문 (Function Declaration)
 
-- Function Declaration
-- function getBook(book){...}
+```js
+function getBook(book){...}
+```
 
 - function 키워드, 함수 이름, 블록{ ... }은 작성 필수
 - 나머지 파라미터, 함수 코드는 선택
 - 함수 이름은 생성한 function 오브젝트의 이름으로 사용
 
-함수 표현식
+함수 표현식(Function Expression)
 
-- Function Expression
-- const getBook = function(book){...}
+```js
+ const getBook = function(book){...}
+```
 
 ```js
 var getBook = function (title) {

@@ -108,8 +108,8 @@ var sports = {
   baseball: "야구",
 };
 for (var item in sports){
-  log(item);
-  log(sports[item]);
+  log(item);            // {key : value} 중 key에 접근
+  log(sports[item]);    // {key : value} 중 value에 접근
 }
 
 ...
