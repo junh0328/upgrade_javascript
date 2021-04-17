@@ -37,7 +37,7 @@ function book() {
   var point = 123;
   function show() {
     // 1. function 키워드를 만나면서 Function 오브젝트를 생성
-    var title = 'JS책';
+    var title = "JS책";
     // getPoint();   4. 주석처리 되어 있지만, 같은 스코프에 있기 때문에 getPoint() 함수를 show() 함수 내부에서 사용할 수 있다.
     // this.bookAmount;
   }
@@ -158,3 +158,6 @@ Contetxt 형태가 효율성이 높음
 
 - 최적화된 형태로 코드를 작성해야 하며
 - 이를 위해 엔진 처리를 이해할 필요가 있다.
+
+<hr/>
+<a href="../SECTION02/readme.md">다음으로 가기</a>

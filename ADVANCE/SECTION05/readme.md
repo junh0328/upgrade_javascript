@@ -191,3 +191,6 @@ JS BOOK
 ```
 
 <hr/>
+
+<hr/>
+<a href="../SECTION06/readme.md">다음으로 가기</a>

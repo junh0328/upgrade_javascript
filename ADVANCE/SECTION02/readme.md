@@ -62,7 +62,7 @@ sports = {
   arguments: {},
   caller: {},
   length: 0,
-  name: 'sports',
+  name: "sports",
   prototype: {
     constructor: sports,
     __proto__: Object.prototype,
@@ -275,3 +275,6 @@ book = function () {
 호이스팅
 // 오브젝트 안에 정상적인 값 (호이스팅)이 있기 때문에 초기화하지 않았습니다.
 ```
+
+<hr/>
+<a href="../SECTION03/readme.md">다음으로 가기</a>

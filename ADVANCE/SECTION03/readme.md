@@ -78,3 +78,6 @@ var get3 = function () {
 
 get3(77, 100); arguments 1 번째 인덱스 호출: 100
 ```
+
+<hr/>
+<a href="../SECTION04/readme.md">다음으로 가기</a>

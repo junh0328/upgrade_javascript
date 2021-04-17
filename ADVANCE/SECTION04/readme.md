@@ -120,3 +120,6 @@ book();
 add() 함수를 만드는 시점에 [[Scope]] 를 설정하기 때문에 point 변수를 공유할 수 있게 됨
 */
 ```
+
+<hr/>
+<a href="../SECTION05/readme.md">다음으로 가기</a>
