@@ -249,13 +249,49 @@ function greet(who) {
 greet("Harry");
 console.log("Bye");
 
-// 전제 조건 js는 스크립팅 언어이기 때문에 위에서 아래로 차례대로 실행된다.
+// 전제 조건 : js는 스크립팅 언어이기 때문에 위에서 아래로 차례대로 실행된다.
 /*
 1. function greet(who) 함수를 발견 (내부 값은 계산 되지 않음)
 2. greet("Harry") 호출 (Harry 를 인자로 넘겨줌)
 3. function greet(who) 함수 내부로 이동 후에 제어를 반환 (console.log(...))
 4. greet("Harry")로 돌아감
 5. 마지막 문장인 console.log("Bye") 실행 후 종료
+*/
+```
+
+```js
+function four() {
+  console.log("Im done");
+  throw Error("We've got some Errors on function four()");
+}
+function three() {
+  four();
+}
+function two() {
+  three();
+}
+function one() {
+  two();
+}
+function zero() {
+  one();
+  throw Error("We've got some Errors on function zero()");
+}
+
+zero();
+
+// 전제 조건 : js는 스크립팅 언어이기 때문에 위에서 아래로 차례대로 실행된다.
+/*
+1. zero() 함수 호출
+2. zero() { ... } 내부 블록 이동
+3. one() 함수 호출
+3. two() 함수 호출
+3. three() 함수 호출
+4. four() 함수에서 console.log('...') 실행
+5. 스크립팅 언어의 특성으로 밑에 남은 코드 값을 반환하기 위해 읽음
+6. 에러 발생 [ throw Error("We've got some Errors on function four()"); ]
+7. 에러가 발생했기 때문에 더 이상 실행되지 않고 멈춤 >> zero(){ ... } 함수 지역 환경의 Error는 발생하지 않음
+
 */
 ```
 

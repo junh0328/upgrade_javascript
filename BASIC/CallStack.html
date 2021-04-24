@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    function four(){
+      console.log('Im done');
+      throw Error("We've got some Errors on function four()");
+    }
+    function three(){
+      four();
+    }
+    function two(){
+      three();
+    }
+    function one(){
+      two();
+    }
+    function zero(){
+      one();
+      throw Error("We've got some Errors on function zero()");
+    }
+
+    zero();
+  </script>
+  <title>Call Stack</title>
+</head>
+<body>
+  <div>
+    위와 같은 상황에서 에러는 어디서 먼저 발생할까요?<br/>
+    Call Stack 에 대한 개념이 잡혀있다면 어렵지 않은 문제입니다.
+  </div>
+</body>
+</html>
