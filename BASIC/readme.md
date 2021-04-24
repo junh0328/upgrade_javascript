@@ -133,7 +133,7 @@ counter += 1;
 
 # Chapter 3, 함수
 
-<p>&nbsp;함수는 자바스크립트 프로그래밍의 핵심 요소다. 하나의 프로그램과 하나의 값을 묶는 이 개념은 다양한 용도로 사용된다. 대규모 프로그램을 구성할 수 있고, 반복을 줄일 수 있으며 이름을 사용해 하위 프로그램과 연결시킬 수 있고 이러한 하위 프로그램을 분리할 수 있다.</p>
+<p>&nbsp;함수는 자바스크립트 프로그래밍의 핵심 요소다. 하나의 프로그램과 하나의 값을 묶는 이 개념은 다양한 용도로 사용된다. <b>1. </b>대규모 프로그램을 구성할 수 있고, <b>2. </b>반복을 줄일 수 있으며 <b>3. </b>이름을 사용해 하위 프로그램과 연결시킬 수 있고 <b>4. </b>이러한 하위 프로그램을 분리할 수 있다. 가장 명확한 함수의 쓰임새는 <b>새로운 어휘를 만드는 것이다.</b> 일반적으로 글을 쓸 때는 새로운 단어를 만드는 것이 좋지 않지만 프로그래밍에서는 필수적이다.</p>
 
 ## 함수 정의
 
@@ -148,15 +148,224 @@ console.log(square(12));
 >>> 144
 ```
 
-<p>&nbsp;함수는 function이라는 키워드로 시작하는 표현식이다. 함수에는 <b>매개변수(parameter)</b>집합과 본문이 있으며 함수가 호출될 때 실행할 구문이 포함된다. 이러한 방식으로 작성된 함수의 본문은 단 하나의 구문으로 구성되더라도 항상 중괄호로 묶어야 한다. 또한 함수의 매개변수는 일반 바인딩과 같이 동작하지만 초기 값은 함수 자체의 코드가 아니라 <b>함수 호출자(caller)</b>가 지정한다.</p>
+<p>&nbsp;함수는 function이라는 키워드로 시작하는 <b>표현식</b>이다. 함수에는 <b>매개변수(parameter)</b>집합과 본문이 있으며 함수가 호출될 때 실행할 구문이 포함된다. 이러한 방식으로 작성된 함수의 본문은 단 하나의 구문으로 구성되더라도 항상 중괄호로 묶어야 한다. 함순는 여러 개의 매개변수를 가질 수도 있고 매개변수가 없을 수도 있다. <b>1. 값을 생성하는 함수</b>와 <b>2. 실행 결과 값만 생성하는 함수가 있기 때문이다.</b> 또한 함수의 매개변수는 일반 바인딩과 같이 동작하지만 초기 값은 함수 자체의 코드가 아니라 <b>함수 호출자(caller)</b>가 지정한다.</p>
 
 ## 바인딩과 범위
 
-<p>&nbsp;모든 바인딩에는 범위(scope)가 있다. 범위는 바인딩을 식별할 수 있는 프로그램의 영역을 말한다. 함수나 블록 외부에서 정의한 바인딩의 경우 그 범위는 프로그램 전체이며 이 바인딩은 어디서든지 참조할 수 있다. 이것을 전역(global) 바인딩이라고 한다. </p>
+<p>&nbsp;모든 바인딩에는 <b>범위 (Scope)</b>가 있다. <b>범위(Scope, 스코프)</b>는 <b>바인딩을 식별할 수 있는 프로그램의 영역</b>을 말한다. 함수나 블록 외부에서 정의한 바인딩의 경우 그 범위는 프로그램 전체이며 이 바인딩은 어디서든지 참조할 수 있다. 이것을 <b>전역(global)</b> 바인딩이라고 한다. </p>
 
-<p>&nbsp;함수의 매개변수나 함수 안에서 선언한 바인딩은 해당 함수에서만 참조할 수 있으므로 지역(local) 바인딩이라고 한다. 이 바인딩은 함수가 호출될 때마다 새 인스턴스가 만들어진다. 따라서 이러한 함수 간에 격리가 일어나며 각 함수 호출(function call)은 저마다의 제한된 공간(지역 환경)에서 동작하며 전역 환경에서 처리되는 내용은 자세하기ㅔ 알지 않아도 된다.</p>
+<p>&nbsp;함수의 매개변수나 함수 안에서 선언한 바인딩은 해당 함수에서만 참조할 수 있으므로 <b>지역(local)</b> 바인딩이라고 한다. 이 바인딩은 함수가 호출될 때마다 새 인스턴스가 만들어진다. 따라서 이러한 함수 간에 격리가 일어나며 각 함수 호출(function call)은 저마다의 제한된 공간(지역 환경)에서 동작하며 전역 환경에서 처리되는 내용은 자세하게 알지 않아도 된다.</p>
+
+```js
+let x = 10; // 함수나 블록 외부에서 정의한 전역(global) 바인딩, 어디서든지 참조할 수 있음
+
+if (true) {
+  // if () { ... } 블록 내부에 작성뙨 바인딩을 지역 바인딩이라 한다.
+  let y = 20;
+  var z = 30;
+  console.log(x + y + z);
+
+  >>> 60
+  // 전역 바인딩으로 선언된 x 를 참조함, 문제 x
+}
+
+console.log(x + z);
+
+>>> 40
+// 1. 전역 바인딩으로 선언된 x 를 참조함, 2. var 로 바인딩 한 변수 z 는 해당 변수가 위치한 블록의 밖에서도 사용 가능하므로 문제 x
+```
 
 <p>&nbsp;let과 const로 선언한 바인딩은 실제로 바인딩이 선언된 블록까지가 지역 범위이므로 반복문 내부의 코드에서 선언하게 되면 해당 반복문 앞뒤의 코드에서는 이 바인딩을 식별할 수 없다. 2015년 이전의 자바스크립트에서는 함수에서만 세 범위를 만들었기 때문에 var 키워드로 생성한 과거 스타일의 바인딩은 해당 바인딩이 내부에 포함되어 있는 경우는 함수 내부에서 식별되고 함수 내부에 없는 경우라면 전역 범위에서 식별된다.</p>
+
+<p>&nbsp;모든 범위는 해당 범위 내부와 그 주변의 범위를 탐색하기 때문에 이 예제에서 x는 블록 안에서 식별된다. 예외 사항은 여러 바인딩의 이름이 같은 경우다. 이 경우 코드에서는 안에서부터 가장 가까운 범위의 바인딩을 식별한다.</p>
+
+```js
+const halve = function (n) {
+  return n / 2;
+};
+
+let n = 10;
+console.log(halve(100));
+
+>>> 50
+
+console.log(n); // 여기서 변수 n 을 호출하면 코드 안에서부터 가장 가까운 범위의 바인딩을 식별
+
+>>> 10
+```
+
+## 범위 중첩
+
+<p>&nbsp;자바스크립트에서는 전역(글로벌) 바인딩과 지역(로컬) 바인딩을 구분한다. 블록과 함수는 다른 블록과 함수의 내부에 생성할 수 있으며 여러 단계의 <b>지역성(locality)</b>을 만들 수 있다. 블록 내부에 있는 바인딩의 <b>가시성(visibilty)</b>은 해당 블록이 프로그램에서 어느 위치에 있느냐에 따라 결정된다.</p>
+
+> 모든 <b>지역 범위</b>에어서는 해당 범위에 포함된 모든 지역 범위의 바인딩을 식별할 수 있으며 <b>모든 범위</b>에서는 전역 범위의 바인딩을 식별할 수 있다.
+
+> 이러한 바인딩 가시성 접근 방식으로 <b>렉시컬 스코핑(lexical scoping, 어휘적 범위 지정)</b>이라고 한다.
+
+## 함수 표현식
+
+```js
+let launchMissiles = function () {
+  missileSystem.launch("now");
+};
+
+if (safeMode) {
+  launchMissiles();
+}
+```
+
+## 함수 선언식
+
+```js
+console.log("The future says:", future());
+
+function future() {
+  return "You';; never have flying cars";
+}
+```
+
+<p>&nbsp; 함수 선언식에서는 함수를 사용하는 코드의 아래쪽에 해당 함수가 정의돼 있어도 동작한다. 함수 선언식은 위에서 아래로 흘러가는 일반적인 방식의 제어 흐름이 아니다. 개념적으로 이 함수는 범위의 맨 위로 옮겨지고 해당 범위(스코프)의 모든 코드에서 사용할 수 있다. 함수를 사용하기 전에 모든 기능을 정의하려고 노력하지 않아도 코드를 의미 있는 방식으로 자유롭게 정렬할 수 있어서 유용하다. </p>
+
+## 화살표 함수
+
+```js
+const power = (base, exponent) => {
+  let result = 1;
+  for (let count = 0; count < exponent; count++>){
+    result *= base;
+  }
+  return result;
+}
+```
+
+<p>&nbsp; 화살표는 매개변수 다음에 오고 함수 본문이 그 뒤를 따른다. "이것을 입력(매개변수)해서 다음 결과(본문)가 나온다."와 같은 표현이다. 이 언어에서 화살표 함수와 function 표현식을 모두 사용해야 할 이유는 없다. 이 둘을 동일하게 동작하기 때문이다.</p>
+
+## 호출 스택 (call stack)
+
+```js
+function greet(who) {
+  console.log("Hello" + who);
+}
+greet("Harry");
+console.log("Bye");
+
+// 전제 조건 js는 스크립팅 언어이기 때문에 위에서 아래로 차례대로 실행된다.
+/*
+1. function greet(who) 함수를 발견 (내부 값은 계산 되지 않음)
+2. greet("Harry") 호출 (Harry 를 인자로 넘겨줌)
+3. function greet(who) 함수 내부로 이동 후에 제어를 반환 (console.log(...))
+4. greet("Harry")로 돌아감
+5. 마지막 문장인 console.log("Bye") 실행 후 종료
+*/
+```
+
+<p>&nbsp;함수가 반환될 때 함수를 호출한 곳으로 돌아가야 하기 때문에 컴퓨터에서는 호출이 발생한 컨텍스트(context)를 기억해야 한다. 어떤 console.log는 완료 후 greet함수로 돌아가야 하고 또 다른 console.log는 프로그램의 끝으로 돌아가야 한다. 컴퓨터에서 이러한 컨텍스트를 저장하는 장소를 <b>호출 스택(call stack)</b>이라고 한다.</p>
+
+<p>&nbsp;함수가 호출될 때마다 현재 컨텍스트가 이 스택의 맨 위에 저장된다. 함수가 반환되면 스택에서 최상위 컨텍스트를 꺼낸 후 해당 컨텍스트를 실행한다. 이 스택을 저장하려면 컴퓨터에 메모리 공간이 필요하다. 스택이 너무 많이 쌓이면 "out of stack space (스택 공간 부족)" 또는 "too much recursion (너무 많은 재귀)"과 같은 메시지와 함께 저장되지 않는다.</p>
+
+## 선택적 인수
+
+> 다음 코드는 아무런 문제없이 실행된다.
+
+```js
+function square(x) {
+  return x * x;
+}
+
+console.log(square(4, true, "hedgehog"));
+
+>>> 16
+```
+
+<p>&nbsp;자바스크립트에서는 함수에 전달하는 인수의 개수에 매우 관대하다. 너무 많은 인수를 보내면 나머지는 무시한다. 반대로 매개변수가 부족하면 누락된 매개변수에 undefined 값을 할당한다. 이렇나 동작의 부정적인 면은 실수로 함수에 잘못된 개수의 인수를 전달할 가능성이 있다는 점이다. <b>그리고 이러한 실수는 아무도 알려주지 않는다.</b></p>
+
+## 클로저
+
+<p>&nbsp;함수를 값으로 취급하고 함수가 호출될 때마다 지역 바인딩이 다시 만들어진다는 사실에서 재밌는 질문이 생각날 수 있다. <b>'지역 바인딩을 만든 함수 호출(function call)이 끝난 상태라면 생성된 지역 바인딩은 어떻게 될 까?'</b> 다음 코드는 이에 관한 예제이다. 이 예제에서는 지역 바인딩을 생성하는 <b>wrapValue</b>함수를 정의한다. 이 함수에서는 해당 지역 바인딩에 접근해서 반환하는 함수를 반환한다.</p>
+
+```js
+function wrapValue(n) {
+  let local = n;
+  return local;
+}
+
+let wrap1 = wrapValue(1);
+let wrap2 = wrapValue(2);
+
+// -- 지역 바인딩을 만든 함수 호출이 끝난 상태 --
+
+console.log(wrap1);
+
+console.log(wrap2);
+```
+
+<p>&nbsp;이 코드를 실행하면 생각한 것처럼 동작한다. 즉, 두 바인딩 인스턴스에 계속해서 접근할 수 있다. 이 예제에서는 함수가 호출될 때마다 새로운 지역 바인딩이 만들어지고, 이렇게 만들어진 지역 바인딩은 다른 호출에서 접근할 수 없다는 사실을 잘 보여준다. <b>외부 범위의 지역 바인딩 인스턴스를 참조할 수 있는 기능을 클로저(closure)라고 말하며, 함수 주변의 지역 범위에서 바인딩을 참조하는 함수(function)을 클로저라고 한다.</b>이 기능을 통해 바인딩의 수명에 대한 걱정을 덜 수 있을 뿐만 아니라 함수 값을 창의적인 방식으로 사용할 수 있게 해준다.</p>
+
+## 함수의 발전
+
+<p>&nbsp;함수를 프로그램에 도입하는 방식은 두 가지다. <b>첫 번째는 비슷한 코드가 박복적으로 작성된 것을 발견하는 것</b>이고. <b>두 번째는 함수 자체로 가치가 있다고 생각되지만 아직 만들어지지 않은 기능을 찾아내는 것이다.</b></p>
+
+<p>&nbsp;농장에 있는 소와 닭의 수를 출력하는 프로그램을 작성한다. 이때 각 숫자가 항상 세자리 수가 되도록 0을 숫자 앞에 붙이고 숫자 뒤에 소를 나타내는 Cows와 닭은 나타내는 Chickens를 붙인다.</p>
+
+```js
+function printFarmInventory(cows, chickens) {
+  let cowString = String(cows); // 매개변수로 받은 정수 cows를 문자열로 변환
+  while (cowString.length < 3) {
+    cowString = "0" + cowString;
+  }
+  console.log(`${cowString} Cows`);
+
+  let chickenString = String(chickens); // 매개변수로 받은 정수 cows를 문자열로 변환
+  while (chickenString.length < 3) {
+    chickenString = "0" + chickenString;
+  }
+  console.log(`${chickenString} Chickens`);
+}
+```
+
+<p>&nbsp;위와 같은 코드로 문제는 해결됐다. 하지만 농부에게 해당 코드를 보내려고 하는 시점에, 농부가 돼지도 키우고 시작했다고 말한다면 돼지도 인쇄하는 소프트웨어로 확장할 수 있을까? 물론 확장할 수 있다. 하지만 이 네줄을 한 번 더 복사하고 붙여 넣는 과정을 멈추고 다시 생각한다. 더 좋은 방법을 사용해야 한다.</p>
+
+```js
+case 1
+
+function printZeroPaddedWithLabel(number, label) {
+  let numberString = String(number);
+  while (numberString.length < 3) {
+    numberString = "0" + numberString;
+  }
+  console.log(`${numberString} ${label}`);
+}
+
+function printFarmInventory(cows, chickens, pigs) {
+  printZeroPaddedWithLabel(cows, "Cows");
+  printZeroPaddedWithLabel(chickens, "Chickens");
+  printZeroPaddedWithLabel(pigs, "Pigs");
+}
+
+printFarmInventory(7, 11, 3);
+```
+
+<p>잘 동작한다! 하지만 printZeroPaddedWithLabel은 인쇄와 0 추가, 레이블 추가, 이 세가지 기능을 하나로 합친 이름이며 어색하다. 이 프로그램에서는 반복되는 부분을 찾아내기보다는 하나의 개념을 골라낸다.</p>
+
+```js
+function zeroPad(number, width) {
+  let string = String(number);
+  while (string.length < width) {
+    string = "0" + string;
+  }
+  return string;
+}
+
+function printFarmInventory(cows, chickens, pigs) {
+  console.log(`${zeroPad(cows, 3)} Cows`);
+  console.log(`${zeroPad(chickens, 3)} Chickens`);
+  console.log(`${zeroPad(pigs, 3)} Pigs`);
+}
+
+printFarmInventory(7, 16, 3);
+```
+
+> 함수 이해의 핵심은 함수의 범위를 이해하는 것이다. 모든 블록은 새 범위를 만든다. 지정된 범위 내에 선언된 매개변수와 바인딩은 지역 범위이며 외부에서 식별할 수 없다.
 
 <hr/>
 
@@ -189,3 +398,7 @@ console.log(square(12));
 ### 👉🏼 <a href="./SECTION13/readme.md">섹션 14, 자바스크립트 특징 바로가기</a><br/>
 
 ### 👉🏼 <a href="./SECTION13/readme.md">섹션 15, JSON 오브젝트 바로가기</a><br/>
+
+```
+
+```
