@@ -509,6 +509,51 @@ console.log(sequence);
 ```
 
 <p>&nbsp;<b>push</b> 메서드는 배열의 마지막에 값을 추가하고, <b>pop</b> 메서드는 반대로 배열의 마지막 값을 제거하고 반환한다. 다소 우스꽝스러운 이러한 이름은 <b>스택 연산</b>에 사용하는 전통적인 용어이다. 프로그래밍에서 스택은 값을 넣고 역순으로 다시 꺼낼 수 있는 자료 구조<b>(L.I.F.O, Last In First Out)</b>, 마지막에 추가된 값이 먼저 나오는 구조이다.</p>
+
+## 객체
+
+<p>&nbsp;객체(object) 유형의 값은 임의의 속성 모음이다. 객체를 만드는 방법 중 하나는 표현식에 중괄호를 사용합니다.</p>
+
+```js
+let day1 = {
+  squirrel: false,
+  events: ["work", "touched tree", "pizza", "running"],
+  morning: {
+    squirrel: false,
+    events: ["work", "touched tree"],
+    inner: {
+      events: {
+        work() {
+          return "work";
+        },
+        touchedTree(){
+          return "touched tree";
+        }
+      },
+    },
+  },
+};
+
+console.log(day1.squirrel);
+>>> false
+
+console.log(day1.wolf); // 객체내에 정의되지 않음
+>>> undefined
+
+console.log(day1.events);
+>>> [ 'work', 'touched tree', 'pizza', 'running' ]
+
+console.log(day1.events[0]);
+>>> work
+
+console.log(day1.morning.inner.events.work());
+>>> work
+```
+
+<p>&nbsp;중괄호 안에 콤마(,)로 구분된 속성 목록이 있다. 각 속성에는 이름이 있고 다음으로 콘론과 값이 이어진다. 객체가 여러 줄에 걸쳐 쓰여지는 경우 예제와 같이 들여쓰기를 하면 가독성이 좋아진다. <b>속성의 이름이 사용 가능한 바인딩 이름이나 숫자가 아니라면 따옴표로 묶어야 한다.</b></p>
+
+<p>&nbsp;자바스크립트에서 중괄호는 두 가지 의미를 갖는다. 구문을 작성할 때는 중괄호를 통해 구문의 블록을 시작한다. 그 밖에는 객체를 나타낸다. 다행히 중괄호 안에서 객체를 사용해 구문을 시작하는 경우는 거의 없기 때문에 이 둘 사이의 모호함은 크게 문제가 되지 않는다.</p>
+
 <hr/>
 
 ### 👉🏼 <a href="./SECTION01/readme.md">섹션 1, 기본 문법 바로가기</a><br/>
