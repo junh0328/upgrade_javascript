@@ -405,6 +405,112 @@ printFarmInventory(7, 16, 3);
 
 <hr/>
 
+# Chapter 4, 객체와 배열 자료 구조
+
+<p>&nbsp;숫자와 불리언, 문자열은 자료 구조를 구성하는 최소 단위다. 하지만 정보는 보통 하나 이상의 단위로 이루어진다. <b>객체(object)</b>를 사용하면 다른 객체를 포함한 값을 그룹화해서 보다 복잡한 구조를 만들 수 있다.</p>
+
+## 데이터 세트
+
+<p>&nbsp;디지털 데이터 청크(chunk)를 다루기 위해서는 먼저 컴퓨터 메모리에서 이 데이터를 표현할 수 있는 방법을 찾아야 한다. 예를 들어 숫자 2, 3, 5, 7, 11의 모음을 표현해야 한다고 가정해 보자. 문자열에는 어떤 길이든지 담을 수 있으므로 이 문자열을 사용해 창의력을 발휘해보면, 여러 개의 데이터를 담아 "2 3 5 7 11"와 같이 표현할 수 있다. 하지만 이 방법은 자연스럽지 않다. 어떻게든 숫자를 추출해야만 하고 숫자로 다시 변환해야 데이터에 접근할 수 있다.</p>
+
+<p>&nbsp;다행히 자바스크립트에서는 이러한 값을 저장할 수 있는 데이터 타입을 제공한다. 이 데이터 유형을 <b>배열(array)</b>이라고 하며 대괄호 사이에 콤마로 구분한 값을 나열한다.</p>
+
+```js
+let listOfNumbers = [2, 3, 5, 7, 11];
+
+console.log(listOfNumbers[2]);
+>>> 5
+
+console.log(listOfNumbers[0]);
+>>> 2
+
+```
+
+<p>&nbsp;배열 안의 <b>요소(element)</b>를 가져 오는 표기법도 대괄호를 사용한다. 표현식 바로 다음에 오는 대괄호 쌍`[ ]`은 그 대괄호 내부에 또 다른 표현식을 포함하며, 대괄호 왼쪽에 있는 표현식(배열)에서 대괄호 안에 있는 표현식에 저장된 <b>인덱스(index)</b>에 해당하는 요소를 찾는다.</p>
+
+## 속성 (프로퍼티)
+
+<p>&nbsp;Chapter 3에서는 `myString.length`와 `Math.max`와 같은 특이한 방식의 표현식을 살펴봤다. 이러한 표현식은 특정 값의 <b>속성(property)</b>에 접근하는 방식이다. 첫 번째는 myString에 있는 값의 length 속성에 접근한다. 두 번쨰는 Math 객체의 max라는 속성에 접근한다.</p>
+
+```js
+const person1 = {
+  name: "LEE JUN HEE",
+  age: 25,
+};
+
+console.log(person1.name);
+>>> LEE JUN HEE // person1 속성의 이름(key) 'name' 을 사용
+```
+
+<p>&nbsp;자바스크립트에서 속성에 접근하는 데 주로 사용하는 두 가지 방법은 <b>'점'</b> 과 <b>'대괄호'</b>를 사용하는 것이다. 첫 번째로 '점'을 사용하는 경우, 점 다음에 오는 다어는 문자 그대로의 속성의 이름이다. '대괄호'를 사용하는 경우, 대괄호 사이의 표현식은 속성의 이름을 얻기 위해 평가된다. value.x 는 "x" 라는 속성의 값을 가져오는 반면, value[x]는 표현식 x를 평가하고 그 결과를 문자열로 변환해서 속성 이름으로 사용한다.</p>
+
+## 메서드
+
+> string과 array 객체는 모두 length 속성 외에도 함수 값을 포함한 여러 속성을 가지고 있다.
+
+```js
+let doh = "Doh";
+
+console.log(typeof doh.toUpperCase);
+>>> function  //  string으로 선언된 바인딩 doh가 가진 속성(프로퍼티) 中 toUpperCase의 typeof> 타입이 뭐니?
+
+console.log(doh.toUpperCase());
+>>> DOH  // doh 가 가진 toUpperCase() 함수를 호출하여 콘솔창에 띄워라
+```
+
+<p>&nbsp;재미있는 점은 toUpperCase를 호출할 때 아무런 인수도 전달하지 않았지만, 이 함수에서는 호출한 속성 값인 "Doh" 문자열에 접근한다. <b>함수를 포함하는 속성은 보통 "toUpperCase는 문자열에 대한 메서드다"와 같이 해당 메서드가 속한 값에 대한 메서드라고 부른다.</b></p>
+
+### 함수 ? 메서드 ?
+
+<p>&nbsp;함수는 메소드를 포괄하는 개념이다. 하지만, 함수와 메서드의 가장 큰 차이점은 함수는 독립적으로 존재하고 (우리가 만들 수 있음), 메서드는 클래스, 객체에 종속되어 존재한다는 점이다. string 객체에서 제공되는 속성으로 종속되어 있는 함수인 toUpperCase는 메서드라고 볼 수 있고, 이를 바탕으로 어떤 문자든 넣으면 toUpperCase를 통해 기능을 수행할 수 있도록 커스텀화 한 것을 함수라고 볼 수 있다.</p>
+
+```js
+// case 1 : 함수처럼 쓰기
+
+function AnythingCanUpper(string) {
+  let result = string.toUpperCase(string);
+  console.log(result);
+}
+
+AnythingCanUpper("upper2");
+>>> UPPER2
+
+// case 1 : 메소드처럼 쓰기
+
+var upper = new String("upper");  // var upper = "upper"로도 가능
+console.log(upper.toUpperCase());
+>>> UPPER
+
+
+// 예시로 만든 함수와 메서드이다.
+/*
+함수인 AnythingCanUpper()를 통해 해당 결과를 console 창에 뽑아낼 수 있도록 만들었고
+메서드인 toUpperCase() [string 객체에서 제공하는 메서드] 를 사용하였다.
+
+함수는 메서드를 포괄하는 큰 개념이다.
+*/
+```
+
+> 다음 예제는 배열을 조작하는 데 사용할 수 있는 두 가지 메서드이다.
+
+```js
+let sequence = [1, 2, 3];
+sequence.push(4);
+sequence.push(5);
+
+console.log(sequence);
+>>> [1, 2, 3, 4, 5]
+
+console.log(sequence.pop());
+>>> 5
+
+console.log(sequence);
+>>> [1,2,3,4]
+```
+
+<p>&nbsp;<b>push</b> 메서드는 배열의 마지막에 값을 추가하고, <b>pop</b> 메서드는 반대로 배열의 마지막 값을 제거하고 반환한다. 다소 우스꽝스러운 이러한 이름은 <b>스택 연산</b>에 사용하는 전통적인 용어이다. 프로그래밍에서 스택은 값을 넣고 역순으로 다시 꺼낼 수 있는 자료 구조<b>(L.I.F.O, Last In First Out)</b>, 마지막에 추가된 값이 먼저 나오는 구조이다.</p>
+<hr/>
+
 ### 👉🏼 <a href="./SECTION01/readme.md">섹션 1, 기본 문법 바로가기</a><br/>
 
 ### 👉🏼 <a href="./SECTION02/readme.md">섹션 2, 연산자 바로가기</a><br/>
