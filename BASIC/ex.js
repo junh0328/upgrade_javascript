@@ -115,9 +115,26 @@ rememberUrgently("멍멍이");
 console.log(todoList);
  */
 
+/*
+JSON 객체 사용
+
 let string = JSON.stringify({ squirrel: false, events: ["weekend"] });
 
 console.log(string);
 
 console.log(JSON.parse(string).squirrel);
 console.log(JSON.parse(string).events);
+*/
+
+/*
+var let const 
+
+const halve = function (n) {
+  return n / 2;
+};
+console.log(halve(100));
+var n = 10;
+console.log(halve(n));
+var n = 20;
+console.log(halve(n));
+*/
