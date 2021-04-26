@@ -550,9 +550,130 @@ console.log(day1.morning.inner.events.work());
 >>> work
 ```
 
-<p>&nbsp;중괄호 안에 콤마(,)로 구분된 속성 목록이 있다. 각 속성에는 이름이 있고 다음으로 콘론과 값이 이어진다. 객체가 여러 줄에 걸쳐 쓰여지는 경우 예제와 같이 들여쓰기를 하면 가독성이 좋아진다. <b>속성의 이름이 사용 가능한 바인딩 이름이나 숫자가 아니라면 따옴표로 묶어야 한다.</b></p>
+<p>&nbsp;중괄호 안에 <b>콤마(,)</b>로 구분된 속성 목록이 있다. 각 속성에는 이름이 있고 다음으로 <b>콜론(:)</b>과 값이 이어진다. 객체가 여러 줄에 걸쳐 쓰여지는 경우 예제와 같이 들여쓰기를 하면 가독성이 좋아진다. <b>속성의 이름이 사용 가능한 바인딩 이름이나 숫자가 아니라면 따옴표로 묶어야 한다.</b></p>
 
 <p>&nbsp;자바스크립트에서 중괄호는 두 가지 의미를 갖는다. 구문을 작성할 때는 중괄호를 통해 구문의 블록을 시작한다. 그 밖에는 객체를 나타낸다. 다행히 중괄호 안에서 객체를 사용해 구문을 시작하는 경우는 거의 없기 때문에 이 둘 사이의 모호함은 크게 문제가 되지 않는다.</p>
+
+## 변형
+
+### 숫자, 문자열, 불리언의 불변성
+
+<p>&nbsp; 이전 장에서 설명한 <b>숫자와 문자열, 불리언</b>과 같은 값 유형은 모두 <b>불변(immutable)</b>이다. <b>따라서 이 같은 유형의 값을 변경하는 것은 불가능하다.</b>이러한 값을 합치고 새로운 값을 만들어 낼 수는 있지만, 특정 문자열 값으로 지정되고 나면 해당 값은 항상 동일하게 유지되며 해당 텍스트는 변경할 수 없다. 만약 "cat"을 포함하는 문자열이 있다고 가정하면 다른 코드에서 이 문자열의 문자를 "rat"으로 변경할 수 없다.</p>
+
+<p>&nbsp; <b>하지만, 객체는 이와 다르게 동작한다.</b>객체의 속성은 변경할 수 있으며, 단일 객체의 값은 시점<b>(바인딩 환경)</b>에 따라 서로 다른 내용을 가질 수 있다.</p>
+
+<p>&nbsp; 두 개의 숫자 120과 120이 있을 때, 이 둘이 동일한 물리적 비트를 참조하든 그렇지 않든 정확하게 같은 숫자라고 생각할 수 있다. 하지만 객체의 경우, <b>동일한 객체에 두 개의 참조가 있는 것과 두 개의 다른 객체가 같은 속성을 가지고 있는 것은 차이가 있다.</b></p>
+
+> 다음의 코드를 생각해보자
+
+```js
+// case 1, 동일한 객체에 두개의 참조가 있는 경우
+let object1 = { value: 10 };
+let object2 = object1;
+
+// case 2, 다른 객체가 같은 속성 { value : 10 }을 가지고 있는 경우
+let object3 = { value: 10 };
+
+console.log(object1 == object2);
+>>> true
+console.log(object1 === object2);
+>>> true
+console.log(object1 == object3);
+>>> false
+
+// value 의 값을 변경
+object1.value = 15;
+
+console.log(object1.value);
+>>> 15
+console.log(object2.value);
+>>> 15
+console.log(object3.value);
+>>> 10
+```
+
+<p>&nbsp;object1 바인딩과 object2 바인딩은 동일한 객체를 가지고 있으므로, object1을 변경하면 object2의 값도 변경된다. 이것을 같은 아이덴티티를 가지고 있다고 말한다. object3 바인딩은 다른 객체를 바라보고 있으며, 처음에는 object1과 같은 속성을 갖고 있으나 별개로 동작한다.</p>
+
+<P>&nbsp;바인딩은 변수나 상수로 사용할 수 있지만, 바인딩의 값이 동작하는 방식과는 별개다. 숫자 값은 변경할 수 없지만, let 바인딩을 사용해서 바인딩이 가리키는 값을 바꾸면 바뀐 숫자를 추적할 수 있다. 이와 비슷하게, 객체에 대한 const 바인딩 그 자체는 변경되지 않고 동일한 객체를 계속 가리키겠지만, 해당 객체의 내용은 바꿀 수 있다.</P>
+
+```js
+// 초기 선언된 객체 score
+const score = { visitors: 0, home: 0 };
+
+// 객체의 프로퍼티에 접근하여 해당 프로퍼티의 값을 바꾸는 경우
+score.visitors = 1;
+console.log(score);
+>>> { visitors: 1, home: 1};
+
+// 객체 자체를 바꾸려는 경우
+score = { visitors: 1, home: 1 };
+console.log(score);
+>>> Error: Assignment to constant variable
+```
+
+<p>&nbsp;자바스크립트의 `==` 연산자를 사용해서 객체를 비교하면, 객체의 아이덴티티를 통해 비교가 수행된다. 두 객체가 정확히 같은 값인 경우에만 true가 반환된다. 서로 다른 객체를 비교하면 동일한 속성을 가지고 있더라도 false가 반환된다. 자바스크립트에는 객체의 내용을 비교하는 "깊은(deep)" 비교 연산은 포함되어 있지 않다.</p>
+
+### <a href="https://velog.io/@yujo/JS%EC%96%95%EC%9D%80-%EB%B3%B5%EC%82%AC%EC%99%80-%EA%B9%8A%EC%9D%80-%EB%B3%B5%EC%82%AC">깊은 복사 얕은 복사 (shallow and deep copy)</a>
+
+## 배열 더 보기
+
+<p>이 장을 마무리하기 전에 몇 가지 객체에 관한 개념을 소개합니다. 기조에는 배열의 끝에 있는 요소를 추가하고 꺼내는 데 사용하는 push와 pop을 살펴봤습니다. 배열의 시작 부분에 요소를 추가하고 꺼내는 메서드를 <b>unshift</b>와 <b>shift</b>라고 합니다.</p>
+
+```js
+let todoList = [];
+function remember(task) {
+  todoList.push(task);
+}
+function getTask() {
+  return todoList.shift();
+}
+function rememberUrgently(task) {
+  todoList.unshift(task);
+}
+
+remember("멍멍이");
+console.log(todoList);
+>> [ '멍멍이' ]
+
+remember("야옹이");
+console.log(todoList);
+>> [ '멍멍이', '야옹이' ]
+
+console.log(getTask());
+>> 멍멍이
+
+console.log(todoList);
+>> [ '야용이' ]
+
+rememberUrgently("멍멍이");
+console.log(todoList);
+>> ['멍멍이', '야옹이']
+```
+
+<p>&nbsp;이 프로그램에서는 작업 큐(queue)를 관리한다. remember("groceries")를 호출해 큐의 마지막에 작업을 추가하고, 작업 수행 준비가 되면 getTask()를 호출해서 해당 큐에 있는 첫 번째 항목을 꺼낸다. rememberUrgently 함수도 작업을 추가하지만 큐의 끝이 아닌 앞 부분에 추가한다.</p>
+
+> 이 밖의 객체에 포함된 메서드들은 링크를 통해 확인하세요
+
+## JSON
+
+<p>&nbsp;속성은 값을 포함하고 있다기보다는 값을 가리키고 있기 때문에 객체와 배열은 주소(address, 메모리의 공간)를 갖는 일련의 비트로 컴퓨터의 메모리에 저장된다. 따라서 내부에 또 다른 배열을 포함하는 배열은 적어도 하나 이상의 내부 배열용 메모리 영역과 내부 배열의 위치를 나타내는 이진수를 포함한 외부 배열용 메모리 영역으로 구성된다.</p>
+
+<p>&nbsp;나중을 위해 파일에 데이터를 저장하거나 네트워크를 통해 다른 컴퓨터로 보내려면 이러한 메모리 주소를 저장하거나 전송할 수 있는 형식으로 변환해야 한다. 원하는 값의 주소와 컴퓨터 메모리를 모두 다 전송할 수는 있지만 최선의 접근 방식은 아니다. 데이터를 직렬화해서 일반적인 형식으로 변환한다. 널리 사용되는 직렬화 형식은 JSON(JavaScript Object Notion)이다. 자바스크립트가 아닌 다른 언어에서도 웹에서 데이터를 저장하고 통신하는 형식으로 널리 사용된다.</p>
+
+<p>&nbsp;자바스크립트에서는 JSON.stringify과 JSON.parse 함수를 사용해 데이터를 JSON형식으로 반환하거나 다시 JSON 형식에서 데이터 형식으로 변환할 수 있다.</p>
+
+```js
+let string = JSON.stringify({ squirrel: false, events: ["weekend"] });
+
+console.log(string);
+>>> {"squirrel": false, "events": ["weekend"]}
+
+console.log(JSON.parse(string).squirrel);
+>>> false
+
+console.log(JSON.parse(string).events);
+>>> [ 'weekend' ]
+```
 
 <hr/>
 
