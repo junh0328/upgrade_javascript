@@ -138,3 +138,62 @@ console.log(halve(n));
 var n = 20;
 console.log(halve(n));
 */
+
+/*
+function speak(line) {
+  console.log(`The ${this.type} rabbits says '${line}'`);
+}
+
+let whiteRabbit = { type: "white", speak };
+let hungryRabbit = { type: "hungry", speak };
+
+whiteRabbit.speak("Oh my ears and whiskers, " + "how late it's getting");
+
+hungryRabbit.speak("I could use a carrot right now.");
+*/
+
+/*
+function normalize() {
+  console.log(this.coords.map((n) => n / this.length));
+}
+
+normalize.call({ coords: [0, 2, 3], length: 5 });
+*/
+
+/*
+let empty = {};
+
+console.log(empty.toString);
+// function toString(){...}
+
+console.log(empty.toString());
+// [object object]
+*/
+
+/*
+let protoRabbit = {
+  speak(line) {
+    console.log(`The ${this.type} rabbit says '${line}'`);
+  },
+};
+
+let killerRabbit = Object.create(protoRabbit);
+
+killerRabbit.type = "killer";
+// type을 설정
+killerRabbit.speak(" SKREEEEE! ");
+// speak()에 인수로 문자열 " SKREEEEE! " 를 넣어주고 호출했기 때문에 해당 함수가 실행된다.
+
+killerRabbit.type;
+killerRabbit.speak(" SKRRRR! SKRRRR! ");
+*/
+
+function Rabbit(type) {
+  this.type = type;
+}
+Rabbit.prototype.speak = function (line) {
+  console.log(`The ${this.type} rabbit says '${line}'`);
+};
+
+let weirdRabbit = new Rabbit("Weird");
+weirdRabbit.speak("bow wow!");

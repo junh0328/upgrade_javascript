@@ -692,6 +692,185 @@ console.log(JSON.parse(string).events);
 
 <hr/>
 
+# Chapter 6, 객체의 이중 생활
+
+> 추상화, 캡슐화, 상속성, 다형성 / 객체 , 인터페이스, 프로토타입, 인스턴스, 클래스
+
+<p>&nbsp;4장에서 자바스크립트 객체를 소개했다. 프로그래밍 세계에는 객체지향 프로그래밍(object-oriented-programming)이라는 것이 있다. 객체지향 프로그래밍은 객체와 객체 관련 개념을 프로그램 구성의 중심 원칙으로 사용하는 기술이다.</p>
+
+### OOP를 사용하는 이유?
+
+<p> &nbsp;가장 큰 이유는 재사용성의 증가 이다. 기존에 만들었던 내용을 쉽게 상속, 다형성 등을 이용해서 재사용이 가능하다.</p>
+<p>&nbsp;또한 개발 자의 실수로 인한 취약점을 줄여준다. 취약점이란 급하게 개발을 하면서 코드에 오류가 발생할수 있다. 이럴경우 새로운 패치를 해야 하고 손실을 가져오게 된다.
+  하지만 생성자, 소멸자, 접근제어 [ Public, Private, Protected ]와 같은 내용은 이러한 오류를 잡아준다.</p>
+
+## 캡슐화
+
+<p>&nbsp;<b>객체지향 프로그래밍의 핵심 아이디어</b>는 <b>프로그램은 더 작은 영역으로 나누고, 각 영역의 상태를 자체적으로 관리하도록 만드는 것</b>이다. 이러한 방식으로 작게 나뉜 영역의 동작에 관한 정보를 해당 영역의 로컬(local)에 유지할 수 있다. 그 밖에 프로그램 영역에서 작업을 할 때는 해당 정보를 기억하거나 알 필요가 없다. 이러한 영역의 로컬에 유지되는 세부 정보가 변경되는 경우에 그 주변에 직접 연관되는 코드만 업데이트하면 되기 때문이다.</p>
+
+<p>&nbsp;이러한 프로그램의 여러 영역은 <b>인터페이스(interface)</b>나 제한적인 함수 또는 정확한 구현을 숨기고 보다 추상적인 수준에서 유용한 기능을 제공하는 바인딩을 통해 서로 상호작용한다. 이러한 프로그램의 영역은 객체를 사용해서 모델링한다. 각 인터페이스는 특정 메소드와 속성으로 구성된다. (메소드 + 속성) 인터페이스의 속한 속성을 <b>퍼블릭(public)</b>이라고 하며, 외부 코드에서 접근하지 못하는 나머지 속성은 <b>프라이빗(private)</b>이라고 한다.</p>
+
+<p>&nbsp;대부분의 언어에서는 퍼블릭과 프라이빗 속성을 구별하고 외부 코드에서 프라이빗 속성에 접근하지 못하게 하는 방법을 제공한다. 자바스크립트에 이러한 속성을 더해 만들어진 언어가 타입스크립트라고 볼 수 있다.</p>
+
+<p>&nbsp;자바스크립트에서는 퍼블릭과 프라이빗을 구분하지 않지만 자바스크립트 프로그래머는 퍼블릭과 프라이빗을 이미 구분해서 사용하고 있다. 일반적으로 사용 가능한 인터페이스는 설명서나 주석으로 작성한다. 속성 이름의 시작 부분에 밑줄 문자`(_)`를 사용해 해당 속성이 프라이빗임을 알려주는 것도 일반적인 내용이다. <b>인터페이스와 구현은 분리하는 것이 좋다. 이 방법을 보통 캡슐화(encapsulation)라고 한다.</b></p>
+
+> public, private, protected <br/><br/>
+> public: 클래스 외부에서 접근가능<br/>
+> private: 클래스 내부에서만 접근 가능<br/>
+> protected : 상속받은 자식 클래스에서만 접근 가능
+
+## 메서드 (method)
+
+<p>&nbsp;메서드는 함수 값을 가지고 있는 속성(프로퍼티)나 다름없다.</p>
+
+```js
+let rabbit = {}; // 전역 객체로 rabbit을 바인딩
+
+rabbit.speak = function (line) {  // rabbit 객체에 speak() 함수를 선언한다.
+  console.log(`The rabbit says '${line}'`);
+};
+
+rabbit.speak("I'm alive");  // 함수를 호출한다.
+>>> The rabbit says 'I'm alive.'
+```
+
+<p>&nbsp;일반적으로 메서드는 호출된 객체를 가지고 무언가를 수행해야 한다. 함수가 메서드처럼 호출되면(하나의 속성으로 포함되어 있고 object.method() 처럼 즉시 호출되는 경우) 함수 본문의 <b>this 바인딩</b>은 호출한 객체를 자동으로 가리킨다.</p>
+
+```js
+function speak(line) {
+  console.log(`The ${this.type} rabbits says '${line}'`);
+  // speak 함수의 내부에서 전역 객체로 바인딩한 whiteRabbit과 hungryRabbit의 속성(프로퍼티)에 접근이 가능해진다. (this 바인딩을 통해)
+}
+
+let whiteRabbit = { type: "white", speak };
+let hungryRabbit = { type: "hungry", speak };
+
+whiteRabbit.speak("Oh my ears and whiskers, " + "how late it's getting");
+
+hungryRabbit.speak("I could use a carrot right now.");
+```
+
+<p>&nbsp;this는 다양한 방식으로 전달되는 추가적인 메개변수라고 생각할 수 있다. 명시적으로 이 매개변수를 전달하려면 함수와 call 메서드를 사용한다. 이 call 메서드는 첫 번째 인수로 this 값을 받고 나머지 인수를 일반 매개변수로 취급한다.</p>
+
+```js
+speak.call(hungryRabbit, "Burp!"); // 위에서 선언했던 전역 객체 hungryRabbit의 속성 type을 자동으로 추론하여 넣어준다.
+
+// The hungry rabbit says 'Burp!'   // let whiteRabbit = { type: "white", speak };
+```
+
+<p>&nbsp;<b>모든 함수는 고유의 this 바인딩이 존재하며, 함수 호출 방식에 따라 그 값이 달라지기 때문에 function 키워드로 정의한 일반 함수에서 주변 범위에 있는 this를 참조할 수 없다.</b>하지만 화살표 함수는 이와 다르게 함수 고유의 this를 바인딩하지 않고 주변 범위의 this 바인딩을 참조할 수 있다. 따라서 다음 코드와 같이 로컬 함수 내부에서 this를 참조할 수 있다.</p>
+
+```js
+function normalize() {
+  console.log(this.coords.map((n) => n / this.length));
+}
+
+normalize.call({ coords: [0, 2, 3], length: 5 });
+
+// [0 , 0.4, 0.6]
+```
+
+> 이 코드에 function 키워드를 사용해 map의 인수를 작성하면 이 코드는 동작하지 않는다.
+
+## 프로토타입
+
+> 다음 예제를 자세히 들여다보자.
+
+```js
+let empty = {};
+
+console.log(empty.toString);
+// [Function: toString]
+
+console.log(empty.toString());
+// [object Object]
+```
+
+<p>&nbsp;언젠가 한 번 정도는 콘솔창에서 봤을 법한 로그이다. 이는 자바스크립트 객체의 동작 방식에 관한 정보를 불러왔다. 대부분의 객체에는 속성 외에도 프로토타입(prototype)이 존재한다. 프로토타입은 속성을 대체하는 용도로 사용되는 또 다른 객체이다. 즉, 객체가 가지고 있지 않은 속성을 요청하면 객체의 프로토타입에서 해당 속성을 검색한 후, 해당 프로토타입의 프로토타입을 검색하고 계속해서 그다음 검색을 반복한다.</p>
+
+<P>&nbsp;그렇다면 빈 객체의 프로토타입은 어디서 나왔을까? 이 객체의 프로토타입은 조상 프로토타입이며 <b>거의 모든 객체에는 Object.prototype이 존재한다.</b>자바스크립트 객체에서 프로토타입의 관계는 트리 모양 구조이며, 이 구조의 루트(root)는 Object.prototype이 된다. 루트에서는 객체를 문자열 표현으로 변환해주는 toString처럼 모든 객체에 포함되는 몇 가지 메서드가 제공된다.</P>
+
+<p>&nbsp;대부분의 객체에서는 프로토타입으로 <b>Object.prototype</b>을 직접 갖는 대신, 다양한 기본 속성이 제공되는 별도의 객체를 갖는다. 함수는 <b>Function.prototype</b>에서 파생되고 배열은 <b>Array.prototype</b>에서 파생된다.</p>
+
+> Object 객체의 create 메서드를 이용하여 특정 프로토타입으로 객체를 만들 수 있다.
+
+```js
+let protoRabbit = {
+  speak(line) {
+    console.log(`The ${this.type} rabbit says '${line}'`); // protoRabbit 객체 선언
+  },
+};
+
+let killerRabbit = Object.create(protoRabbit);
+// protoRabbit을 프로토타입으로 선언후, protoRabbit이 들고있는 속성을 가지는 객체 killerRabbit 바인딩
+// 현재 killerRabbit을 객체로 사용하기 위한 프로퍼티, type과 함수 speak() 모두 선언되지 않았기 때문에(undefined) 후에 선언
+
+killerRabbit.type = "killer";
+// type을 선언
+killerRabbit.speak(" SKREEEEE! ");
+// speak()에 인수로 문자열 " SKREEEEE! " 를 넣어주고 호출했기 때문에 해당 함수가 실행된다.
+>>> The killer rabbit says ' SKREEEEE! '
+
+killerRabbit.type;
+// type을 재선언해도 기존 바인딩 killer 유지
+killerRabbit.speak(" SKRRRR! SKRRRR! ");
+>>> The killer rabbit says ' SKRRRR! SKRRRR! '
+```
+
+> '프로토' 토끼는 모든 토끼가 공유하는 속성에 대한 컨테이너(붕어빵 틀, 부모) 역할을 한다. 킬러 토끼와 같은 개별 토끼 객체는 자신에게 해당하는 속성(프로퍼티)만 포함하며 자신의 프로토타입에서 공유 속성을 얻는다.
+
+## 클래스 (class)
+
+<p>&nbsp;자바스크립트의 프로토타입 체계는 클래스(class)라는 객체지향 개념을 비공식적으로 채택했다고 볼 수 있다. 클래스에서는 메서드와 속성을 포함한 객체 유형의 외형(shape)을 정의하며, 해당 클래스의 <b>인스턴스</b>를 <b>객체</b>라고 한다. 프로토 타입은 메서드와 같이 클래스의 모든 인스턴스에서 동일한 값을 공유하기 위한 속성을 정의하는데 사용한다. '토끼'의 'type' 속성처럼, 인스턴스별로 다른 속성은 객체 자체에 직접 저장해야 한다.</p>
+
+<p>&nbsp;따라서 클래스의 인스턴스를 생성하려면, 적절한 프로토타입에서 파생된 객체를 만들어야 하고, 이 클래스의 인스턴스가 가지고 있어야 하는 고유 속성도 포함되어야 한다. 자바스크립트에서는 기존 Object.create()보다 함수를 쉽게 정의할 수 있는 방법을 제공한다.</p>
+
+<p>&nbsp;함수 호출 부분의 앞에 `new`키워드를 붙ㅌ이면 그 함수는 생성자로 작동한다. 그렇게 하면 적절한 프로토타입을 갖는 객체가 자동으로 생성되고, 해당 함수의 this를 바인딩한 후, 해당 함수의 마지막에서 반환한다. 객체 생성에 사용되는 프로토타입 객체는 생성자 함수의 prototype 속성을 통해 확인할 수 있다.</p>
+
+```js
+function Rabbit(type) {
+  this.type = type;
+}
+Rabbit.prototype.speak = function (line) {
+  console.log(`The ${this.type} rabbit says '${line}'`);
+};
+
+let weirdRabbit = new Rabbit("weird"); // 'Rabbit' 프로토타입을 갖는 객체 'weirdRabbit' 바인딩, new 연산자를 통해 자동으로 적절한 프로토타입을 갖게 됨
+
+weirdRabbit.speak("bow wow!");
+// The Weird rabbit says 'bow wow!'
+```
+
+<p>&nbsp;<b>생성자(사실상 모든 함수)는 자동으로 prototype 속성을 갖는다.</b> 이 prototype 속성은 기본적으로 <b>Object.prototype</b>에서 파생된 비어 있는 일반 객체를 갖는다. 필요에 따라 이 객체를 새로운 객체로 덮어쓸 수 있다. 또는 예제처럼 기존 객체에 새로운 속성(speak() 메서드)를 추가할 수도 있다.</p>
+
+## 파생 속성 재정의
+
+<p>&nbsp;<b>객체에 속성을 추가하는 경우, 그 속성이 해당 프로토타입에 속성으로 존재하는지 여부와 관계없이 해당 객체에 속성이 추가된다.</b>만약 프로토타입에 같은 이름의 속성이 이미 존재한다면 이 속성은 해당 객체가 소유한 속성에 가려져 더 이상 객체에 영향을 미치지 못한다.<b>(기존 객체가 만들어질 때 가지고 있던 속성들이 우선 순위에 있기 때문에 덮어 쓸 수 없다는 말이다.)</b></p>
+
+```js
+// 새로운 속성 { teeth : "small" } 추가
+Rabbit.prototype.teeth = "small";
+
+console.log(killerRabbit.teeth);
+// small 확인
+
+// killerRabbit 타입 재정의
+killerRabbit.teeth = "long, sharp, and bloody";
+console.log(killerRabbit.teeth);
+// "long, sharp, and bloody"
+
+console.log(blackRabbit.teeth);
+// small
+console.log(Rabbit.prototype.teeth);
+// small
+
+/*
+Rabbit 프로토타입을 통해 생성된 객체 killerRabbit의 teeth 속성을 바뀔 수 있지만, 프로토타입의 속성까지 변경된 것은 아니다. (얕은 복사의 개념)
+*/
+```
+
+<hr/>
+
 ### 👉🏼 <a href="./SECTION01/readme.md">섹션 1, 기본 문법 바로가기</a><br/>
 
 ### 👉🏼 <a href="./SECTION02/readme.md">섹션 2, 연산자 바로가기</a><br/>
@@ -721,7 +900,3 @@ console.log(JSON.parse(string).events);
 ### 👉🏼 <a href="./SECTION13/readme.md">섹션 14, 자바스크립트 특징 바로가기</a><br/>
 
 ### 👉🏼 <a href="./SECTION13/readme.md">섹션 15, JSON 오브젝트 바로가기</a><br/>
-
-```
-
-```
