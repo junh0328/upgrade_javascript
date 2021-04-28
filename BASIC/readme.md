@@ -786,6 +786,8 @@ console.log(empty.toString());
 // [object Object]
 ```
 
+### <a href="https://medium.com/오늘의-프로그래밍/자바스크립트에서-object-object-가-대체-뭘까-fe55b754e709">[object Object] 가 뭔데?</a>
+
 <p>&nbsp;언젠가 한 번 정도는 콘솔창에서 봤을 법한 로그이다. 이는 자바스크립트 객체의 동작 방식에 관한 정보를 불러왔다. 대부분의 객체에는 속성 외에도 프로토타입(prototype)이 존재한다. 프로토타입은 속성을 대체하는 용도로 사용되는 또 다른 객체이다. 즉, 객체가 가지고 있지 않은 속성을 요청하면 객체의 프로토타입에서 해당 속성을 검색한 후, 해당 프로토타입의 프로토타입을 검색하고 계속해서 그다음 검색을 반복한다.</p>
 
 <P>&nbsp;그렇다면 빈 객체의 프로토타입은 어디서 나왔을까? 이 객체의 프로토타입은 조상 프로토타입이며 <b>거의 모든 객체에는 Object.prototype이 존재한다.</b>자바스크립트 객체에서 프로토타입의 관계는 트리 모양 구조이며, 이 구조의 루트(root)는 Object.prototype이 된다. 루트에서는 객체를 문자열 표현으로 변환해주는 toString처럼 모든 객체에 포함되는 몇 가지 메서드가 제공된다.</P>
@@ -868,6 +870,136 @@ console.log(Rabbit.prototype.teeth);
 Rabbit 프로토타입을 통해 생성된 객체 killerRabbit의 teeth 속성을 바뀔 수 있지만, 프로토타입의 속성까지 변경된 것은 아니다. (얕은 복사의 개념)
 */
 ```
+
+## 맵
+
+<p>&nbsp;고차함수에서 맵은 함수를 적용하여 자료 구조를 변환하는 작업이다. 혼란을 줄 수 있지만 프로그래밍에서는 동일한 관련이 있으나 약간은 다르게 사용하기도 한다. 명사인<b>맵</b>은 <b>값을 다른 값과 연결하는 자료 구조</b>이다. 예를 들어, 이름을 나이와 매핑할 수 있다.<b>(= 연결할 수 있다.)</b>이러한 매핑을 하기 위해 객체를 사용할 수도 있다.</p>
+
+```js
+let ages = {
+  Boris: 39,
+  Liang: 25,
+  Julia: 30,
+};
+
+console.log(`Julia is ${ages["Julia"]}`); // ages 객체에 속성이름이 Julia 인 속성 값을 가져왔다.(매핑, 연결해 주었다.)
+// Julia is 30
+
+console.log("Is Jack's age known?", "Jack" in ages);
+// Is Jack's age known? false
+
+// why? ages 객체 안에 속성 이름이 Jack인 속성이 없다.
+
+console.log("Is toString's age known?", "toString" in ages);
+// Is toString's age known? true
+
+// why? toString 메서드는 일반 객체 Object.prototype의 기본 프로퍼티이기 때문에
+```
+
+<p>&nbsp;일반 객체를 맵으로 사용하는 것은 위험하다. <b>(toString처럼 Object의 프로토타입으로 전달된 메서드를 오용할 수 있기 때문에)</b> 이 문제를 회피할 수 있는 몇 가지 방법이 존재한다. 먼저, 프로토타입이 없는 객체를 생성할 수 있다. Object.create에 null을 전달하면 생성되는 객체는 Object.prototype에서 파생되지 않으며 안전하게 맵으로 사용할 수 있다.</p>
+
+```js
+console.log("toString" in Object("Jack"));
+// true : toString 메서드는 일반 객체 Object.prototype의 기본 프로퍼티이기 때문에, in 연산자를 사용하면 Object 객체 안에 들어 있으므로 true를 반환
+
+console.log("toString" in Object.create(null));
+// false
+```
+
+<p>&nbsp;객체 속성 이름은 반드시 <b>문자열</b>이어야 한다. 따라서 키를 문자열로 쉽게 변환할 수 없다면 객체를 매핑용으로 사용할 수 없다. 다행히도 자바스크립트에서는 바로 이러한 목적으로 만들어진 <b>Map</b>이라는 클래스가 제공된다. 이 클래스에는 매핑을 저장하고 모든 유형의 키를 허용한다.</p>
+
+```js
+let ages = new Map();
+ages.set("Boris", 39);
+ages.set("Liang", 25);
+ages.set("Julia", 30);
+
+console.log(`Julia is ${ages.get("Julia")}`);
+// Julia is 30
+
+console.log("Is Jack's age known?", ages.has("Jack"));
+// Is Jack's age known? false
+
+console.log(age.has("toString"));
+// false : Map 클래스를 이용하면 프로퍼티가 비어있는 객체를 만들 수 있다.
+```
+
+<p>&nbsp;set과 get, has 메서드는 Map 객체의 <b>인터페이스</b>다. 많은 값을 빠르게 업데이트하고 검색할 수 있는 자료 구조를 만드는 것은 쉽지 않지만, 누군가 그러한 자료 구조를 이미 만들었으며 간단한 인터페이스를 통해 사용하기만 하면 된다. 어떠한 이유로 일반 객체를 맵으로 사용해야 하는 경우, Object.keys는 프로토타입의 키가 아닌 객체 고유의 키만 반환한다는 내용을 알고 있으면 좋다. `in` 연산자의 대안으로 객체의 프로토타입을 무시하는 <b>hasOwnProperty</b>메서드를 사용할 수 있다. </p>
+
+```js
+console.log({ x: 1 }.hasOwnProperty("x")); // hasOwnPropery("속성 이름")
+// true : 해당 객체가 속성 이름을 포함한 객체를 가지고 있다면 true를 반환한다.
+console.log({ x: 1 }.hasProperty("toString"));
+// false :
+/*
+why ?
+일반 객체는 Object.prototype에 따라 파생되므로 toString 메서드를 가지고 있지만, 
+hasOwnProperty() 메서드를 사용하여 프로토타입의 키가 아닌 객체 고유의 키만 반환할 수 있다.
+*/
+```
+
+## 다형성 (polymorphism)
+
+<p>&nbsp;삼각형, 사각형, 원을 그리고자 할때 삼각형을 그리는 메소드, 사각형을 그리는 메소드, 원을 그리는 메소드를 각각 따로 선언해줄 필요가 없다. 도형을 그리는 Draw()라는 메소드를 선언하고, 각 상황에 맞게 사용하면 된다.한 마디로, 다형성이란 하나의 메소드나 클래스가 있을 때 이것들이 다양한 방법으로 동작하는 것을 의미한다. 또 하나의 예는 키보드의 키를 사용하는 방법이다. 키보드는 눌렀을 때 입력의 기능을 수행한다. 하지만 똑같이 누르는 동작으로 실행하지만 ESC는 취소를, ENTER는 실행의 목적을 가지고 있다. 다형성이란 동일한 조작방법(메소드)로 동작시키지만 다른 방식으로 동작할 수 있다는 것이다.</p>
+
+<img src="./public/다형성.png" alt="polymorphism">
+
+## 상속 (inheritance)
+
+```js
+// Human class
+class Human {
+  constructor(name, age, sex) {
+    this.name = name;
+    this.age = age;
+    this.sex = sex;
+  }
+  sleep() {
+    console.log("zzz");
+  }
+  eat() {
+    console.log("냠냠");
+  }
+}
+
+// Human class의 자식 class인 Student class
+class Student extends Human {
+  constructor(name, sex, age, grade, school) {
+    super(name, sex, age);
+    this.grade = grade;
+    this.school = school;
+  }
+  // 공부하는 기능도 추가되었다.
+  study() {
+    console.log(
+      `${this.school}에 다니는 ${this.grade} ${this.name}은(는) 열심히 공부합니다`
+    );
+  }
+}
+
+const student1 = new Student("영수", "남성", 19, "고 3", "인덕원 고등학교");
+
+student1.eat();
+// 냠냠
+student1.study();
+// 인덕원 고등학교에 다니는 고 3 영수은(는) 열심히 공부합니다
+```
+
+<p>&nbsp;<b>extends</b>라는 단어를 사용한다는 것은 이 클래스가 기본 object 프로토타입 기반이 아닌 다른 클래스 기반이라는 것을 나타낸다. 이 클래스를 <b>수퍼 클래스(super class)클래스</b>라고 한다. 그리고 파생된 하위 클래스를 <b>하위 클래스(sub class)</b>라고 한다.</p>
+
+## <a href="https://github.com/junh0328/learning_typescript">getter setter 접근자</a>
+
+<p>&nbsp;Getter & Setter 로 검색!</p>
+
+## Chapter 6, 정리
+
+<p>&nbsp;객체에는 고유의 속성을 유지하는 것 외에도 더 많은 기능을 수행한다. 객체는 또 다른 객체인 프로토타입을 가지고 있다. 프로토타입에 속성이 존재하기만 하면, 해당 속성이 객체에 없더라도 동작한다. 단순 객체는 Object.prototype을 프로토타입으로 갖는다. </p>
+
+<p>&nbsp;생성자 함수는 일반적으로 이름이 대문자로 시작되며, new 연산자를 사용해서 새로운 객체를 생성한다. 새로운 객체의 프로토타입은 생성장의 prototype 속성에 있는 객체가 된다. 따라서 특정 유형의 모든 값에서 공유하는 속성을 프로토타입에 추가해 적절하게 활용할 수 있다. class 표기법을 사용해 생성자와 생성자의 프로토타입을 명확하게 정의할 수 있다.</p>
+
+<p>&nbsp;객체를 통해 할 수 있는 유용한 한 가지 작업은 해당 객체의 인터페이스를 지정하고 해당 인터페이스를 통해서만 객체와 통신할 수 있다고 모두에게 알리는 것이다. 이때부터 객체를 구성하는 나머지 세부 정보는 캡슐화되어 해당 인터페이스 뒤에 숨겨진다.</p>
+
+<p>&nbsp;내용의 일부만 차이 나는 여러 개의 클래스를 구현하는 경우, 새 클래스를 기존 클래스의 하위 클래스로 작성하고 동작의 일부는 상속할 수 있다.</p>
 
 <hr/>
 

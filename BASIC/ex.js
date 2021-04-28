@@ -188,6 +188,7 @@ killerRabbit.type;
 killerRabbit.speak(" SKRRRR! SKRRRR! ");
 */
 
+/*
 function Rabbit(type) {
   this.type = type;
 }
@@ -197,3 +198,42 @@ Rabbit.prototype.speak = function (line) {
 
 let weirdRabbit = new Rabbit("Weird");
 weirdRabbit.speak("bow wow!");
+*/
+
+// console.log("toString" in Object("Jack"));
+
+// Human class
+class Human {
+  constructor(name, age, sex) {
+    this.name = name;
+    this.age = age;
+    this.sex = sex;
+  }
+  sleep() {
+    console.log("zzz");
+  }
+  eat() {
+    console.log("냠냠");
+  }
+}
+// Human class의 자식 class인 Student class
+// Human class가 가지고 있는 속성인 name, sex, age를 super를 통해 가지고 오고, 고유의 속성인 grade와 school이 추가 되었다.
+class Student extends Human {
+  constructor(name, sex, age, grade, school) {
+    super(name, sex, age);
+    this.grade = grade;
+    this.school = school;
+  }
+  // 공부하는 기능도 추가되었다.
+  study() {
+    console.log(
+      `${this.school}에 다니는 ${this.grade} ${this.name}은(는) 열심히 공부합니다`
+    );
+  }
+}
+
+const student1 = new Student("영수", "남성", 19, "고 3", "인덕원 고등학교");
+
+student1.eat();
+
+student1.study();
