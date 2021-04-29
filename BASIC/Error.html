@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오류 전파</title>
+  <script>
+    function promptDirection(question) {
+      let result = prompt(question);
+      if (result.toLocaleLowerCase() == "left") return "L";
+      if (result.toLocaleLowerCase() == "right") return "R";
+      throw new Error("Invalid direction: " + result);
+    }
+
+    function look() {
+      if (promptDirection("Which way? \n Left(⬅) or Right(➡)") == "L") {
+        return "a house";
+      } else {
+        return "two angry bears";
+      }
+    }
+
+    try {
+      prompt("You see", look());
+    } catch (error) {
+      console.log("Something went wrong: " + error);
+    }
+  </script>
+</head>
+<body>
+  <h1>오류 전파</h1>
+</body>
+</html>
