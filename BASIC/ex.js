@@ -28,29 +28,31 @@
 
 /* 객체의 접근 */
 
-// let day1 = {
-//   squirrel: false,
-//   events: ["work", "touched tree", "pizza", "running"],
-//   morning: {
-//     squirrel: false,
-//     events: ["work", "touched tree"],
-//     inner: {
-//       events: {
-//         work() {
-//           return "work";
-//         },
-//         touchedTree() {
-//           return "touched tree";
-//         },
-//       },
-//     },
-//   },
-// };
-// console.log(day1.squirrel);
+/*
+let day1 = {
+  squirrel: false,
+  events: ["work", "touched tree", "pizza", "running"],
+  morning: {
+    squirrel: false,
+    events: ["work", "touched tree"],
+    inner: {
+      events: {
+        work() {
+          return "work";
+        },
+        touchedTree() {
+          return "touched tree";
+        },
+      },
+    },
+  },
+};
+console.log(day1.squirrel);
 
-// console.log(day1.wolf); // 객체내에 정의되지 않음
+console.log(day1.wolf); // 객체내에 정의되지 않음
 
-// console.log(day1.morning.inner.events.touchedTree());
+console.log(day1.morning.inner.events.touchedTree());
+*/
 
 /* 객체의 변형과 참조 */
 
@@ -259,6 +261,7 @@ let ferdinand = new Person("Ferdinand");
 console.log(ferdinand.name);
 */
 
+/*
 function promptDirection(question) {
   let result = prompt(question);
   if (result.toLocaleLowerCase() == "left") return "L";
@@ -279,3 +282,22 @@ try {
 } catch (error) {
   console.log("Something went wrong: " + error);
 }
+*/
+
+/*
+function square(x) {
+  if (arguments.length > 1) {
+    console.log(arguments[1]);
+    console.log(arguments[2]);
+  }
+  return x * x;
+}
+
+console.log(square(4, true, "Hedge hog"));
+*/
+
+/*
+let sequence = [1, 2, 3];
+
+console.log(sequence.push(4));
+*/
