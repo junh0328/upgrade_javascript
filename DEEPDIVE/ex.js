@@ -1,15 +1,33 @@
-function Circle(radius) {
-  // 1. 암묵적으로 인스턴스가 생성되고 this에 바인딩된다.
+const increase = function (num) {
+  return ++num;
+};
 
-  // 2. this에 바인딩되어 있는 인스턴스를 초기화한다.
-  this.radius = radius;
-  this.getDiameter = function () {
-    return 2 * this.radius;
+const decrease = function (num) {
+  return --num;
+};
+
+// 2. 함수는 객체에 저장할 수 있다.
+const predicates = { increase, decrease };
+
+console.log("predicates: ", predicates);
+
+// 3. 함수의 매개변수에게 전달할 수 있다.
+// 4. 함수의 반환값으로 사용할 수 있다.
+function makeCounter(predicate) {
+  let num = 0;
+
+  return function () {
+    num = predicate(num);
+    return num;
   };
-
-  // 3. 완성된 인스턴스가 바인딩된 this가 암묵적으로 반환된다
 }
 
-// 인스턴스 생성. Circle 생성자 함수는 암묵적으로 this를 반환한다.
-const circle = new Circle(1);
-console.log(circle.getDiameter()); // Circle {radius: 1, getDiameter: ƒ}
+// 3. 함수는 매개변수에게 함수를 전달할 수 있다.
+const increaser = makeCounter(predicates.increase);
+console.log(increaser()); // 1
+console.log(increaser()); // 2
+
+// 3. 함수는 매개변수에게 함수를 전달할 수 있다.
+const decreaser = makeCounter(predicates.decrease);
+console.log(decreaser()); // -1
+console.log(decreaser()); // -2
