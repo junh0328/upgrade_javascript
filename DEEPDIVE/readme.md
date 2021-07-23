@@ -21,7 +21,7 @@
 - [14장 전역 변수의 문제점](#14장-전역-변수의-문제점)
 - [15장 let, const 키워드와 블록 레벨 스코프](#15장-let,-const-키워드와-블록-레벨-스코프)
 
-- <a href="">다음 섹션으로</a>
+- <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme2.md">다음 섹션으로</a>
 
 ## 1장 프로그래밍
 
