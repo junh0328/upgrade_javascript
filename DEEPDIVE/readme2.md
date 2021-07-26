@@ -850,3 +850,350 @@ console.log(foo.constructor === Function); // true
 ```
 
 <p>위 두 가지 방식을 사용하여 프로토타입 생성 시점에 대해 살펴보자</p>
+
+### 사용자 정의 생성자 함수와 프로토타입 생성 시점
+
+<p>사용자 정의 생성자 함수는 화살표 함수나 ES6의 메서드 축약 표현으로 정의하지 않고 일반 함수(함수 선언문, 함수 표현식)로 정의한 함수 객체는 new 연산자와 함께 생성자 함수로서 호출할 수 있다. 생성자 함수로서 호출할 수 있는 함수, 즉 <b>constructor는 함수 정의가 평가되어 함수 객체를 생성하는 시점(런타임 이전)에 프로토타입도 더불어 생성된다.</b></p>
+
+```js
+// 함수 정의(constructor)가 평가되어 함수 객체를 생성하는 시점에 프로토타입도 더불어 생성된다.
+// 함수 선언문은 호이스팅되어 런타임 이전에 평가되기 때문에 Person.prototype의 결과를 뽑아낼 수 있다.
+
+case 1: 함수 선언문
+console.log(Person.prototype); // {constructor: ƒ}
+
+// 생성자 함수
+function Person(name) {
+  this.name = name;
+}
+
+
+case 2: 함수 표현식
+
+console.log(Person.prototype); // Cannot access 'Person' before initialization
+// 함수 표현식은 선언문과 달리 값으로 평가되기 때문에 런타임에 평가가 이뤄진다.
+// 따라서 위와 같이 최기화되지 않은 Person에 접근할 수 없다는 에러메시지를 볼 수 있다.
+
+// 생성자 함수
+const Person = function (name) {
+  this.name = name;
+};
+```
+
+<p>생성자 함수로서 호출할 수 없는 함수, 즉 non-constructor는 프로토타입이 생성되지 않는다.</p>
+
+```js
+// 화살표 함수는 non-constructor다.
+const Person = (name) => {
+  this.name = name;
+};
+
+// non-constructor는 프로토타입이 생성되지 않는다.
+console.log(Person.prototype); // undefined
+```
+
+<p>앞서 '함수 생성 시점과 호이스팅'에서 살펴보았듯이 함수 선운문은 런타임 이전에 자바스크립트 엔진에 의해 먼저 실행된다. 따라서 함수 선언문으로 정의된 Person 생성자 함수는 어떤 코드보다 먼저 평가되어 함수 객체가 된다. 이때 프로토타입도 더불어 생성된다. 생성된 프로토타입은 Person 생성자 함수의 prototype 프로퍼티에 바인딩된다. Person 생성자 함수와 더불어 생성된 프로토타입의 내부를 살펴보자.</p>
+
+<br/>
+
+<img width="400" src="./images/19_11.png" alt="생성자 함수와 더불어 생성된 프로토타입">
+
+<p>생성된 프로토타입(Person.prototype)은 오직 constructor 프로퍼티만을 갖는 객체다. 프로토타입도 객체이고 모든 객체는 프로토타입을 가지므로 프로토타입도 자신의 프로토타입을 갖는다. 생성된 프로토타입은 Object.prototype이다. 빌트인 생성자 함수가 아닌 사용자 정의 생성자 함수는 자신이 평가되어 함수 객체로 생성되는 시점에 프로토타입도 더불어 생성되며, 생성된 프로토타입의 프로토타입은 언제나 Object.prototype이다.</p>
+
+### 빌트인 생성자 함수와 프로토타입 생성 시점
+
+<p><b>Object, String, Number, Function, Array, RegExp, Date, Promise 등과 같은 빌트인 생성자 함수</b>도 일반 함수와 마찬가지로 빌트인 생성자 함수가 생성되는 시점에 프로토타입이 생성된다. 모든 빌트인 생성자 함수는 전역 객체가 생성되는 시점에 생성된다. 생성된 프로토타입은 빌트인 생성자 함수의 prototype 프로퍼티에 바인딩된다.</p>
+
+### 전역 객체
+
+```
+전역 객체는 코드가 실행되기 이전 단계에 자바스크립트 엔진에 의해 생성되는 특수한 객체다.
+전역 객체는 클라이언트 사이드 환경(브라우저)에서는 window, 서버 사이드 환경(Node.js)에서는 global 객체를 의미한다.
+전역 객체는 표준 빌트인 객체(Object, String, Number, Function, Array...) 들과 환경에 따른 호스트 객체,
+그리고 var 키워드로 선언한 전역 변수와 전역 함수를 프로퍼티로 갖늗다.
+
+표준 빌트인 객체인 Object 또한 전역 객체의 프로퍼티이며, 전역 객체가 생성되는 시점에 생성된다.
+전역 객체와 표준 빌트인 객체에 대해서는 후에 '빌트인 객체'에서 알아 본다.
+```
+
+<p>이처럼 객체(인스턴스)가 생성되기 이전에 생성자 함수와 프로토타입은 이미 객체화되어 존재한다. 이후 생성자 함수 또는 리터럴 표기법으로 객체를 생성하면 프로토타입은 생성된 객체의 [[Prototype]] 내부 슬롯에 할당된다. 이로써 생성된 객체(인스턴스)는 프로토타입을 상속받는다.</p>
+
+### 19.10 instanceof 연산자
+
+<p>instanceof 연산자는 이항(항이 2개) 연산자로서 좌변에 객체를 가리키는 식별자, 우변에 생성자 함수를 가리키는 식별자를 피연산자로 받는다. 만약 우변의 피연산자가 함수가 아닌 경우 TypeError가 발생한다.</p>
+
+```
+객체 instanceof 생성자 함수
+```
+
+<p>우변의 생성자 함수의 prototype에 바인딩된 객체가 좌변의 객체의 프로토타입 체인 상에 존재하면 true로 평가되고, 그렇지 않은 경우에는 false로 평가된다.</p>
+
+```js
+// 생성자 함수
+function Person(name) {
+  this.name = name;
+}
+
+const me = new Person("Lee");
+
+// Person.prototype이 me 객체의 프로토타입 체인 상에 존재하므로 true로 평가된다.
+console.log(me instanceof Person); // true
+
+// Object.prototype이 me 객체의 프로토타입 체인 상(제일 상위에 있겠죠?)에 존재하므로 true로 평가된다.
+console.log(me instanceof Object); // true
+```
+
+<p>instanceof 연산자가 어떻게 동작하는지 이해하기 위해 프로토타입을 교체해 보자.</p>
+
+```js
+// 생성자 함수
+function Person(name) {
+  this.name = name;
+}
+
+const me = new Person("Lee");
+
+// 프로토타입으로 교체할 객체
+const parent = {};
+
+// 프로토타입의 교체
+Object.setPrototypeOf(me, parent);
+
+// Person 생성자 함수와 parent 객체는 연결되어 있지 않다.
+console.log(Person.prototype === parent); // false
+console.log(parent.constructor === Person); // false
+
+// Person.prototype이 me 객체의 프로토타입 체인 상에 존재하지 않기 때문에 false로 평가된다.
+console.log(me instanceof Person); // false
+
+// Object.prototype이 me 객체의 프로토타입 체인 상에 존재하므로 true로 평가된다.
+console.log(me instanceof Object); // true
+```
+
+> 프로토타입 교체를 모른다면?
+
+```
+ctrl + F 'setPrototypeOf'
+```
+
+<p>me 객체는 비록 프로토타입이 교체되어 프로토타입과 생성자 함수 간의 연결이 파괴되었지만 Person 생성자 함수에 의해 생성된 인스턴스임에는 틀림이 없다. 그러나 me instanceof Person은 false로 평가된다. 이는 Person.prototype이 me 객체의 프로토타입 체인 상에 존재하지 않기 때문이다. 따라서 프로토타입으로 교체한 parent 객체를 Person 생성자 함수의 prototype 프로퍼티에 바인딩하면 me instanceof Person은 true로 평가될 것이다.</p>
+
+```js
+// 생성자 함수
+function Person(name) {
+  this.name = name;
+}
+
+const me = new Person("Lee");
+
+// 프로토타입으로 교체할 객체
+const parent = {};
+
+// 프로토타입의 교체
+Object.setPrototypeOf(me, parent);
+
+// Person 생성자 함수와 parent 객체는 연결되어 있지 않다.
+console.log(Person.prototype === parent); // false
+console.log(parent.constructor === Person); // false
+
+// parent 객체를 Person 생성자 함수의 prototype 프로퍼티에 바인딩한다.
+Person.prototype = parent;
+
+// Person.prototype이 me 객체의 프로토타입 체인 상에 존재하므로 true로 평가된다.
+console.log(me instanceof Person); // true
+
+// Object.prototype이 me 객체의 프로토타입 체인 상에 존재하므로 true로 평가된다.
+console.log(me instanceof Object); // true
+```
+
+<p>이처럼 <b>instanceof 연산자는 프로토타입의 constructor 프로퍼티가 가리키는 생성자 함수를 찾는 것이 아니라 생성자 함수의 prototype에 바인딩 된 객체가 프로토타입 체인 상에 존재하는지 확인한다.</b></p>
+
+### 19.12 정적 프로퍼티/메서드
+
+<p>정적(static) 프로퍼티/메서드는 생성자 함수로 인스턴스를 생성하지 않아도 참조/호출할 수 있는 프로퍼티/메서드를 말한다.</p>
+
+```js
+// 생성자 함수
+function Person(name) {
+  this.name = name;
+}
+
+// 프로토타입 메서드
+Person.prototype.sayHello = function () {
+  console.log(`Hi! My name is ${this.name}`);
+};
+
+// 정적 프로퍼티
+Person.staticProp = "static prop";
+
+// 정적 메서드
+Person.staticMethod = function () {
+  console.log("staticMethod");
+};
+
+const me = new Person("Lee");
+
+// 생성자 함수에 추가한 정적 프로퍼티/메서드는 생성자 함수로 참조/호출한다.
+Person.staticMethod(); // staticMethod
+
+// 정적 프로퍼티/메서드는 생성자 함수가 생성한 인스턴스로 참조/호출할 수 없다.
+// 인스턴스로 참조/호출할 수 있는 프로퍼티/메서드는 프로토타입 체인 상에 존재해야 한다.
+me.staticMethod(); // TypeError: me.staticMethod is not a function
+```
+
+<p>Person 생성자 함수는 객체이므로 자신의 프로퍼티/메서드를 소유할 수 있다. Person 생성자 함수 객체가 소유한 프로퍼티/메서드를 정적 프로퍼티/메서드라고 한다. <b>정적 프로퍼티/메서드는 생성자 함수가 생성한 인스턴스로 참조/호출할 수 없다.</b></p>
+
+### 19.13 프로퍼티 존재 확인
+
+### in 연산자
+
+<p>in 연산자는 객체 내에 특정 프로퍼티가 존재하는지 여부를 확인한다.</p>
+
+```
+key : 프로퍼티 키를 나타내는 문자열
+object: 객체로 평가되는 표현식
+
+key in object
+```
+
+```js
+const person = {
+  name: "Lee",
+  address: "Seoul",
+};
+
+// person 객체에 name 프로퍼티가 존재한다.
+console.log("name" in person); // true
+// person 객체에 address 프로퍼티가 존재한다.
+console.log("address" in person); // true
+// person 객체에 age 프로퍼티가 존재하지 않는다.
+console.log("age" in person); // false
+```
+
+<p>in 연산자는 확인 대상 객체(person)의 프로퍼티뿐만 아니라 확인 대상 객체가 상속 받은 모든 프로토타입의 프로퍼티를 확인하므로 주의가 필요하다. person 객체에는 toString이라는 프로퍼티가 없지만 다음 코드의 실행 결과는 true이다.</p>
+
+```js
+console.log("toString" in person); // true
+```
+
+<p>이는 in 연산자가 person 객체가 속한 프로토타입 체인 상에 존재하는 모든 프로토타입에서 toString 프로퍼티를 검색했기 때문이다. toString은 Object.prototype의 메서드이다.</p>
+
+### Object.prototype.hasOwnProperty 메서드
+
+<p>Object.prototype.hasOwnProperty 메서드를 사용해도 객체에 특정 프로퍼티가 존재하는지 확인할 수 있다.</p>
+
+```js
+const person = {
+  name: "Lee",
+  address: "Seoul",
+};
+
+console.log(person.hasOwnProperty("name")); // true
+console.log(person.hasOwnProperty("age")); // false
+```
+
+<p>Object.prototype.hasOwnProperty 메서드는 이름에서 알 수 있듯이 인수로 전달받은 프로퍼티 키가 <b>객체 고유의 프로퍼티 키인 경우에만 true를 반환하고</b> <b>상속받은 프로퍼티 키인 경우 false를 반환한다.</b></p>
+
+```js
+console.log(person.hasOwnProperty("toString")); // false
+```
+
+### 19.14 프로퍼티 열거
+
+### for ... in 문
+
+<p>객체의 모든 프로퍼티를 순회하며(iterable) 열거(enumeration)하려면 for ... in 문을 사용한다.</p>
+
+```
+for(변수선언문 in 객체) {...}
+```
+
+```js
+const person = {
+  name: "Lee",
+  address: "Seoul",
+};
+
+// for...in 문의 변수 prop에 person 객체의 프로퍼티 키가 할당된다.
+// person 객체의 프로퍼티 갯수만큼 순회한다
+for (const key in person) {
+  console.log(key + ": " + person[key]);
+}
+// name: Lee
+// address: Seoul
+```
+
+<p>for ... in 문은 객체의 프로퍼티 개수만큼 순회하며 for ... in 문의 변수 선언문에서 선언한 변수에 프로퍼티 키를 할단한다.</p>
+
+<p>하지만 for ... in 문은 in 연산자처럼 순회 대상 객체의 프로퍼티뿐만 아니라 상속받은 프로토타입의 프로퍼티까지 열거한다. 하지만 위 예제의 경우 toString과 같은 Object.prototype의 프로퍼티가 열거되지 않는다.</p>
+
+```js
+const person = {
+  name: "Lee",
+  address: "Seoul",
+};
+
+// in 연산자는 객체가 상속받은 모든 프로토타입의 프로퍼티를 확인한다.
+console.log("toString" in person); // true
+
+// for...in 문도 객체가 상속받은 모든 프로토타입의 프로퍼티를 열거한다.
+// 하지만 toString과 같은 Object.prototype의 프로퍼티가 열거되지 않는다.
+for (const key in person) {
+  console.log(key + ": " + person[key]);
+}
+
+// name: Lee
+// address: Seoul
+```
+
+<p>이는 Object.prototype.toString() 메서드가 열거할 수 없도록 정의되어 있는 프로퍼티이기 때문이다. 다시 말해, Object.prototype.string 프로퍼티의 프로퍼티 어트리뷰트 [[Enumerable]]의 값이 false이기 때문이다. 프로퍼티 어트리뷰트 [[Enumerable]]은 프로퍼티의 열거 가능 여부를 나타내며 불리언 값을 갖는다.</p>
+
+<p>따라서 for ... in 문에 대해 좀 더 정확히 표현하면 아래와 같다.</p>
+
+```
+for ... in 문은 객체의 프로토타입 체인 상에 존재하는 모든 프로토타입의 프로퍼티 중에서
+프로퍼티 어트리뷰트 [[Enumerable]] 값이 true인 프로퍼티를 순회하며 열거한다.
+```
+
+<p>상속받은 프로퍼티는 제외하고 객체 자신의 프로퍼티만 열거하려면 Object.prototype.hasOwnProperty 메서드를 사용하여 객체 자신의 프로퍼티인지 확인해야 한다.</p>
+
+```js
+const person = {
+  name: "Lee",
+  address: "Seoul",
+  __proto__: { age: 20 },
+};
+
+for (const key in person) {
+  // 객체 자신의 프로퍼티인지 확인한다.
+  if (!person.hasOwnProperty(key)) continue;
+  console.log(key + ": " + person[key]);
+}
+// name: Lee
+// address: Seoul
+```
+
+<p>배열에는 for ... in 문을 사용하지 말고 일반적인 for 문이나 for ...of 문 또는 Array.prototype.forEach 메서드를 사용하기를 권장한다. 사실 배열도 객체이므로 프로퍼티와 상속받은 프로퍼티가 포함될 수 있다.</p>
+
+```js
+const arr = [1, 2, 3];
+arr.x = 10; // 배열도 객체이므로 프로퍼티를 가질 수 있다.
+
+for (const i in arr) {
+  // 프로퍼티 x도 출력된다.
+  console.log(arr[i]); // 1 2 3 10
+}
+
+// arr.length는 3이다.
+for (let i = 0; i < arr.length; i++) {
+  console.log(arr[i]); // 1 2 3
+}
+
+// forEach 메서드는 요소가 아닌 프로퍼티는 제외한다.
+arr.forEach((v) => console.log(v)); // 1 2 3
+
+// for...of는 변수 선언문에서 선언한 변수에 키가 아닌 값을 할당한다.
+for (const value of arr) {
+  console.log(value); // 1 2 3
+}
+```
