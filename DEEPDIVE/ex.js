@@ -1,11 +1,15 @@
-function Person(name) {
-  this.name = name;
+// 외부 함수(outer function)
+function outer() {
+  var x = 1;
+
+  // 중첩 함수(nested function), 내부 함수(inner function)
+  function inner() {
+    var y = 2;
+    // 외부 함수의 변수를 참조할 수 있다.
+    console.log(x + y); // 3
+  }
+
+  inner();
 }
 
-const me = new Person("Lee");
-
-// Person.prototype이 me 객체의 프로토타입 체인 상에 존재하므로 true로 평가된다.
-console.log(me instanceof Person); // true
-
-// Object.prototype이 me 객체의 프로토타입 체인 상(제일 상위에 있겠죠?)에 존재하므로 true로 평가된다.
-console.log(me instanceof String); // true
+outer();
