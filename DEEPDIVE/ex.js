@@ -1,6 +1,3 @@
-function foo() {
-  let x = 10;
-}
-foo();
+console.log(encodeURI("가"));
 
-console.log(x); // ?
+console.log(decodeURI("%EC%9E%90"));

@@ -6,6 +6,7 @@
 - [18장 함수와 일급 객체](#18장-함수와-일급-객체)
 - [19장 프로토타입](#19장-프로토타입)
 - [20장 strict mode](#20장-strict-mode)
+- [21장 빌트인 객체](#21장-빌트인-객체)
 
 ## 17장 생성자 함수에 의한 객체 생성
 
@@ -1500,3 +1501,441 @@ foo();
   console.log(arguments); // { 0: 1, length: 1 }
 })(1);
 ```
+
+## 21장 빌트인 객체
+
+### 21.1 자바스크립트 객체의 분류
+
+자바스크립트 객체는 다음과 같이 크게 3개의 객체로 분류할 수 있다.
+
+### 표준 빌트인 객체
+
+```
+표준 빌트인 객체는 ECMAScript 사양에 정의된 객체를 말하며, 애플리케이션 전역의 공통 기능을 제공한다.
+
+표준 빌트인 객체는 ECMAScript 사양에 정의된 객체이므로 자바스크립트 실행 환경(브라우저 또는 Node.js 환경)과 관계없이
+언제나 사용할 수 있다. 표준 빌트인 객체는 전역 객체의 프로퍼티로서 제공된다.
+따라서 별도의 선언 없이 전역 변수처럼 언제나 참조할 수 있다.
+```
+
+### 호스트 객체
+
+```
+호스트 객체는 ECMAScript 사양에 정의되어 있지 않지만 자바스크립트 실행 환경(브라우저 또는 Node.js 환경)에서 추가로 제공하는 객체를 말한다.
+
+브라우저 환경에서는 DOM, BOM, CANVAS, XMLHttpRequest, fetch, Web Storage, Web Component와 같은 클라이언트 사이드 Web API를 호스트 객체로 제공하고,
+
+Node.js 환경에서는 Node.js 고유의 API를 호스트 객체로 제공한다.
+```
+
+### 사용자 정의 객체
+
+```
+사용자 정의 객체는 표준 빌트인 객체와 호스트 객체처럼 기본 제공되는 객체가 아닌 사용자가 직접 정의한 객체를 말한다.
+```
+
+<img src="./images/25_1.jpg" alt="표준 빌트인 객체">
+
+### 21.2 표준 빌트인 객체
+
+> 표준 빌트인 객체는 ECMAScript 사양의 자바스크립트 실행 환경(브라우저/node.js)에서 모두 사용 가능한 공통 객체이다.
+
+<p>자바스크립트는 Object, String, Number, Boolean, Symbol, Date, Math, RegExp, Array, Map/Set, Function, Promise, Reflect, Proxy, Json, Error 등 40여 개의 표준 빌트인 객체를 제공한다.</p>
+
+> <a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects">표준 빌트인 객체 보기</a>
+
+<p>Math, Reflect, JSON을 제외한 <b>표준 빌트인 객체</b>는 모두 인스턴스를 생성할 수 있는 <b>생성자 함수 객체</b>다. 생성자 함수 객체인 <b>표준 빌트인 객체</b>는 <b>프로토타입 메서드와 정적 메서드</b>를 제공하고 <b>생성자 함수 객체가 아닌 표준 빌트인 객체</b>는 <b>정적 메서드</b>만 제공한다.</p>
+
+<p>예를 들어, 표준 빌트인 객체인 String, Number, Boolean, Function, Array, Date는 생성자 함수로 호출하여 인스턴스를 생성할 수 있다.</p>
+
+```
+생성자 함수 (new 표준 빌트인 객체)
+```
+
+```js
+// String 생성자 함수에 의한 String 객체 생성
+const strObj = new String("Lee"); // String {"Lee"}
+console.log(typeof strObj); // object
+
+// Number 생성자 함수에 의한 Number 객체 생성
+const numObj = new Number(123); // Number {123}
+console.log(typeof numObj); // object
+
+// Boolean 생성자 함수에 의한 Boolean 객체 생성
+const boolObj = new Boolean(true); // Boolean {true}
+console.log(typeof boolObj); // object
+
+// Function 생성자 함수에 의한 Function 객체(함수) 생성
+const func = new Function("x", "return x * x"); // ƒ anonymous(x )
+console.log(typeof func); // function
+
+// Array 생성자 함수에 의한 Array 객체(배열) 생성
+const arr = new Array(1, 2, 3); // (3) [1, 2, 3]
+console.log(typeof arr); // object
+
+// RegExp 생성자 함수에 의한 RegExp 객체(정규 표현식) 생성
+const regExp = new RegExp(/ab+c/i); // /ab+c/i
+console.log(typeof regExp); // object
+
+// Date 생성자 함수에 의한 Date 객체 생성
+const date = new Date(); // Fri May 08 2020 10:43:25 GMT+0900 (대한민국 표준시)
+console.log(typeof date); // object
+```
+
+<p>생성자 함수인 표준 빌트인 객체가 생성한 인스턴스의 프로토타입은 표준 빌트인 객체의 prototype 프로퍼티에 바인딩된 객체다. 예를 들어, 표준 빌트인 객체인 String을 생성자 함수로서 호출하여 생성한 String 인스턴스의 프로토타입은 String.prototype이다.</p>
+
+```js
+// String 생성자 함수에 의한 String 객체 생성
+const strObj = new String("Lee"); // String {"Lee"}
+
+// String 생성자 함수를 통해 생성한 strObj 객체의 프로토타입은 String.prototype이다.
+console.log(Object.getPrototypeOf(strObj) === String.prototype); // true
+```
+
+<p>표준 빌트인 객체의 prototype 프로퍼티에 바인딩된 객체는 다양한 기능의 빌트인 프로토타입 메서드(String.prototype.xxxx)를 제공한다. 그리고 <b>표준 빌트인 객체는 인스턴스 없이도 호출 가능한 빌트인 정적 메서드를 제공한다.</b></p>
+
+<p>예를 들어, 표준 빌트인 객체인 Number의 prototype 프로퍼티에 바인딩된 객체(numObj), Number.prototype은 다양한 기능의 빌트인 프로토타입 메서드를 제공한다. 이 프로토타입 메서드는 모든 Number 인스턴스가 상속을 통해 사용할 수 있다. 그리고 표준 빌트인 객체인 Number는 인스턴스 없이 정적으로 호출할 수 있는 정적 메서드를 제공한다.</p>
+
+> 표준 빌트인 객체는 생성자 함수를 통해 인스턴스를 생성하지 않더라도 사용가능한 프로토타입 정적 메서드를 제공한다.
+
+```js
+// Number 생성자 함수에 의한 Number 객체 생성
+const numObj = new Number(1.5); // Number {1.5}
+
+// toFixed는 Number.prototype의 프로토타입 메서드다.
+// Number.prototype.toFixed는 소수점 자리를 반올림하여 문자열로 반환한다.
+console.log(numObj.toFixed()); // 2
+
+// isInteger는 Number의 정적 메서드다.
+// Number.isInteger는 인수가 정수(integer)인지 검사하여 그 결과를 Boolean으로 반환한다.
+console.log(Number.isInteger(0.5)); // false
+
+/*
+new Number()라는 생성자 함수를 통해 인스턴스를 생성하지 않았지만,
+표준 빌트인 객체 Number는 정적 메서드를 제공받아 Number.prototype의 메서드(isInteger)를 사용하였다.
+*/
+```
+
+### 21.3 원시값과 래퍼 객체
+
+<p>문자열이나 숫자, 불리언 등의 원시값이 있는데도 문자열, 숫자, 불리언 객체를 생성하는 String, Number, Boolean 등의 <b>표준 빌트인 생성자 함수</b>가 존재하는 이유는 무엇일까?</p>
+
+> 다음 예제를 살펴보자. 원시값은 객체가 아니므로 프로퍼티나 메서드를 가질 수 없는데도 원시값인 문자열이 마치 객체처럼 동작한다.
+
+```js
+const str = "hello";
+
+// 원시 타입인 문자열이 프로퍼티와 메서드를 갖고 있는 객체처럼 동작한다.
+console.log(str.length); // 5
+console.log(str.toUpperCase()); // HELLO
+```
+
+<p>이는 원시값인 <b>문자열, 숫자, 불리언 값</b>의 경우 이들 원시값에 대해 마치 객체처럼 마침표 표기법 (.) 또는 대괄호 표기법 ([ ])으로 접근하면 <b>자바스크립트 엔진이 일시적으로 원시값을 연관된 객체로 변환해 주기 때문이다.</b> 즉, 원시값을 객체처럼 사용하면 자바스크립트 엔진은 암묵적으로 연관된 객체를 생성하여 생성된 객체로 프로퍼티에 접근하거나 메서드를 호출하고 다시 원시값으로 되돌린다.</p>
+
+```
+이처럼 문자열, 숫자, 불리언 값에 대해 객체처럼 접근하면 생성되는 임시 객체를 래퍼 객체(wrapper object)라 한다.
+```
+
+<p>예를 들어, 문자열에 대해 마침표 표기법으로 접근하면(마치 객체처럼) 그 순간 자바스크립트 엔진에 의해 래퍼 객체인 String 생성자 함수의 인스턴스가 생성되고 문자열은 래퍼 객체의 [[StringData]] 내부 슬롯에 할당된다.</p>
+
+```js
+const str = "hi";
+
+// 원시 타입인 문자열이 래퍼 객체인 String 인스턴스로 변환된다. (자바스크립트 엔진에 의해 일시적으로 변환된다)
+console.log(str.length); // 2
+console.log(str.toUpperCase()); // HI
+
+// 래퍼 객체로 프로퍼티에 접근하거나 메서드를 호출한 후, 다시 원시값으로 되돌린다. (누가? 자바스크립트 엔진이!)
+console.log(typeof str); // string
+```
+
+<p>이때 문자열 래퍼 객체인 String 생성자 함수의 인스턴스는 String.prototype의 메서드(ex: toUpperCase)를 상속받아 사용할 수 있다.</p>
+
+<p>이후 래퍼 객체의 처리가 종료되면 래퍼 객체의 [[StringData]] 내부 슬롯에 할당된 원시값으로 원래의 상태, 즉 식별자가 원시값을 갖도록 되돌리고 <b>래퍼 객체는 가비지 컬렉션의 대상이 된다.</b></p>
+
+> <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme.md#%EA%B0%80%EB%B9%84%EC%A7%80-%EC%BD%9C%EB%A0%89%ED%84%B0">가비지 콜렉터 바로가기</a>
+
+```
+가비지 콜렉터는 애플리케이션이 할당한 메모리 공간을 주기적으로 검사하여 더 이상 사용되지 않는 메모리를 해제하는 기능을 말한다.
+더 이상 사용되지 않는 메모미란 간단히 말하자면 어떤 식별자도 참조하지 않는 메모리 공간을 의미한다.
+자바스크립트는 가비지 콜렉터를 내장하고 있는 매니지드 언어로서 가비지 콜렉터를 통해 메모리 누수를 방지한다.
+```
+
+```js
+// ① 식별자 str은 문자열을 값으로 가지고 있다.
+const str = "hello";
+
+// ② 식별자 str은 암묵적으로 생성된 래퍼 객체를 가리킨다.
+// 식별자 str의 값 'hello'는 래퍼 객체의 [[StringData]] 내부 슬롯에 할당된다.
+// 래퍼 객체에 name 프로퍼티가 동적 추가된다.
+str.name = "Lee";
+
+// ③ 식별자 str은 다시 원래의 문자열, 즉 래퍼 객체의 [[StringData]] 내부 슬롯에 할당된 원시값을 갖는다.
+// 이때 ②에서 생성된 래퍼 객체는 아무도 참조하지 않는 상태(사용되지 않는 쓰레기 값이 되었음)이므로 가비지 컬렉션의 대상이 된다.
+
+// ④ 식별자 str은 새롭게 암묵적으로 생성된(②에서 생성된 래퍼 객체와는 다른) 래퍼 객체를 가리킨다.
+// 새롭게 생성된 래퍼 객체에는 name 프로퍼티가 존재하지 않는다.
+console.log(str.name); // undefined
+
+// ⑤ 식별자 str은 다시 원래의 문자열, 즉 래퍼 객체의 [[StringData]] 내부 슬롯에 할당된 원시값을 갖는다.
+// 이때 ④에서 생성된 래퍼 객체는 아무도 참조하지 않는 상태이므로 가비지 컬렉션의 대상이 된다.
+console.log(typeof str, str);
+```
+
+> <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme.md#141-%EB%B3%80%EC%88%98%EC%9D%98-%EC%83%9D%EB%AA%85-%EC%A3%BC%EA%B8%B0">변수의 생명주기 바로가기</a>
+
+<p>숫자, 문자열, 불리언 값 모두 마찬가지이다. 숫자 값에 대해 마침표 표기법으로 접근하면 그 순간 래퍼 객체인 Number 생성자 함수의 인스턴스가 생성되고 숫자는 래퍼 객체의 [[NumberData]] 내부 슬롯에 할당된다. 이때 래퍼 객체인 Number 객체는 당연히 Number.prototype의 메서드를 상속받아 사용할 수 있다. 그 후, 래퍼 객체의 처리가 종료되면 래퍼 객체의 [[NumberData]] 내부 슬롯에 할당된 원시값을 되돌리고 래퍼 객체는 가비지 컬렉션의 대상이 된다.</p>
+
+```js
+const num = 1.5;
+
+// 원시 타입인 숫자가 래퍼 객체인 Number 객체로 변환된다.
+console.log(num.toFixed()); // 2
+
+// 래퍼 객체로 프로퍼티에 접근하거나 메서드를 호출한 후, 다시 원시값으로 되돌린다.
+console.log(typeof num, num); // number 1.5
+```
+
+<p>불리언 값도 문자열이나 숫자와 마찬가지이지만 불리언 값으로 메서드를 호출하는 경우는 없으므로 그다지 유용하지는 않다.</p>
+
+<p>이처럼 문자열, 숫자, 불리언, 심벌은 암묵적으로 생성되는 래퍼 객체에 의해 마치 객체처럼 사용할 수 있으며, 표준 빌트인 객체인 String, Number, Boolean, Symbol의 프로토타입 메서드 또는 프로퍼티를 참조할 수 있다. <b>따라서, String, Number, Boolean 생성자 함수를 new 연산자와 함께 호출하여 문자열, 숫자, 불리언 인스턴스를 생성할 필요가 없으며 권장하지도 않는다.</b></p>
+
+<p>문자열, 숫자, 불리언, 심벌 이외의 원시값, 즉 null과 undefined는 래퍼 객체를 생성하지 않는다. 따라서 null과 undefined 값을 객체처럼 사용하면 에러가 발생한다.</p>
+
+### 21.4 전역 객체
+
+<p>전역 객체(global object)는 코드가 실행되기 이전(런타임 이전)단계에 자바스크립트 엔진에 의해 어떤 객체보다도 먼저 생성되는 특수한 객체이며, 어떤 객체에도 속하지 않는 최상위 객체다. 전역 객체는 자바스크립트 환경에 따라 지칭하는 이름이 제각각이다. 브라우저 환경에서는 window 또는 self, this, frames가 전역 객체를 가리키지만 Node.js 환경에서는 global이 전역 객체를 가리킨다.</p>
+
+### globalThis
+
+```
+ES11에서 도입된 globalThis는 브라우저 환경과 Node.js 환경에서 전역 객체를 가리키던 다양한 식별자를 통일한 식별자다.
+globalThis는 표준 사양이므로 ECMAScript 표준 사양을 준수하는 모든 환경에서 사용할 수 있다.
+```
+
+```
+전역 객체는
+
+1. 표준 빌트인 객체(Object, String, Number, Function, Array 등)
+2. 환경에 따른 호스트 객체 (브라우저, node.js)
+3. var 키워드로 선언한 전역 변수와 전역 함수
+
+를 프로퍼티로 갖는다.
+```
+
+<p>즉, 전역 객체는 계층적 구조상 어떤 객체에도 속하지 않은 모든 빌트인 객체의 최상위 객체이다. 전역 객체가 최상위 객체라는 것은 프로토타입 상속 관계상에서 최상위 객체라는 의미가 아니다. 전역 객체 자신은 어떤 객체의 프로퍼티도 아니며 객체의 계층적 구조상 표준 빌트인 객체와 호스트 객체를 프로퍼티로 소유한다는 것을 말한다.</p>
+
+<p>전역 객체의 특징은 다음과 같다.</p>
+
+```
+1. 전역 객체는 개발자가 의도적으로 생성할 수 없다. 즉, 전역 객체를 생성할 수 있는 생성자 함수가 제공되지 않는다.
+2. 전역 객체의 프로퍼티를 참조할 때 window(또는 global)를 생략할 수 있다.
+```
+
+```js
+window.alert("안녕하세요"); // window 포함
+
+alert("안녕하세요!"); // window 생략
+```
+
+```
+3. 전역 객체는 Object, String, Number, Function, Array, RegExp, Date, Promise와 같은 모든 표준 빌트인 객체를 프로퍼티로 가지고 있다.
+4. 자바스크립트 실행 환경(브라우저 또는 Node.js 환경)에 따라 추가적으로 프로퍼티와 메서드를 갖는다.
+5. var 키워드로 선언한 전역 변수와 선언하지 않은 변수에 값을 할당한 암묵적 전역, 그리고 전역 함수는 전역 객체의 프로퍼티가 된다.
+```
+
+```js
+// var 키워드로 선언한 전역 변수
+var foo = 1;
+console.log(window.foo); // 1
+
+// 선언하지 않은 변수에 값을 암묵적 전역. bar는 전역 변수가 아니라 전역 객체의 프로퍼티다.
+bar = 2; // window.bar = 2
+console.log(window.bar); // 2
+
+// 전역 함수
+function baz() {
+  return 3;
+}
+console.log(window.baz()); // 3
+```
+
+```
+6. let이나 const 키워드로 선언한 전역 변수는 전역 객체의 프로퍼티가 아니다. 즉, window.foo와 같이 접근할 수 없다.
+```
+
+```js
+let foo = 123;
+console.log(window.foo); // undefined
+```
+
+```
+7. 브라우저 환경의 모든 자바스크립트 코드는 하나의 전역 객체 window를 공유한다.
+여러 개의 script 태그를 통해 자바스크립트 코드를 분리해도 하나의 전역 객체 window를 공유하는 것은 변함이 없다.
+이는 분리되어 있는 자바스크립트 코드가 하나의 전역을 공유한다는 의미다.
+```
+
+<p>전역 객체는 몇 가지 프로퍼티와 메서드를 가지고 있다. 전역 객체의 프로퍼티와 메서드는 전역 객체를 가리키는 식별자, 즉 window나 global을 생략하여 참조/호출할 수 있으므로 전역 변수와 전역 함수처럼 사용할 수 있다.</p>
+
+### 빌트인 전역 프로퍼티
+
+> <a href="https://developer.mozilla.org/ko/docs/Web/API/Window">빌트인 전역 프로퍼티 모두 보기</a>
+
+<p>빌트인 전역 프로퍼티는 전역 객체의 프로퍼티를 의미한다. 주로 애플리케이션 전역에서 사용하는 값을 제공한다.</p>
+
+```
+- Infinity
+- NaN
+```
+
+### 빌트인 전역 함수
+
+> <a href="https://developer.mozilla.org/ko/docs/Web/API/Window">빌트인 전역 함수 모두 보기</a>
+
+### encodeURI / decodeURI
+
+<p>encodeURI 함수는 완전한 <b>URI(Uniform Resource Identifier)</b>를 문자열로 전달받아 이스케이프 처리를 위해 <b>인코딩</b>한다. URI는 인터넷에 있는 자원을 나타내는 유일한 주소를 말한다. URI의 하위 개념으로 <b>URL(Uniform Resource Locator)</b>, <b>URN(Uniform Resource Name)</b>이 있다.</p>
+
+<img src="./images/25_2.jpg" alt="URI URL URN"/>
+
+<p><b>인코딩</b>이란 URI의 문자들을 <b>이스케이프 처리</b>하는 것을 의미한다. <b>이스케이프 처리</b>는 <b>네트워크를 통해 정보를 공유할 때 어떤 시스템에서도 읽을 수 있는 아스키 문자 셋으로 변환하는 것</b>이다. UTF-8 특수 문자의 경우 1문자당 1~3 바이트 UTF-8 한글 표현의 경우 1 문자당 3바이트이다. 예를 들어, 특수 문자인 공백 문자는 %20, 한글 '가'는 '%EA%B0%80'으로 인코딩된다.</p>
+
+```js
+/* 인코딩 (암호화) */
+console.log(encodeURI("가")); // %EA%B0%80
+
+/* 디코딩 (복호화) */
+console.log(decodeURI("%EA%B0%80")); // '가'
+
+console.log(decodeURI("%EC%9E%90")); // '자'
+```
+
+<p>URI 문법 형식 표준에 따르면 URL은 아스키 문자 셋으로만 구성되어야 하며 한글을 포함한 대부분의 외국어나 아스키 문자 셋에 정의되지 않은 특수 문자의 경우 URL에 포함될 수 없습니다. 따라서 URL 내에서 의미를 갖고 있는 문자(%, ?, #)나 URL에 올 수 없는 문자(한글, 공백 등) 또는 시스템에 의해 해석될 수 있는 문자(&lt;, &gt;)를 이스케이프 처리하여 야기될 수 있는 문제를 예방하기 위해 이스케이프 처리가 필요합니다.</p>
+
+```js
+// 완전한 URI
+const uri = "http://example.com?name=이웅모&job=programmer&teacher";
+
+// encodeURI 함수는 완전한 URI를 전달받아 이스케이프 처리를 위해 인코딩한다.
+const enc = encodeURI(uri);
+console.log(enc);
+// http://example.com?name=%EC%9D%B4%EC%9B%85%EB%AA%A8&job=programmer&teacher
+```
+
+<p>decodeURI 함수는 인코딩된 URI를 인수로 전달받아 이스케이프 처리 이전으로 디코딩합니다.</p>
+
+```js
+const uri = "http://example.com?name=이웅모&job=programmer&teacher";
+
+// encodeURI 함수는 완전한 URI를 전달받아 이스케이프 처리를 위해 인코딩한다.
+const enc = encodeURI(uri);
+console.log(enc);
+// http://example.com?name=%EC%9D%B4%EC%9B%85%EB%AA%A8&job=programmer&teacher
+
+// decodeURI 함수는 인코딩된 완전한 URI를 전달받아 이스케이프 처리 이전으로 디코딩한다.
+const dec = decodeURI(enc);
+console.log(dec);
+// http://example.com?name=이웅모&job=programmer&teacher
+```
+
+### encodeURIComponent / decodeURIComponent
+
+<p>encodeURIComponent 함수는 URI 구성 요소(component)를 인수로 전달받아 인코딩합니다. 여기서 인코딩이란 URI의 문자들을 이스케이프 처리하는 것을 의미합니다.</p>
+
+```js
+// URI의 쿼리 스트링
+const uriComp = "name=이웅모&job=programmer&teacher";
+
+// encodeURIComponent 함수는 인수로 전달받은 문자열을 URI의 구성요소인 쿼리 스트링의 일부로 간주한다.
+// 따라서 쿼리 스트링 구분자로 사용되는 =, ?, &까지 인코딩한다.
+let enc = encodeURIComponent(uriComp);
+console.log(enc);
+// name%3D%EC%9D%B4%EC%9B%85%EB%AA%A8%26job%3Dprogrammer%26teacher
+
+let dec = decodeURIComponent(enc);
+console.log(dec);
+// 이웅모&job=programmer&teacher
+
+// encodeURI 함수는 인수로 전달받은 문자열을 완전한 URI로 간주한다.
+// 따라서 쿼리 스트링 구분자로 사용되는 =, ?, &를 인코딩하지 않는다.
+enc = encodeURI(uriComp);
+console.log(enc);
+// name=%EC%9D%B4%EC%9B%85%EB%AA%A8&job=programmer&teacher
+
+dec = decodeURI(enc);
+console.log(dec);
+// name=이웅모&job=programmer&teacher
+```
+
+### 암묵적 전역
+
+> 예제를 먼저 살펴봅니다.
+
+```js
+var x = 10; // 전역 변수
+
+function foo() {
+  // 선언하지 않은 식별자에 값을 할당
+  y = 20; // window.y = 20;
+}
+foo();
+
+// 선언하지 않은 식별자 y를 전역에서 참조할 수 있다.
+console.log(x + y); // 30
+```
+
+<p>foo 함수 코드 블록 내의 식별자 y는 선언하지 않은 식별자입니다. 따라서 y=20이 실행되면 참조에러가 발생할 것처럼 보입니다. 하지만 선언하지 않은 식별자 y는 마치 선언된 전역 스코프의 변수처럼 동작합니다. 이는 선언하지 않은 식별자에 값을 할당하면 전역 객체의 프로퍼티가 되기 때문입니다.</p>
+
+<p>foo 함수가 호출되면 자바스크립트 엔진은 y 변수에 값을 할당하기 위해 먼저 스코프 체인을 통해 선언된 변수인지 확인한다. 이때 foo 함수의 스코프와 전역 스코프 어디에서도 y 변수에 대한 선언을 찾을 수 없으므로 참조에러가 발생한다. 하지만 자바스크립트 엔진은 y = 20을 window.y = 20으로 해석하여 전역 객체에 프로퍼티를 동적 생성합니다. 이러한 현상을 <b>암묵적 전역(implict global)이라 합니다.</b></p>
+
+```
+ctrl + F '암묵적 전역'
+```
+
+<p>하지만 y는 변수 선언 없이 단지 전역 객체의 프로퍼티로 추가되었을 뿐이다. 따라서 y는 변수가 아니다. y는 변수가 아니므로 변수 호이스팅이 발생하지 않는다.</p>
+
+```js
+// 전역 변수 x는 호이스팅이 발생한다.
+console.log(x); // undefined
+// 전역 변수가 아니라 단지 전역 객체의 프로퍼티인 y는 호이스팅이 발생하지 않는다.
+console.log(y); // ReferenceError: y is not defined
+
+var x = 10; // 전역 변수
+
+function foo() {
+  // 선언하지 않은 식별자에 값을 할당
+  y = 20; // window.y = 20;
+}
+foo();
+
+// 선언하지 않은 식별자 y를 전역에서 참조할 수 있다.
+// 암묵적 전역에 의해 전역 객체의 프로퍼티로 추가되었기 때문이다.
+// 이를 방지하기 위해 'use strict' 를 사용하기도 한다.
+console.log(x + y); // 30
+```
+
+<p>또한 변수가 아니라 단지 프로퍼티인 y는 delete 연산자로 삭제할 수 있다. 전역 변수는 프로퍼티이지만 delete 연산자로 삭제할 수 없다.</p>
+
+```js
+var x = 10; // 전역 변수
+
+function foo () {
+  // 선언하지 않은 식별자에 값을 할당
+  y = 20; // window.y = 20;
+  console.log(x + y);
+}
+
+foo(); // 30
+
+console.log(window.x); // 10
+console.log(window.y); // 20
+
+delete x; // 전역 변수는 삭제되지 않는다.
+delete y; // 프로퍼티는 삭제된다.
+
+console.log(window.x); // 10
+console.log(window.y); // undefined
+
+```
+
+> <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme.md#106-%ED%94%84%EB%A1%9C%ED%8D%BC%ED%8B%B0-%EA%B0%B1%EC%8B%A0-%EC%83%9D%EC%84%B1-%EC%82%AD%EC%A0%9C">프로퍼티 갱신, 생성, 삭제 바로가기 </a>
