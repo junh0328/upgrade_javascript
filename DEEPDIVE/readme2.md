@@ -7,6 +7,7 @@
 - [19장 프로토타입](#19장-프로토타입)
 - [20장 strict mode](#20장-strict-mode)
 - [21장 빌트인 객체](#21장-빌트인-객체)
+- [22장 this](#22장-this)
 
 ## 17장 생성자 함수에 의한 객체 생성
 
@@ -1536,6 +1537,28 @@ Node.js 환경에서는 Node.js 고유의 API를 호스트 객체로 제공한�
 
 <img src="./images/25_1.jpg" alt="표준 빌트인 객체">
 
+```js
+// 생성자 함수에 의한 인스턴스 생성
+const num1 = new Number("1");
+console.log("num1 value: ", num1);
+
+const num2 = "20";
+
+// 일반 함수 형태로 num2 변환
+console.log("parseInt type: ", typeof parseInt(num2));
+console.log("parseInt type: ", typeof Number(num2));
+
+// Math는 인스턴스를 생성할 수 없는 생성자 함수 객체다.
+console.log("Math: ", Math.floor(Math.random() * 100));
+
+/*
+num1 value:  [Number: 1]
+parseInt type:  number
+parseInt type:  number
+Math:  11
+*/
+```
+
 ### 21.2 표준 빌트인 객체
 
 > 표준 빌트인 객체는 ECMAScript 사양의 자바스크립트 실행 환경(브라우저/node.js)에서 모두 사용 가능한 공통 객체이다.
@@ -1680,6 +1703,27 @@ console.log(str.name); // undefined
 // ⑤ 식별자 str은 다시 원래의 문자열, 즉 래퍼 객체의 [[StringData]] 내부 슬롯에 할당된 원시값을 갖는다.
 // 이때 ④에서 생성된 래퍼 객체는 아무도 참조하지 않는 상태이므로 가비지 컬렉션의 대상이 된다.
 console.log(typeof str, str);
+```
+
+```js
+const str1 = "hello world!";
+
+/* 
+생성자 함수를 통해 생성된 객체(인스턴스)가 아니여도 (원시타입 중) String, Number, Boolean 타입으로 선언된 변수는 
+(.)/ ([])으로 접근할 경우 자바스크립트 엔진에 의해 원시값을 연관된 타입의 객체로 변환해 준다.
+*/
+
+console.log(str1);
+console.log(str1.toUpperCase());
+
+// 원시 타입으로 선언된 변수들은 immutable 한 성질을 가지고 있기 때문에 값이 변하지 않는다.
+console.log(str1);
+
+// 1. '값에 의한 전달'의 성질을 사용하여 새로운 변수에 해당 값을 전달해 초기화할 수 있다.
+// 2. 또는 let 키워드를 사용하여 str1의 값을 재할당할 수 있다.
+const str2 = str1.toUpperCase();
+
+console.log(str2);
 ```
 
 > <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme.md#141-%EB%B3%80%EC%88%98%EC%9D%98-%EC%83%9D%EB%AA%85-%EC%A3%BC%EA%B8%B0">변수의 생명주기 바로가기</a>
@@ -1939,3 +1983,383 @@ console.log(window.y); // undefined
 ```
 
 > <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme.md#106-%ED%94%84%EB%A1%9C%ED%8D%BC%ED%8B%B0-%EA%B0%B1%EC%8B%A0-%EC%83%9D%EC%84%B1-%EC%82%AD%EC%A0%9C">프로퍼티 갱신, 생성, 삭제 바로가기 </a>
+
+## 22장 this
+
+### 22.1 this 키워드
+
+<p>객체지향 프로그래밍에서 살펴보았듯이 객체는 상태를 나타내는 프로퍼티와 동작을 나타내는 메서드를 하나의 논리적인 단위로 묶은 복합적인 자료구조다. </p>
+
+<p>동작을 나타내는 메서드는 자신이 속한 객체의 상태, 즉 프로퍼티를 참조하고 변경할 수 있어야 한다. 이때 메서드가 자신이 속한 객체의 프로퍼티를 참조하려면 먼저 자신이 속한 객체를 가리키는 식별자를 참조할 수 있어야 한다.</p>
+
+<p>객체 리터럴 방식으로 생성한 객체의 경우 메서드 내부에서 메서드 자신이 속한 객체를 가리키는 식별자를 재귀적으로 참조할 수 있다.</p>
+
+> 객체 리터럴 방식
+
+```js
+const circle = {
+  // 프로퍼티: 객체 고유의 상태 데이터
+  radius: 5,
+  // 메서드: 상태 데이터를 참조하고 조작하는 동작
+  getDiameter() {
+    // 이 메서드가 자신이 속한 객체의 프로퍼티나 다른 메서드를 참조하려면
+    // 자신이 속한 객체인 circle을 참조할 수 있어야 한다.
+    return 2 * circle.radius;
+  },
+};
+
+console.log(circle.getDiameter()); // 10
+```
+
+<p>circle 객체 내부에서 상태 (radius)를 동작시키는 메서드 getDiameter는 메서드 내에서 메서드 자신이 속한 객체를 가리키는 식별자(circle)을 참조하고 있다. 이 참조 표현식이 평가되는 시점은 getDiameter 메서드가 호출되어 함수 몸체가 실행되는 시점이다.</p>
+
+<p>위의 circle에 대한 객체 리터럴은 circle 변수에 할당되기 직전에 평가된다. 따라서 getDiameter 메서드가 호출되는 시점 (circle.getDiameter())에는 이미 객체 리터럴의 평가가 완료되어 객체가 생성되었고 circle 식별자에 생성된 객체가 할당된 이후이다. 따라서 메서드 내부에서 circle 식별자를 참조할 수 있다.</p>
+
+<p>하지만 자기 자신이 속한 객체를 재귀적으로 참조하는 방식 <b>(return 2 * circle.radius;)</b>은 일반적이지 않으며 바람직하지도 않다. 생성자 함수 방식으로 인스턴스를 생성하는 경우를 생각해보자. </p>
+
+```js
+function Circle(radius) {
+  // 이 시점에는 생성자 함수 자신이 생성할 인스턴스를 가리키는 식별자를 알 수 없다.
+  ????.radius = radius;
+}
+
+Circle.prototype.getDiameter = function () {
+  // 이 시점에는 생성자 함수 자신이 생성할 인스턴스를 가리키는 식별자를 알 수 없다.
+  return 2 * ????.radius;
+};
+
+// 생성자 함수로 인스턴스를 생성하려면 먼저 생성자 함수를 정의해야 한다.
+const circle = new Circle(5);
+```
+
+<p>생성자 함수 내부에서는 프로퍼티 또는 메서드를 추가하기 위해 자신이 생성할 인스턴스를 참조할 수 있어야 한다. 하지만 생성자 함수에 의한 객체 생성 방식은</p>
+
+```
+① 생성자 함수를 정의한다
+② new 연산자와 함께 생성자 함수를 호출한다
+③ 생성자 함수로 인스턴스를 생성한다
+```
+
+<p>와 같은 과정을 거치므로 인스턴스를 생성하기 위해서는 먼저 생성자 함수가 존재해야 한다.</p>
+
+<p>생성자 함수를 정의하는 시점에는 아직 인스턴스를 생성하기 이전이므로 <b>생성자 함수가 생성할 인스턴스를 가리키는 식별자를 알 수 없다.</b> 따라서 <b>자신이 속한 객체 또는 자신이 생성할 인스턴스를 가리키는 특수한 식별자가 필요하다. 이를 위해 자바스크립트는 this라는 특수한 식별자를 제공한다.</b></p>
+
+<p>this는 자신이 속한 객체 또는 자신이 생성할 인스턴스를 가리키는 자기 참조 변수(self-referencing variable)이다. this를 통해 자신이 속한 객체 또는 자신이 생성할 인스턴스의 프로퍼티나 메서드를 참조할 수 있다.</p>
+
+<p>this는 자바스크립트 엔진에 의해 암묵적으로 생성되며, 코드 어디서든 참조할 수 있다. 단 <b>this가 가리키는 값, 즉 this 바인딩은 함수 호출 방식에 의해 동적으로 결정된다.</b></p>
+
+### this 바인딩
+
+```
+바인딩이란 식별자(변수)와 값(원시 값 또는 객체)을 연결하는 과정을 의미한다.
+예를 들어, 변수 선언은 변수 이름(식별자)과 확보된 메모리 공간의 주소를 바인딩하는 것이다.
+this 바인딩은 this(키워드로 분류되지만 식별자 역할을 한다)와 this가 가리킬 객체를 바인딩하는 것이다.
+```
+
+> 위에서 살펴본 ① 객체 리터럴 방식 과 ② 생성자 함수의 예제를 this를 사용하여 수정해 보자
+
+```js
+// ① 객체 리터럴
+
+const circle = {
+  radius: 5,
+  getDiameter() {
+    // this는 메서드를 호출한 객체를 가리킨다.
+    return 2 * this.radius;
+    /* 
+    return 2 * circle.radius; 와 같이 자기 자신을 재귀적으로 참조하는 방식에서
+    this를 통해 메서드가 속한 객체인 circle을 가리키는 방식으로 변경해 주었다.
+    */
+  },
+};
+
+console.log(circle.getDiameter()); // 10
+```
+
+```js
+// ② 생성자 함수
+
+function Circle(radius) {
+  // this는 생성자 함수가 생성할 인스턴스를 가리킨다.
+  this.radius = radius;
+}
+
+Circle.prototype.getDiameter = function () {
+  // this는 생성자 함수가 생성할 인스턴스를 가리킨다.
+  return 2 * this.radius;
+};
+
+// 인스턴스 생성
+const circle = new Circle(5);
+console.log(circle.getDiameter()); // 10
+```
+
+<p>생성자 함수 내부의 this는 생성자 함수가 생성할 인스턴스를 가리킨다. 이처럼 this는 상황에 따라 가리키는 대상이 다르다. <b>(자바스크립트 환경에서 this는 함수 호출 방식에 따라 동적으로 호출되기 때문이다.)</b></p>
+
+<p>자바나 C++ 같은 <b>클래스 기반 언어</b>에서 this는 언제나 클래스가 생성하는 인스턴스를 가리킨다. 하지만 자바스크립트의 this는 <b>함수가 호출되는 방식에 따라 this에 바인딩될 값, 즉 this 바인딩이 동적으로 결정된다.</b> 또한 strict mode에서 역시 this 바인딩에 영향을 준다. </p>
+
+```
+strict mode에서 함수를 일반 함수로서 호출하면 this에 undefined가 바인딩 된다.
+this는 객체의 프로퍼티나 메서드를 참조하기 위한 자기 참조 변수인데, 일반 함수 내부에서는 this를 사용할 필요가 없기 때문이다.
+why? this는 자기 자신을 참조하는 식별자 역할을 하기 때문에
+```
+
+```js
+// this는 어디서든지 참조 가능하다.
+// 전역에서 this는 전역 객체 window를 가리킨다.
+console.log(this); // window
+
+function square(number) {
+  // 일반 함수 내부에서 this는 전역 객체 window를 가리킨다.
+  console.log(this); // window
+  return number * number;
+}
+square(2);
+
+const person = {
+  name: "Lee",
+  getName() {
+    // 메서드 내부에서 this는 메서드를 호출한 객체를 가리킨다.
+    console.log(this); // {name: "Lee", getName: ƒ}
+    return this.name;
+  },
+};
+console.log(person.getName()); // Lee
+
+function Person(name) {
+  this.name = name;
+  // 생성자 함수 내부에서 this는 생성자 함수가 생성할 인스턴스를 가리킨다.
+  console.log(this); // Person {name: "Lee"}
+}
+
+const me = new Person("Lee");
+```
+
+### 22.2 함수 호출 방식과 this 바인딩
+
+<p><b>this 바인딩(this에 바인딩 될 값)은 함수 호출 방식, 즉 함수가 어떻게 호출되었는지에 따라 동적으로 결정된다.</b></p>
+
+### 렉시컬 스코프와 this 바인딩은 결정 시기가 다르다
+
+```
+함수의 상위 스코프를 결정하는 방식인 렉시컬 스코프는 함 정의가 평가되어 함수 객체가 생성되는 시점에 상위 스코프를 결정한다.
+하지만 this 바인딩은 함수 호출 시점에 결정된다.
+```
+
+<p>주의할 것은 동일한 함수도 다양한 방식으로 호출할 수 있다는 것이다. 함수를 호출하는 방식은 다음과 같이 다양하다.</p>
+
+```
+① 일반 함수 호출
+② 메서드 호출
+③ 생성자 함수 호출
+④ Function.prototype.apply/call/bind 메서드에 의한 간접 호출
+```
+
+```js
+// this 바인딩은 함수 호출 방식에 따라 동적으로 결정된다.
+const foo = function () {
+  console.dir(this);
+};
+
+// 동일한 함수도 다양한 방식으로 호출할 수 있다.
+
+// ① 일반 함수 호출
+// foo 함수를 일반적인 방식으로 호출
+// foo 함수 내부의 this는 전역 객체 window를 가리킨다.
+foo(); // window
+
+// ② 메서드 호출
+// foo 함수를 프로퍼티 값으로 할당하여 호출
+// foo 함수 내부의 this는 메서드를 호출한 객체 obj를 가리킨다.
+const obj = { foo };
+obj.foo(); // obj
+
+// ③ 생성자 함수 호출
+// foo 함수를 new 연산자와 함께 생성자 함수로 호출
+// foo 함수 내부의 this는 생성자 함수가 생성한 인스턴스를 가리킨다.
+new foo(); // foo {}
+
+// ④ Function.prototype.apply/call/bind 메서드에 의한 간접 호출
+// foo 함수 내부의 this는 인수에 의해 결정된다.
+const bar = { name: "bar" };
+
+foo.call(bar); // bar
+foo.apply(bar); // bar
+foo.bind(bar)(); // bar
+```
+
+<p>함수 호출 방식에 따라 this 바인딩이 어떻게 결정되는지 알아보자</p>
+
+### 일반 함수 호출
+
+<p>기본적으로 일반 함수 호출 시 this에는 전역 객체가 바인딩된다.</p>
+
+```js
+function foo() {
+  console.log("foo's this: ", this); // window
+  function bar() {
+    console.log("bar's this: ", this); // window
+  }
+  bar();
+}
+foo();
+```
+
+<p>전역 함수(전역 스코프에 선언된 함수)는 물론이고 중첩 함수(nested function)를 일반 함수로 호출하면 함수 내부의 this에는 전역 객체가 바인딩된다. 다만 this는 객체의 프로퍼티나 메서드를 참조하기 위한 자기 참조 변수이므로 객체를 생성하지 않는 일반 함수에서 this는 의미가 없다. 따라서 다음 예제처럼 strict mode가 적용된 일반 함수 내부의 this에는 undefined가 바인딩된다.</p>
+
+> <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme.md#132-스코프의-종류">스코프의 종류 바로가기</a>
+
+```js
+function foo() {
+  "use strict";
+
+  console.log("foo's this: ", this); // undefined
+  function bar() {
+    console.log("bar's this: ", this); // undefined
+  }
+  bar();
+}
+foo();
+```
+
+<p>메서드 내에서 정의한 중첩 함수도 일반 함수로 호출되면 중첩 함수 내부의 this에는 전역 객체(window)가 바인딩된다.</p>
+
+```js
+// var 키워드로 선언한 전역 변수 value는 전역 객체의 프로퍼티다.
+var value = 1;
+// const 키워드로 선언한 전역 변수 value는 전역 객체의 프로퍼티가 아니다.
+// const value = 1;
+
+const obj = {
+  value: 100,
+  foo() {
+    console.log("foo's this: ", this); // {value: 100, foo: ƒ}
+    console.log("foo's this.value: ", this.value); // 100
+
+    // 메서드 내에서 정의한 중첩 함수
+    function bar() {
+      console.log("bar's this: ", this); // window
+      console.log("bar's this.value: ", this.value); // 1
+    }
+
+    // 메서드 내에서 정의한 중첩 함수도 일반 함수로 호출되면 중첩 함수 내부의 this에는 전역 객체가 바인딩된다.
+    bar();
+  },
+};
+
+obj.foo();
+```
+
+<p>콜백 함수가 일반 함수로 호출된다면 콜백 함수 내부의 this에도 전역 객체가 바인딩된다.</p>
+
+```js
+var value = 1;
+
+const obj = {
+  value: 100,
+  foo() {
+    console.log("foo's this: ", this); // {value: 100, foo: ƒ}
+    // 콜백 함수 내부의 this에는 전역 객체가 바인딩된다.
+    setTimeout(function () {
+      console.log("callback's this: ", this); // window
+      console.log("callback's this.value: ", this.value); // 1
+    }, 100);
+  },
+};
+
+obj.foo();
+```
+
+<p>이처럼 일반 함수로 호출된 모든 함수 내부의 this에는 전역 객체가 바인딩된다.</p>
+
+### 메서드 호출
+
+<p>메서드 내부의 this에는 메서드를 호출한 객체, 즉 메서드를 호출할 때 메서드 이름 앞의 마침표(.) 연산자 앞에 기술한 객체가 바인딩된다. 주의할 것은 메서드 내부의 this는 메서드를 소유한 객체가 아닌 메서드를 호출한 객체에 바인딩된다는 것이다.</p>
+
+```js
+const person = {
+  name: "Lee",
+  getName() {
+    // 메서드 내부의 this는 메서드를 호출한 객체에 바인딩된다.
+    return this.name;
+  },
+};
+
+// 메서드 getName을 호출한 객체는 person이다.
+console.log(person.getName()); // Lee
+```
+
+<p>따라서 getName 프로퍼티가 가리키는 함수 객체, 즉 getName 메서드는 다른 객체의 프로퍼티에 할당하는 것으로 다른 객체의 메서드가 될 수도 있고 일반 변수에 할당하여 일반 함수로 호출될 수도 있다.</p>
+
+```js
+const anotherPerson = {
+  name: "Kim",
+};
+// getName 메서드를 anotherPerson 객체의 메서드로 할당
+anotherPerson.getName = person.getName;
+
+// getName 메서드를 호출한 객체는 anotherPerson이다.
+console.log(anotherPerson.getName()); // Kim
+
+// getName 메서드를 변수에 할당
+const getName = person.getName;
+
+// getName 메서드를 일반 함수로 호출
+console.log(getName()); // ''
+// 일반 함수로 호출된 getName 함수 내부의 this.name은 브라우저 환경에서 window.name과 같다.
+// 브라우저 환경에서 window.name은 브라우저 창의 이름을 나타내는 빌트인 프로퍼티이며 기본값은 ''이다.
+// Node.js 환경에서 this.name은 undefined다.
+```
+
+### 생성자 함수 호출
+
+<p>생성자 함수 내부의 this에는 생성자 함수가 (미래에) 생성할 인스턴스가 바인딩된다.</p>
+
+```js
+// 생성자 함수
+function Circle(radius) {
+  // 생성자 함수 내부의 this는 생성자 함수가 생성할 인스턴스를 가리킨다.
+  this.radius = radius;
+  this.getDiameter = function () {
+    return 2 * this.radius;
+    //생성자 함수 new Circle()에 의해 생성된 인스턴스(circle1, circle2)가 바인딩된다.
+  };
+}
+
+// 반지름이 5인 Circle 객체를 생성
+const circle1 = new Circle(5);
+// 반지름이 10인 Circle 객체를 생성
+const circle2 = new Circle(10);
+
+console.log(circle1.getDiameter()); // 10
+console.log(circle2.getDiameter()); // 20
+```
+
+<p>앞서 '생성자 함수'에서 살펴보았듯이 생성자 함수는 이름 그대로 객체(인스턴스)를 생성하는 함수다. 일반 함수와 동일한 방법으로 생성자 함수를 정의하고 new 연산자와 함께 호출하면 해당 함수는 생성자 함수로 동작한다. 만약 new 연산자와 함께 생성자 함수를 호출하지 않으면 생성자 함수가 아니라 일반 함수로 동작한다.</p>
+
+```js
+// new 연산자와 함께 호출하지 않으면 생성자 함수로 동작하지 않는다. 즉, 일반적인 함수의 호출이다.
+const circle3 = Circle(15);
+
+// 일반 함수로 호출된 Circle에는 반환문이 없으므로 암묵적으로 undefined를 반환한다.
+console.log(circle3); // undefined
+
+// 일반 함수로 호출된 Circle 내부의 this는 전역 객체를 가리킨다.
+// 일반 함수로 호출되었기 때문에 전역 객체에 바인딩 되었다.
+console.log(radius); // 15
+```
+
+### Function.prototype.apply/call/bind 메서드에 의한 간접 호출
+
+```
+Function 빌트인 객체에 대해 공부를 더 하고 작성해야 할 듯
+```
+
+### 정리
+
+| 함수 호출 방식                                             | this 바인딩                                                            |
+| :--------------------------------------------------------- | :--------------------------------------------------------------------- |
+| 일반 함수 호출                                             | 전역 객체                                                              |
+| 메서드 호출                                                | 메서드를 호출한 객체                                                   |
+| 생성자 함수 호출                                           | 생성자 함수가 (미래에) 생성할 인스턴스                                 |
+| Function.prototype.apply/call/bind 메서드에 의한 간접 호출 | Function.prototype.apply/call/bind 메서드에 첫 번째 인수로 전달한 객체 |
