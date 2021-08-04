@@ -1,8 +1,9 @@
-function square(number) {
-  // 일반 함수 내부에서 this는 전역 객체 window를 가리킨다.
-  console.log(this); // window
-  return number * number;
-}
-// square(2);
+let foo = 1; // 전역 변수
 
-globalThis.console.log("hi");
+{
+  // let, const 키워드로 선언한 변수가 호이스팅되지 않는다면 전역 변수를 참조해야 한다.
+  // 하지만 let 키워드로 선언한 변수도 여전히 호이스팅이 발생하기 때문에 참조 에러(ReferenceError)가 발생한다.
+  console.log("전역 변수를 참조하는 foo: ", foo); // ReferenceError: Cannot access 'foo' before initialization
+  foo = 2; // 지역 변수
+  console.log("재할당된 foo ", foo);
+}
