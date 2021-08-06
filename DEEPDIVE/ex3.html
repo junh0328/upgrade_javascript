@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <script>
+    function foo() {
+      const x = 1;
+      const y = 2;
+
+      // 클로저
+      // 중첩 함수 bar는 외부 함수보다 더 오래 유지되며 상위 스코프의 식별자를 참조한다.
+      function bar() {
+        debugger;
+        console.log(x);
+      }
+      return bar;
+    }
+
+    const bar = foo();
+    bar();
+  </script>
+</body>
+</html>

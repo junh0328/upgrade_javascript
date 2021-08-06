@@ -1,9 +1,23 @@
-let foo = 1; // 전역 변수
+const counter = (function () {
+  // 카운트 상태 변수
+  let num = 0;
 
-{
-  // let, const 키워드로 선언한 변수가 호이스팅되지 않는다면 전역 변수를 참조해야 한다.
-  // 하지만 let 키워드로 선언한 변수도 여전히 호이스팅이 발생하기 때문에 참조 에러(ReferenceError)가 발생한다.
-  console.log("전역 변수를 참조하는 foo: ", foo); // ReferenceError: Cannot access 'foo' before initialization
-  foo = 2; // 지역 변수
-  console.log("재할당된 foo ", foo);
-}
+  // 클로저인 메서드를 갖는 객체를 반환한다.
+  // 객체 리터럴은 스코프를 만들지 않는다.
+  // 따라서 아래 메서드들의 상위 스코프는 즉시 실행 함수의 렉시컬 환경이다.
+  return {
+    // num: 0, // 프로퍼티는 public하므로 은닉되지 않는다.
+    increase() {
+      return ++num;
+    },
+    decrease() {
+      return num > 0 ? --num : 0;
+    },
+  };
+})();
+
+console.log(counter.increase()); // 1
+console.log(counter.increase()); // 2
+
+console.log(counter.decrease()); // 1
+console.log(counter.decrease()); // 0
