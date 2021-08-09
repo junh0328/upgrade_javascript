@@ -1,25 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
 <body>
   <script>
-    function foo() {
-      const x = 1;
-      const y = 2;
+class Person {
+  // 생성자
+  constructor(name) {
+    // 인스턴스 생성 및 초기화
+    this.name = name;
+  }
+}
 
-      // 일반적으로 클로저라고 하지 않는다.
-      function bar() {
-        const z = 3;
-
-        debugger;
-        // 상위 스코프의 식별자를 참조하지 않는다.
-        console.log(z);
-      }
-
-      return bar;
-    }
-
-    const bar = foo();
-    bar();
+const me = new Person("Lee");
+console.log(me);
   </script>
 </body>
 </html>

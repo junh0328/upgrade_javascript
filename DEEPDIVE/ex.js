@@ -1,27 +1,32 @@
-// 카운트 상태 변경 함수
-function numState() {
-  // 카운트 상태 변수
-  let num = 0;
-
-  // 카운트 상태를 1만큼 증가 시킨다.
-  function increaseNum() {
-    num++;
+class Animal {
+  constructor(age, weight) {
+    this.age = age;
+    this.weight = weight;
   }
 
-  function printNum() {
-    console.log("num is:", num);
+  eat() {
+    return "eat";
   }
 
-  return { increaseNum, printNum };
+  move() {
+    return "move";
+  }
 }
 
-const closure = numState();
+// 상속을 통해 Animal 클래스를 확장한 Bird 클래스
+class Bird extends Animal {
+  fly() {
+    return "fly";
+  }
+}
 
-closure.increaseNum();
-closure.printNum();
-closure.increaseNum();
-closure.printNum();
-closure.increaseNum();
-closure.printNum();
-closure.increaseNum();
-closure.printNum();
+const bird = new Bird(1, 5);
+
+console.log(bird); // Bird {age: 1, weight: 5}
+console.log(bird instanceof Bird); // true
+console.log(bird instanceof Animal); // true (프로토타입 체인으로 얽혀있기 때문에)
+console.log(bird instanceof Object); // true (프로토타입 체인으로 얽혀있기 때문에)
+
+console.log(bird.eat()); // eat
+console.log(bird.move()); // move
+console.log(bird.fly()); // fly
