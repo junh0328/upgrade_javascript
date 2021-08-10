@@ -36,6 +36,20 @@ person.sayHello(); // Hi! My name is Lee
 <p>생성자 함수(constructor)란 new 연산자와 함께 호출하여 객체(인스턴스)를 생성하는 함수를 말한다. 생성자 함수에 의해 생성된 객체를 인스턴스(instance)라고 한다. 자바스크립트는 Object 생성자 함수 이외에도 String, Number, Boolean, Function, Array, Date, RegExp, Promise 등의 빌트인 생성자 함수를 제공한다.</p>
 
 ```js
+// 생성자 함수로 사용
+const strObj = new String("Lee");
+
+console.log(typeof strObj); // object
+console.log(strObj); // String {"Lee"}
+
+// tring 생성자 함수를 new 연산자 없이 호출하는 방법
+const str = String("2");
+
+console.log(typeof str); // string
+console.log(str); // 2
+```
+
+```js
 // String 생성자 함수에 의한 String 객체 생성
 const strObj = new String("Lee");
 console.log(typeof strObj); // object
@@ -907,7 +921,7 @@ console.log(foo.constructor === Function); // true
 // 함수 선언문은 호이스팅되어 런타임 이전에 평가되기 때문에 Person.prototype의 결과를 뽑아낼 수 있다.
 
 case 1: 함수 선언문
-console.log(Person.prototype); // {constructor: ƒ}
+console.log(Person.prototype); // {constructor: ƒ} , 브라우저에서 관측 가능
 
 // 생성자 함수
 function Person(name) {
@@ -988,6 +1002,22 @@ console.log(me instanceof Person); // true
 
 // Object.prototype이 me 객체의 프로토타입 체인 상(제일 상위에 있겠죠?)에 존재하므로 true로 평가된다.
 console.log(me instanceof Object); // true
+
+// 해당 식별자의 생성자 찾기
+console.log(me.constructor); // [Function: Person]
+console.log(Person.constructor); // [Function: Function]
+console.log(Function.constructor); // [Function: Function]
+
+// 스코프 체인 구성
+console.log(me instanceof Person); // true
+console.log(Person instanceof Function); // true
+console.log(Function instanceof Object); // true
+
+// in 연산자
+console.log("name" in me);
+console.log("name" in Person);
+console.log("name" in Function);
+console.log("name" in Object);
 ```
 
 <p>instanceof 연산자가 어떻게 동작하는지 이해하기 위해 프로토타입을 교체해 보자.</p>
@@ -1475,7 +1505,9 @@ foo();
 
 ### 일반 함수의 this
 
-<p>strict mode에서 함수를 일반 함수로서 호출하면 this에 undefined가 바인딩된다. 생성자 함수가 아닌 일반 함수 내부에서는 this를 싸용할 필요가 없기 때문이다. (이때 에러는 발생하지 않는다.)</p>
+<p>strict mode에서 함수를 일반 함수로서 호출하면 this에 undefined가 바인딩된다. 생성자 함수가 아닌 일반 함수 내부에서는 this를 사용할 필요가 없기 때문이다. (이때 에러는 발생하지 않는다.)</p>
+
+> this는 자기 참조 변수이다. 인스턴스 생성과정에서 프로퍼티를 바인딩해주기 위해 사용한다. 하지만 일반 함수로 사용된다면 바인딩할 값이 없으므로 this를 사용하지 않는다.
 
 ```js
 (function () {
@@ -1622,6 +1654,12 @@ console.log(Object.getPrototypeOf(strObj) === String.prototype); // true
 
 <p>표준 빌트인 객체의 prototype 프로퍼티에 바인딩된 객체는 다양한 기능의 빌트인 프로토타입 메서드(String.prototype.xxxx)를 제공한다. 그리고 <b>표준 빌트인 객체는 인스턴스 없이도 호출 가능한 빌트인 정적 메서드를 제공한다.</b></p>
 
+```js
+console.log(Math.floor(3.5));
+
+MDN: Math.floor();
+```
+
 <p>예를 들어, 표준 빌트인 객체인 Number의 prototype 프로퍼티에 바인딩된 객체(numObj), Number.prototype은 다양한 기능의 빌트인 프로토타입 메서드를 제공한다. 이 프로토타입 메서드는 모든 Number 인스턴스가 상속을 통해 사용할 수 있다. 그리고 표준 빌트인 객체인 Number는 인스턴스 없이 정적으로 호출할 수 있는 정적 메서드를 제공한다.</p>
 
 > 표준 빌트인 객체는 생성자 함수를 통해 인스턴스를 생성하지 않더라도 사용가능한 프로토타입 정적 메서드를 제공한다.
@@ -1646,16 +1684,31 @@ new Number()라는 생성자 함수를 통해 인스턴스를 생성하지 않�
 
 ### 21.3 원시값과 래퍼 객체
 
-<p>문자열이나 숫자, 불리언 등의 원시값이 있는데도 문자열, 숫자, 불리언 객체를 생성하는 String, Number, Boolean 등의 <b>표준 빌트인 생성자 함수</b>가 존재하는 이유는 무엇일까?</p>
+<p>문자열이나 숫자, 불리언 등의 원시값이 있는데도 <b>문자열, 숫자, 불리언</b> 객체를 생성하는 String, Number, Boolean 등의 <b>표준 빌트인 생성자 함수</b>가 존재하는 이유는 무엇일까?</p>
 
 > 다음 예제를 살펴보자. 원시값은 객체가 아니므로 프로퍼티나 메서드를 가질 수 없는데도 원시값인 문자열이 마치 객체처럼 동작한다.
 
 ```js
+/* 암묵적 타입 변환 */
 const str = "hello";
+
+/* 생성자 함수를 통해 만든 인스턴스 */
+const strObject = new String("hi");
+
+// 값 출력
+console.log(str); // hello
+console.log(strObject); // [String: 'hi']
+
+// 타입 출력
+console.log(typeof str); // string
+console.log(typeof strObject); // object
 
 // 원시 타입인 문자열이 프로퍼티와 메서드를 갖고 있는 객체처럼 동작한다.
 console.log(str.length); // 5
 console.log(str.toUpperCase()); // HELLO
+
+console.log(strObject.length); // 2
+console.log(strObject.toUpperCase()); // HI
 ```
 
 <p>이는 원시값인 <b>문자열, 숫자, 불리언 값</b>의 경우 이들 원시값에 대해 마치 객체처럼 마침표 표기법 (.) 또는 대괄호 표기법 ([ ])으로 접근하면 <b>자바스크립트 엔진이 일시적으로 원시값을 연관된 객체로 변환해 주기 때문이다.</b> 즉, 원시값을 객체처럼 사용하면 자바스크립트 엔진은 암묵적으로 연관된 객체를 생성하여 생성된 객체로 프로퍼티에 접근하거나 메서드를 호출하고 다시 원시값으로 되돌린다.</p>

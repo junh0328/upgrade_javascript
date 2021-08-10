@@ -1,32 +1,23 @@
-class Animal {
-  constructor(age, weight) {
-    this.age = age;
-    this.weight = weight;
-  }
+// var 키워드로 선언한 전역 변수 value는 전역 객체의 프로퍼티다.
+var value = 1;
+// const 키워드로 선언한 전역 변수 value는 전역 객체의 프로퍼티가 아니다.
+// const value = 1;
 
-  eat() {
-    return "eat";
-  }
+const obj = {
+  value: 100,
+  foo() {
+    console.log("foo's this: ", this); // {value: 100, foo: ƒ}
+    console.log("foo's this.value: ", this.value); // 100
 
-  move() {
-    return "move";
-  }
-}
+    // 메서드 내에서 정의한 중첩 함수
+    function bar() {
+      console.log("bar's this: ", this); // window
+      console.log("bar's this.value: ", this.value); // 1
+    }
 
-// 상속을 통해 Animal 클래스를 확장한 Bird 클래스
-class Bird extends Animal {
-  fly() {
-    return "fly";
-  }
-}
+    // 메서드 내에서 정의한 중첩 함수도 일반 함수로 호출되면 중첩 함수 내부의 this에는 전역 객체가 바인딩된다.
+    bar();
+  },
+};
 
-const bird = new Bird(1, 5);
-
-console.log(bird); // Bird {age: 1, weight: 5}
-console.log(bird instanceof Bird); // true
-console.log(bird instanceof Animal); // true (프로토타입 체인으로 얽혀있기 때문에)
-console.log(bird instanceof Object); // true (프로토타입 체인으로 얽혀있기 때문에)
-
-console.log(bird.eat()); // eat
-console.log(bird.move()); // move
-console.log(bird.fly()); // fly
+obj.foo();
