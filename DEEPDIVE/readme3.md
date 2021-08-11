@@ -4,6 +4,7 @@
 
 - [24장 클로저](#24장-클로저)
 - [25장 클래스](#25장-클래스)
+- [26장 ES6 함수의 추가 기능](#26장-ES6-함수의-추가-기능)
 
 ## 24장 클로저
 
@@ -360,7 +361,7 @@ console.log(increase()); // 2
 console.log(increase()); // 3
 ```
 
-<p>위 코드는 잘 동작하지만 오류를 발생시킬 가능성을 내퐣고 있는 좋지 않은 코드다. 그 이유는 위 예제가 바르게 동작하려면 다음의 전제 조건이 지켜져야 하기 때문이다.</p>
+<p>위 코드는 잘 동작하지만 오류를 발생시킬 가능성을 내포하고 있는 좋지 않은 코드다. 그 이유는 위 예제가 바르게 동작하려면 다음의 전제 조건이 지켜져야 하기 때문이다.</p>
 
 ```
 1.카운트 상태(num 변수의 값)는 increase 함수가 호출되기 전까지 변경되지 않고 유지되어야 한다.
@@ -413,6 +414,8 @@ console.log(increase()); // 1
 <p>카운트 상태를 안전하게 변경하고 유지하기 위해 전역 변수 num을 increase 함수 지역 변수로 변경하여 의도치 않은 상태 변경은 방지했다. 하지만, 호출될 때마다 지역 변수 num은 다시 선언되고 0으로 초기화되기 때문에 출력 결과는 언제나 1이다. 이전 상태를 유지할 수 있도록 클로저를 사용해보자.</p>
 
 ```js
+case 1 즉시 실행 함수로 처리
+
 const counter = (function () {
   // 카운트 상태 변수
   let num = 0;
@@ -428,6 +431,10 @@ const counter = (function () {
     decrease() {
       return num > 0 ? --num : 0;
     },
+    // num을 반환한 함수 count를 추가
+    counterNum() {
+      return num;
+    },
   };
 })();
 
@@ -437,9 +444,49 @@ console.log(counter.increase()); // 2
 console.log(counter.decrease()); // 1
 console.log(counter.decrease()); // 0
 
+console.log(counter.increase()); // 1
+console.log(counter.increase()); // 2
+console.log(counter.counterNum()); // 2
+
 console.log(num);
 // num is not defined,
 // why? increase 함수의 스코프 내에 선언했기 때문에 전역 코드에서는 increase 함수의 지역 변수 num을 찾지 못한다.
+// 외부에서는 접근하지 못하는 안전한 은닉 (information hiding)이 가능해진다
+```
+
+```js
+case 2 일반 함수로 처리
+
+const counter = function () {
+  // 카운트 상태 변수
+  let num = 0;
+
+  // 클로저인 메서드를 갖는 객체를 반환한다.
+  // 객체 리터럴은 스코프를 만들지 않는다.
+  // 따라서 아래 메서드들의 상위 스코프는 즉시 실행 함수의 렉시컬 환경이다.
+  return {
+    // num: 0, // 프로퍼티는 public하므로 은닉되지 않는다.
+    increase() {
+      return ++num;
+    },
+    decrease() {
+      return num > 0 ? --num : 0;
+    },
+    counterNum() {
+      return num;
+    },
+  };
+};
+
+const newNum = counter();
+
+console.log(typeof newNum); // object
+console.log(newNum.countructor); // undefined , 생성자 함수가 아니다.
+
+console.log(newNum.counterNum()); // 0
+console.log(newNum.increase());
+console.log(newNum.counterNum()); // 1
+
 ```
 
 <p>이처럼 클로저는 상태(state)가 의도치 않게 변경되지 않도록 안전하게 은닉(information hiding)하고 특정 함수에게만 상태 변경을 허용하여 상태를 안전하게 변경하고 유지하기 위해 사용한다. 변수 값은 누군가에 의해 언제든지 변경될 수 있어 오류 발생의 근본적 원인이 될 수 있다. <b>외부 상태 변경이 가변 데이터를 피하고 불변성을 지향하는 함수형 프로그래밍에서 부수 효과를 최대한 억제하여 오류를 피하고 프로그램의 안정성을 높이기 위해 클로저는 적극적으로 사용된다.</b></p>
@@ -727,14 +774,19 @@ why?
 <p>클래스는 생성자 함수이며 new 연산자와 함께 호출되어 인스턴스를 생성한다.</p>
 
 ```js
-class Person {}
+class Person {
+  // 생성자
+  constructor(name) {
+    // Person {} 빈 객체가 암묵적으로 생성됨
+    console.log(this);
+    // 인스턴스 생성 및 초기화
+    this.name = name;
+  }
 
-// 인스턴스 생성
-const me = new Person();
-console.log(me); // Person {}
+  const me = new Person('준희');
 ```
 
-<p>생성자 함수는 new 연산자의 사용 여부에 따라 일반 함수로 호출되거나 인ㅅ그턴스 생성을 위한 생성자 함수로 호출되지만 클래스는 인스턴스를 생성하는 것이 유일한 존재이므로 반드시 new 연산자와 함께 호출해야 한다.</p>
+<p>생성자 함수는 new 연산자의 사용 여부에 따라 일반 함수로 호출되거나 인스턴스 생성을 위한 생성자 함수로 호출되지만 클래스는 인스턴스를 생성하는 것이 유일한 존재이므로 반드시 new 연산자와 함께 호출해야 한다.</p>
 
 ### 25.5 메서드
 
@@ -1531,4 +1583,429 @@ console.log(colorRectangle.toString()); // width = 2, height = 4, color = red
 4. 서브클래스 constructor로의 복귀와 this 바인딩
 5. 서브클래스의 인스턴스 초기화
 6. 인스턴스 반환
+```
+
+## 26장 ES6 함수의 추가 기능
+
+```
+앞서 다뤘던 내용과 겹치는 부분이 많기 때문에 필요하다고 생각되는 부분만 간결하게 정리하였습니다.
+```
+
+### 26.1 함수의 구분
+
+<p>ES6 이전까지 자바스크립트의 함수는 별다른 구분 없이 다양한 목적으로 사용되었다. 자바스크립트의 함수는 ① 일반적인 함수로서 호출할 수도 있고, ② new 연산자와 함께 호출하여 인스턴스를 생성할 수 있는 생성자 함수로서 호출할 수도 있으며, ③ 객체에 바인딩되어 메서드로서 호출할 수도 있다. 이는 언뜻 보면 편리할 것 같지만 실수를 유발시킬 수 있으며 성능 면에서도 손해다.</p>
+
+```js
+// 함수 표현식으로 함수 정의
+var foo = function () {
+  return 1;
+};
+
+// 일반적인 함수로서 호출
+console.log(foo()); // -> 1
+
+// 생성자 함수로서 호출
+console.log(new foo()); // -> foo {}
+
+// 메서드로서 호출
+var obj = { foo };
+console.log(obj.foo()); // -> 1
+```
+
+<p>이처럼 ES6 이전의 함수는 사용 목적에 따라 명확히 구분되지 않는다. 즉, <b>ES6 이전의 모든 함수는 일반 함수로서 호출할 수 있는 것은 물론 생성자 함수로서 호출할 수 있다.</b> 주의할 것은 ES6 이전에 일반적으로 메서드라고 부르던 객체에 바인딩된 함수또한 호출과 생성자 함수로서의 호출이 가능하다는 것이다.</p>
+
+```js
+// 프로퍼티 f에 바인딩된 함수는 callable이며 constructor다.
+var obj = {
+  x: 10,
+  f: function () {
+    return this.x;
+  },
+};
+
+// 프로퍼티 f에 바인딩된 함수를 메서드로서 호출
+console.log(obj.f()); // 10
+
+// 프로퍼티 f에 바인딩된 함수를 일반 함수로서 호출
+var bar = obj.f;
+console.log(bar()); // undefined
+
+// 프로퍼티 f에 바인딩된 함수를 생성자 함수로서 호출
+console.log(new obj.f()); // f {}
+```
+
+<p>객체에 바인딩된 함수를 새엇ㅇ자 함수로 호출하는 경우가 흔치 않겠지만 문법적을 가능하다는 것은 문제가 있다. 따라서 이러한 문제를 해결하기 위해 ES6에서는 함수를 사용 목적에 따라 명확히 구분했다.</p>
+
+```
+① 일반 함수
+② 메서드
+③ 화살표 함수
+```
+
+<p>① 일반 함수는 함수 선언문이나 함수 표현식으로 정의한 함수를 말하며, ES6 이전의 함수와 차이가 없다. 하지만 ES6의 메서드와 화살표 함수는 ES6 이전의 함수와 명확한 차이가 있다. 일반 함수는 constructor이지만, ES6의 메서드와 화살표 함수는 non-constructor이다. </p>
+
+<p>생성자를 만들지 않으므로 메서드와 화살표 함수는 prototype 프로퍼티가 존재하지 않고, 이로 인해 함수 자체를 조금 더 가볍게 사용할 수 있다.</p>
+
+### 26.2 메서드
+
+<p>ES6 사양에서 메서드는 메서드 축약 표현으로 정의된 함수만을 의미한다.</p>
+
+```js
+const obj = {
+  x: 1,
+  // foo는 메서드이다.
+  foo() {
+    return this.x;
+  },
+  // bar에 바인딩된 함수는 메서드가 아닌 일반 함수이다.
+  bar: function () {
+    return this.x;
+  },
+};
+
+console.log(obj.foo()); // 1
+console.log(obj.bar()); // 1
+```
+
+<p>ES6 사양에서 정의한 메서드는 인스턴스를 생성할 수 없는 non-constructor다. 따라서 ES6 메서드는 생성자 함수로서 호출할 수 없다.</p>
+
+```js
+new obj.foo(); // -> TypeError: obj.foo is not a constructor
+new obj.bar(); // -> bar {}
+```
+
+> 참고로 표준 빌트인 객체가 제공하는 프로토타입 메서드와 정적 메서드는 모두 non-constructor다.
+
+```js
+String.prototype.toUpperCase.prototype; // -> undefined
+String.fromCharCode.prototype; // -> undefined
+
+Number.prototype.toFixed.prototype; // -> undefined
+Number.isFinite.prototype; // -> undefined
+
+Array.prototype.map.prototype; // -> undefined
+Array.from.prototype; // -> undefined
+```
+
+### 26.3 화살표 함수
+
+<p>화살표 함수(arrow function)는 function 키워드 대신 화살표(=&gt;, fat arrow)를 사용하여 기존의 함수 정의 방식보다 간략하게 함수를 정의할 수 있다. 화살표 함수는 표현만 간략한 것이 아니라 내부 동작도 기존의 함수보다 간략하다. 특히 화살표 함수는 콜백 함수 내부에서 this가 전역 객체를 가리키는 문제(일반 함수에서 this를 호출하면 전역 객체(window)를 가리키는 것)를 해결하기 위한 대안으로 유용하다.</p>
+
+### 함수 정의
+
+<p>화살표 함수는 함수 표현식으로만 정의가 가능하다.</p>
+
+```js
+const multiply = (x, y) => x * y;
+multiply(2, 3); // -> 6
+```
+
+### 매개변수 선언
+
+<p>매개변수가 여러개인 경우 소괄호 () 안에 매개변수를 선언한다. 단, 매개변수가 한 개인 경우 소괄호를 생략할 수 있다. 매개변수가 없을 경우에는 소괄호를 생략할 수 없다.</p>
+
+```js
+const arrow = (x, y) => { ... };
+
+const arrow = x => { ... };
+
+const arrow = () => { ... };
+```
+
+### 함수 몸체 정의
+
+<p>함수 몸체가 하나(1개)의 문으로 구성된다면 함수 몸체를 감싸는 중괄호 {} 를 생략할 수 있다. 이때 <b>함수 몸체 내부의 문이 값으로 평가될 수 있는 표현식인 문이라면 암묵적으로 반환된다.(return 문을 쓰지 않더라도 반환된다.)</b></p>
+
+```js
+// concise body
+const power = (x) => x ** 2;
+power(2); // -> 4
+
+// 위 표현은 다음과 동일하다.
+// block body
+const power = (x) => {
+  return x ** 2;
+};
+```
+
+<p>표현식이 아닌 문(예를 들면 선언문)이라면 값으로 평가되지 않기 때문에 반환할 수 없기 때문이다.</p>
+
+```js
+const arrow = () => const x = 1; // SyntaxError: Unexpected token 'const'
+
+// 위 표현은 다음과 같이 해석된다.
+const arrow = () => { return const x = 1; };
+```
+
+<p>객체 리터럴을 반환하는 경우 객체 리터럴을 소괄호 ( )로 감싸 주어야 한다.</p>
+
+```js
+// 축약 x
+const create = (id, content) => ({ id: id, content: content });
+console.log(create(1, "JavaScript")); // -> {id: 1, content: "JavaScript"}
+
+// 축약 o
+const create = (id, content) => ({ id, content });
+console.log(create(1, "JavaScript")); // -> {id: 1, content: "JavaScript"}
+
+// 위 표현은 다음과 동일하다.
+const create = (id, content) => {
+  return { id, content };
+};
+```
+
+<p>객체 리터럴을 소괄호 ( ) 로 감싸지 않으면 객체 리터럴의 중괄호 { } 를 함수 몸체를 감싸는 중괄호 { }로 잘못 해석한다.</p>
+
+```js
+// { id, content }를 함수 몸체 내의 쉼표 연산자문으로 해석한다.
+const create = (id, content) => {
+  id, content;
+};
+create(1, "JavaScript"); // -> undefined
+```
+
+<p>함수 몸체가 여러 개의 문으로 구성된다면 함수 몸체를 감싸는 중괄호 { }를 생략할 수 없다.</p>
+
+```js
+const sum = (a, b) => {
+  const result = a + b;
+  return result;
+};
+```
+
+### 화살표 함수와 일반 함수의 차이
+
+<p>화살표 함수와 일반 함수의 가장 큰 차이점은 화살표 함수는 함수 자체의 <b>(this, arguments, super, new.target)</b>바인딩을 갖지 않는다는 것이다. 따라서 화살표 내부에서 해당 바인딩을 참조한다면 스코프 체인을 통해 자신의 상위 스코프의 this, arguments, super, new.target을 참조한다.</p>
+
+<p>만약 화살표 함수와 화살표 함수가 중첩되어 있다면 스코프 체인 상에서 가장 가까운 상위 함수 중에서 화살표 함수가 아닌 함수의 바인딩을 참조한다.</p>
+
+```js
+class Prefixer {
+  constructor(prefix) {
+    this.prefix = prefix;
+  }
+
+  add(arr) {
+    // add 메서드는 인수로 전달된 배열 arr을 순회하며 배열의 모든 요소에 prefix를 추가한다.
+    // ①
+    return arr.map(function (item) {
+      return this.prefix + item; // ②
+      // -> TypeError: Cannot read property 'prefix' of undefined
+    });
+  }
+}
+
+const prefixer = new Prefixer("-webkit-");
+console.log(prefixer.add(["transition", "user-select"]));
+```
+
+<p>위 코드를 실행했을 때 기대하는 결과는 [-webkit-transition', '-webkit-user-select']이다. 하지만, TypeError가 발생한다.</p>
+
+```
+프로토타입 내부 메서드은 add의 몸체 내부 (①)에서 this는 호출한 객체(prefix)를 가리킨다.
+그런데 Array.prototype.map의 인수로 전달한 콜백 함수의 내부인 ②에서 this는 undefined를 가리킨다.
+이는 Array.prototype.map 메서드가 콜백 함수를 일반 함수로서 호출하기 때문이다.
+```
+
+<p>'22장 this'에서 살펴보았듯이 일반 함수로서 호출되는 모든 함수 내부의 this는 전역 객체를 가리킨다. 그런데 <b>클래스</b> 내부의 모든 코드에는 암묵적으로 strict mode가 적용된다. 따라서 일반 함수로 호출된 경우 this 바인딩에는 undefined가 나타난다. 이를 해결하기 위해 우리는 화살표 함수를 사용할 수 있다.</p>
+
+```js
+case 1 : 반환문 없이 사용
+
+class Prefixer {
+  constructor(prefix) {
+    this.prefix = prefix;
+  }
+
+  add(arr) {
+    // add 메서드는 인수로 전달된 배열 arr을 순회하며 배열의 모든 요소에 prefix를 추가한다.
+    // ①
+    return arr.map((item) => {this.prefix + item); // ②
+    // -> TypeError: Cannot read property 'prefix' of undefined
+  }
+}
+
+const prefixer = new Prefixer("-webkit-");
+console.log(prefixer.add(["transition", "user-select"]));
+
+/*
+[ '-webkit-transition', '-webkit-user-select' ]
+*/
+
+case 2 반환문 사용 및 this 바인딩 확인
+
+class Prefixer {
+  constructor(prefix) {
+    this.prefix = prefix;
+  }
+
+  add(arr) {
+    // add 메서드는 인수로 전달된 배열 arr을 순회하며 배열의 모든 요소에 prefix를 추가한다.
+    // ①
+      console.log(this);
+    return arr.map((item) => {
+      return this.prefix + item;
+    }); // ②
+    // -> TypeError: Cannot read property 'prefix' of undefined
+  }
+}
+
+const prefixer = new Prefixer("-webkit-");
+console.log(prefixer.add(["transition", "user-select"]));
+
+/*
+Prefixer { prefix: '-webkit-' }
+[ '-webkit-transition', '-webkit-user-select' ]
+*/
+```
+
+<p>화살표 함수 내부에는 this가 없기 때문에 상위 스코프에 있는 this를 그대로 참조하기 때문에, this: Prefixer { prefix: '-webkit-' } 인스턴스의 값을 그대로 참조할 수 있었다.</p>
+
+### 26.4 Rest 파라미터
+
+### 기본 문법
+
+<p>Rest 파라미터는 매개변수 이름 앞에 세개의 점 ...을 붙여서 정의한 매개변수를 의미한다. <b>Rest 파라미터는 함수에 전달된 인수들의 목록을 배열로 전달받는다.</b></p>
+
+```js
+function foo(...rest) {
+  // 매개변수 rest는 인수들의 목록을 배열로 전달받는 Rest 파라미터다.
+  console.log(rest); // [ 1, 2, 3, 4, 5 ]
+}
+
+foo(1, 2, 3, 4, 5);
+
+/* 매개변수의 식별자 명은 상관없지만 함수 몸체 내부와 통일해줘야 한다.*/
+
+function foo(...bar) {
+  // 매개변수 rest는 인수들의 목록을 배열로 전달받는 Rest 파라미터다.
+  console.log(bar); // [ 1, 2, 3, 4, 5 ]
+}
+
+foo(1, 2, 3, 4, 5);
+```
+
+<p>일반 매개변수와 Rest 파라미터는 함께 사용할 수 있다. 이때 함수에 전달된 인수들은 매개변수와 Rest 파라미터에 순차적으로 할당된다.</p>
+
+```js
+function foo(param, ...rest) {
+  console.log(param); // 1
+  console.log(rest); // [ 2, 3, 4, 5 ]
+}
+
+foo(1, 2, 3, 4, 5);
+
+function bar(param1, param2, ...rest) {
+  console.log(param1); // 1
+  console.log(param2); // 2
+  console.log(rest); // [ 3, 4, 5 ]
+}
+
+bar(1, 2, 3, 4, 5);
+```
+
+<p>Rest 파라미터는 이름 그대로 먼저 선언된 매개변수에 할당된 인수를 제외한 나머지 인수들로 구성된 배열이 할당된다. 따라서 Rest 파라미터는 반드시 마지막 파라미터이어야 한다.</p>
+
+```js
+function foo(...rest, param1, param2) { }
+
+foo(1, 2, 3, 4, 5);
+// SyntaxError: Rest parameter must be last formal parameter
+```
+
+<p>Rest 파라미터는 단 하나만 선언할 수 있다.</p>
+
+```js
+function foo(...rest1, ...rest2) { }
+
+foo(1, 2, 3, 4, 5);
+// SyntaxError: Rest parameter must be last formal parameter
+```
+
+### Rest 파라미터와 arguments 객체
+
+<p>ES5에서는 함수를 저으이할 때 매개변수의 개수를 확정할 수 없는 <b>가변 인자 함수</b>의 경우 매개변수를 통해 인수(argument)를 전달받는 것이 불가능하므로 arguments 객체를 활용하여 인수를 전달받았다. 이 arguments 객체는 함수 호출 시 전달된 인수들의 정보를 담고 있는 순회 가능한 유사 배열 객체이며, 함수 내부에서 지역 변수처럼 사용할 수 있다.</p>
+
+```js
+// 매개변수의 개수를 사전에 알 수 없는 가변 인자 함수
+function sum() {
+  // 가변 인자 함수는 arguments 객체를 통해 인수를 전달받는다.
+  console.log(arguments);
+}
+
+sum(1, 2); // {length: 2, '0': 1, '1': 2}
+```
+
+<p>하지만 arguments 객체는 배열이 아닌 유사 배열 객체이므로 배열 메서드를 이용하려면 Function.prototype.call이나 Function.prototype.apply 메서드를 사용해 arguments 객체를 배열로 변환해야 하는 번거로움이 있었다.</p>
+
+```js
+function sum() {
+  // 유사 배열 객체인 arguments 객체를 배열로 변환한다.
+  var array = Array.prototype.slice.call(arguments);
+  console.log("type: ", typeof array);
+
+  return array.reduce(function (pre, cur) {
+    return pre + cur;
+  }, 0);
+}
+
+console.log(sum(1, 2, 3, 4, 5)); // 15
+```
+
+<p>ES6에서는 rest 파라미터를 사용하여 가변 인자 함수의 인수 목록을 배열로 직접 전달받을 수 있다. 이를 통해 유사 배열 객체인 arguments 객체를 배열로 변환하는 번거로움을 피할 수 있다.</p>
+
+```js
+function sum(...args) {
+  // Rest 파라미터 args에는 배열 [1, 2, 3, 4, 5]가 할당된다.
+  return args.reduce((pre, cur) => pre + cur, 0);
+}
+console.log(sum(1, 2, 3, 4, 5)); // 15
+```
+
+### 26.5 매개변수 기본값
+
+<p>함수를 호출할 때 매개변수의 개수만큼 인수를 전달하는 것이 바람직하지만 그렇지 않은 경우에도 에러가 발생하지 않는다. 이는 자바스크립트 엔진이 매개변수의 개수와 인수의 개수를 체크하지 않기 때문이다. 인수가 전달되지 않은 매개변수의 값은 undefined이다. 이를 방치하면 다음 예제와 같이 의도치 않은 결과가 나올 수 있다.</p>
+
+```js
+function sum(x, y) {
+  console.log(x, y); // 1 undefined
+  return x + y;
+}
+
+console.log(sum(1)); // NaN: 숫자가 아님
+```
+
+<p>띠리사 매개변수에 인수가 전달되었는지 확인하여 인수가 전달되지 않은 경우 매개변수에 기본값을 할당할 필요가 있다. ES6에서 도입된 매개변수 기본값을 사용하면 함수 내에서 수행하던 인수 체크 및 초기화를 간소화할 수 있다.</p>
+
+```js
+function sum(x = 0, y = 0) {
+  return x + y;
+}
+
+console.log(sum(1, 2)); // 3
+console.log(sum(1)); // 1
+```
+
+<p>매개변수 기본값은 매개변수에 인수를 전달하지 않은 경우와 undefined를 전달한 경우에만 유효하다.</p>
+
+```js
+function logName(name = "Lee") {
+  console.log(name);
+}
+
+logName(); // Leefunction foo(...rest = []) {
+  console.log(rest);
+}
+// SyntaxError: Rest parameter may not have a default initializer
+logName(undefined); // Lee
+logName(null); // null
+```
+
+<p>Rest 파라미터에는 기본값을 지정할 수 없다.</p>
+
+```js
+function foo(...rest = []) {
+  console.log(rest);
+}
+// SyntaxError: Rest parameter may not have a default initializer
 ```
