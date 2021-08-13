@@ -8,21 +8,23 @@
 </head>
 <body>
   <script>
-var foo = function () {
-  return 1;
-};
+var x = 10; // 전역 변수
 
-// 일반적인 함수로서 호출
-console.log(foo()); // -> 1
+function foo() {
+  console.log('this.y: ',this.y)
+  // 선언하지 않은 식별자에 값을 할당
+  y = 20; // window.y = 20;
+  console.log('this.y: ',this.y)
+}
+foo();
 
-// 생성자 함수로서 호출
-console.log(new foo()); // -> foo {}
-
-// 메서드로서 호출
-var obj = { foo };
-console.log(obj.foo()); // -> 1
+console.log('window.y:',window.y)
+setTimeout(() => console.log('window.x:',window.x))
+console.log('window.y:',window.y)
 
 
+// 선언하지 않은 식별자 y를 전역에서 참조할 수 있다.
+console.log('x+y:',x + y); // 30
 
 
   </script>

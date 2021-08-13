@@ -1,6 +1,13 @@
-function sum(x, y) {
-  console.log(x, y);
-  return x + y;
-}
+const arr = [1, 2, 3, 4];
 
-console.log(sum(1)); // NaN
+// 기본 구분자는 ','이다.
+// 원본 배열 arr의 모든 요소를 문자열로 변환한 후, 기본 구분자 ','로 연결한 문자열을 반환한다.
+console.log(arr.join()); // -> '1,2,3,4';
+
+// 원본 배열 arr의 모든 요소를 문자열로 변환한 후, 빈문자열로 연결한 문자열을 반환한다.
+console.log(arr.join("")); // -> '1234'
+
+// 원본 배열 arr의 모든 요소를 문자열로 변환한 후, 구분자 ':'로 연결한 문자열을 반환한다.ㄴ
+console.log(arr.join(":")); // -> '1:2:3:4'
+
+console.log(arr);
