@@ -3,6 +3,11 @@
 ## 목차
 
 - [27장 배열](#27장-배열)
+- [28장 Number](#28장-Number)
+- [29장 Math](#29장-Math)
+- [30장 Date](#30장-Date)
+- [31장 RegExp](#31장-RegExp)
+- [32장 String](#32장-String)
 - <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme4.md">다음 섹션으로</a>
 
 ## 27장 배열
@@ -794,4 +799,566 @@ Array.prototype.every
 Array.prototype.find
 Array.prototype.findIndex
 Array.prototype.flatMap
+```
+
+<details>
+<summary>심호흡하고 들어오기</summary>
+
+### Array.prototype.sort
+
+<p>sort 메서드는 배열의 요소를 정렬한다. 원본 배열을 직접 변경하며 정렬된 배열을 반환한다. 기본적으로 유니코드를 기반으로 오름차순으로 요소를 정렬한다.</p>
+
+```js
+const fruits = ["Banana", "Orange", "Apple"];
+
+// 오름차순(ascending) 정렬
+fruits.sort();
+
+// sort 메서드는 원본 배열을 직접 변경한다.
+console.log(fruits); // ['Apple', 'Banana', 'Orange']
+```
+
+<p>유니코드를 기반으로 동작하기 때문에 한글 문자열 요소도 오름차순으로 정렬된다.</p>
+
+```js
+const fruits = ["바나나", "오렌지", "사과"];
+
+// 오름차순(ascending) 정렬
+fruits.sort();
+
+// sort 메서드는 원본 배열을 직접 변경한다.
+console.log(fruits); // ['바나나', '사과', '오렌지']
+```
+
+<p>내림차순 정렬을 하기 위해서는 Array의 포로토타입 메서드인 sort()를 통해 정렬한 뒤, reverse()를 사용하여 출력합니다.</p>
+
+```js
+const fruits = ["Banana", "Orange", "Apple"];
+
+// 오름차순(ascending) 정렬
+fruits.sort();
+
+// sort 메서드는 원본 배열을 직접 변경한다.
+console.log(fruits); // ['Apple', 'Banana', 'Orange']
+
+// 내림차순(descending) 정렬
+fruits.reverse();
+
+// reverse 메서드도 원본 배열을 직접 변경한다.
+console.log(fruits); // ['Orange', 'Banana', 'Apple']
+```
+
+<p>유니코드 코드 포인트의 순서를 따르기 때문에 1~9 까지의 문자를 정렬할 때는 문제가 되지 않지만 두 자리 수부터 (10)는 문제가 발생할 수 있습니다. 문자열 10의 경우, 유니코드 코드 포인트가 U+0031U+0030이기 때문에, U+0032인 문자열 '2'보다 낮습니다. </p>
+
+```js
+["2", "10"].sort(); // -> ["10", "2"]
+[2, 10].sort(); // -> [10, 2]
+```
+
+<p>따라서 숫자 요소를 정렬할 때는 sort 메서드에 <b>(정렬 순서를 정의하는 비교 함수)</b>를 인수로 전달해야 합니다.</p>
+
+```js
+const points = [40, 100, 1, 5, 2, 25, 10];
+
+// 숫자 배열의 오름차순 정렬. 비교 함수의 반환값이 0보다 작으면 a를 우선하여 정렬한다.
+points.sort((a, b) => a - b);
+console.log(points); // [1, 2, 5, 10, 25, 40, 100]
+
+// 숫자 배열에서 최소/최대값 취득
+console.log(points[0], points[points.length]); // 1
+
+// 숫자 배열의 내림차순 정렬. 비교 함수의 반환값이 0보다 작으면 b를 우선하여 정렬한다.
+points.sort((a, b) => b - a);
+console.log(points); // [100, 40, 25, 10, 5, 2, 1]
+
+// 숫자 배열에서 최대값 취득
+consconst todos = [
+  { id: 4, content: 'JavaScript' },
+  { id: 1, content: 'HTML' },
+  { id: 2, content: 'CSS' }
+];
+
+// 비교 함수. 매개변수 key는 프로퍼티 키다.
+function compare(key) {
+  // 프로퍼티 값이 문자열인 경우 - 산술 연산으로 비교하면 NaN이 나오므로 비교 연산을 사용한다.
+  // 비교 함수는 양수/음수/0을 반환하면 되므로 - 산술 연산 대신 비교 연산을 사용할 수 있다.
+  return (a, b) => (a[key] > b[key] ? 1 : (a[key] < b[key] ? -1 : 0));
+}
+
+// id를 기준으로 오름차순 정렬
+todos.sort(compare('id'));
+console.log(todos);
+/*
+[
+  { id: 1, content: 'HTML' },
+  { id: 2, content: 'CSS' },
+  { id: 4, content: 'JavaScript' }
+]
+*/
+
+// content를 기준으로 오름차순 정렬
+todos.sort(compare('content'));
+console.log(todos);
+/*
+[
+  { id: 2, content: 'CSS' },
+  { id: 1, content: 'HTML' },
+  { id: 4, content: 'JavaScript' }
+]
+*/
+console.log(points[0]); // 100
+```
+
+<p>객체를 요소로 갖는 배열을 정렬하는 예제는 다음과 같습니다.</p>
+
+```js
+const todos = [
+  { id: 4, content: "JavaScript" },
+  { id: 1, content: "HTML" },
+  { id: 2, content: "CSS" },
+];
+
+// 비교 함수. 매개변수 key는 프로퍼티 키다.
+function compare(key) {
+  // 프로퍼티 값이 문자열인 경우 - 산술 연산으로 비교하면 NaN이 나오므로 비교 연산을 사용한다.
+  // 비교 함수는 양수/음수/0을 반환하면 되므로 - 산술 연산 대신 비교 연산을 사용할 수 있다.
+  return (a, b) => (a[key] > b[key] ? 1 : a[key] < b[key] ? -1 : 0);
+}
+
+// id를 기준으로 오름차순 정렬
+todos.sort(compare("id"));
+console.log(todos);
+/*
+[
+  { id: 1, content: 'HTML' },
+  { id: 2, content: 'CSS' },
+  { id: 4, content: 'JavaScript' }
+]
+*/
+
+// content를 기준으로 오름차순 정렬
+todos.sort(compare("content"));
+console.log(todos);
+/*
+[
+  { id: 2, content: 'CSS' },
+  { id: 1, content: 'HTML' },
+  { id: 4, content: 'JavaScript' }
+]
+*/
+```
+
+### Array.prototype.forEach
+
+<p>앞서 살펴보았듯이 함수형 프로그래밍은 순수 함수와 보조 함수의 조합을 통해 로직 내에 존재하는 <b>조건문과 반복문을 제거</b>하여 복잡성을 해결하고 <b>변수의 사용을 억제</b>하여 상태 변경을 피하려는 프로그래밍 패러다임입니다. 조건문이나 반복문은 코드를 짠 본인 외에 타인이 볼 때 로직의 흐름을 이해하기 어려울 수 있습니다. 특히 for 문은 반복을 위한 변수를 선언해야 하며, 조건식과 증감식으로 이루어져 있어 함수형 프로그래밍이 추구하는 바와 맞지는 않습니다.</p>
+
+<p>forEach 메서드는 for 문을 대체할 수 있는 고차 함수입니다. forEach 메서드는 반복문을 추상화한 고차 함수로서 내부에서 반복문을 통해 자신을 호출한 배열을 순회하면서 수행해야 할 처리를 <b>콜백 함수로 전달받아 반복 호출합니다.</b></p>
+
+```js
+const numbers = [1, 2, 3];
+let pows = [];
+
+// for 문으로 배열 순회
+for (let i = 0; i < numbers.length; i++) {
+  pows.push(numbers[i] ** 2);
+}
+console.log(pows); // [1, 4, 9]
+```
+
+```js
+const numbers = [1, 2, 3];
+let pows = [];
+
+// forEach 메서드는 numbers 배열의 모든 요소를 순회하면서 콜백 함수를 반복 호출한다.
+numbers.forEach((item) => pows.push(item ** 2));
+console.log(pows); // [1, 4, 9]
+```
+
+<p>forEach 메서드의 콜백 함수는 forEach 메서드를 호출한 배열의 ① 요소값 ② 인덱스 ③ forEach 메서드를 호출한 배열 자체, 즉 this를 순차적으로 전달받을 수 있습니다.</p>
+
+```js
+// forEach 메서드는 콜백 함수를 호출하면서 3개(① 요소값 ② 인덱스 ③ this)의 인수를 전달한다.
+[1, 2, 3].forEach((item, index, arr) => {
+  console.log(`요소값: ${item}, 인덱스: ${index}, this: ${arr}`);
+});
+
+/*
+요소값: 1, 인덱스: 0, this: [1,2,3]
+요소값: 2, 인덱스: 1, this: [1,2,3]
+요소값: 3, 인덱스: 2, this: [1,2,3]
+*/
+```
+
+<p>기본적으로 forEach 메서드는 원본 배열을 변경하지 않는다. 하지만 콜백 함수를 통해 원본 배열을 변경할 수는 있다.</p>
+
+```js
+const numbers = [1, 2, 3];
+
+// forEach 메서드는 원본 배열을 변경하지 않지만 콜백 함수를 통해 원본 배열을 변경할 수는 있다.
+// 콜백 함수의 세 번째 매개변수 arr은 원본 배열 numbers를 가리킨다.
+// 따라서 콜백 함수의 세 번째 매개변수 arr을 직접 변경하면 원본 배열 numbers가 변경된다.
+numbers.forEach((item, index, arr) => {
+  arr[index] = item ** 2;
+});
+console.log(numbers); // [1, 4, 9]
+```
+
+<p>화살표 함수는 함수 자체의 this 바인딩을 갖지 않고, 참조 시에 상위 스코프 (여기서는 multiply 메서드 내부의 this)를 그대로 참조한다.</p>
+
+```js
+class Numbers {
+  numberArray = [];
+
+  multiply(arr) {
+    console.log(this); // Numbers { numberArray: [] }
+    // 화살표 함수 내부에서 this를 참조하면 상위 스코프의 this를 그대로 참조한다.
+    arr.forEach((item) => this.numberArray.push(item * item));
+  }
+}
+
+const numbers = new Numbers();
+numbers.multiply([1, 2, 3]);
+console.log(numbers.numberArray); // [1, 4, 9]
+```
+
+### forEach 메서드의 폴리필(polyfill)
+
+```
+폴리필은 최신 사양의 기능을 지원하지 않는 브라우저를 위해 누락된 최신 사양의 기능을 구현하여 추가하는 것을 말한다.
+```
+
+```js
+// 만약 Array.prototype에 forEach 메서드가 존재하지 않으면 폴리필을 추가한다.
+if (!Array.prototype.forEach) {
+  Array.prototype.forEach = function (callback, thisArg) {
+    // 첫 번째 인수가 함수가 아니면 TypeError를 발생시킨다.
+    if (typeof callback !== "function") {
+      throw new TypeError(callback + " is not a function");
+    }
+
+    // this로 사용할 두 번째 인수를 전달받지 못하면 전역 객체를 this로 사용한다.
+    thisArg = thisArg || window;
+
+    // for 문으로 배열을 순회하면서 콜백 함수를 호출한다.
+    for (var i = 0; i < this.length; i++) {
+      // call 메서드를 통해 thisArg를 전달하면서 콜백 함수를 호출한다.
+      // 이때 콜백 함수의 인수로 배열 요소, 인덱스, 배열 자신을 전달한다.
+      callback.call(thisArg, this[i], i, this);
+    }
+  };
+}
+```
+
+<p>for문과 달리 break, continue 문을 사용할 수 없고, 반드시 모든 요소를 순회해야 하는 특징이 있다.</p>
+
+### Array.prototype.map
+
+### Array.prototype.filter
+
+### Array.prototype.reduce
+
+### Array.prototype.some
+
+### Array.prototype.every
+
+### Array.prototype.find
+
+### Array.prototype.findIndex
+
+### Array.prototype.flatMap
+
+</details>
+
+## 28장 Number
+
+> <a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Number">MDN: Number</a>
+
+```
+워낙 많은 프로퍼티와 메서드가 있기 때문에 전부 다루지는 않는다
+공식 문서를 통해 필요한 메서드를 훑어보기를 바란다
+```
+
+<p>표준 빌트인 객체(standard built-in object)인 Number는 원시 타입인 숫자를 다룰 때 유용한 프로퍼티와 메서드를 제공한다.</p>
+
+### 28.1 Number 생성자 함수
+
+<p>표준 빌트인 객체인 Number 객체는 생성자 함수 객체다. 따라서 <b>new 연산자와 함께 호출하여 Number 인스턴스를 생성할 수 있다.</b> '9.3 명시적 타입 변환'에서 살펴보았듯이 <b>new 연산자를 사용하지 않고 Number 생성자 함수를 호출하면 Number 인스턴스가 아닌 숫자를 반환한다.</b></p>
+
+```js
+// 문자열 타입 => 숫자 타입
+Number("0"); // -> 0
+Number("-1"); // -> -1
+Number("10.53"); // -> 10.53
+
+// 불리언 타입 => 숫자 타입
+Number(true); // -> 1
+Number(false); // -> 0
+```
+
+### 28.2 Number 프로퍼티
+
+```
+Number.EPSILON
+Number.MAX_VALUE
+Number.MIN_VALUE
+Number.MAX_SAFE_INTEGER 📍
+Number.MIN_SAFE_INTEGER 📍
+Number.POSITIVE_INFINITY
+Number.NEGATIVE_INFINITY
+Number.NaN
+```
+
+### Number.MAX_SAFE_INTEGER 📍
+
+<p>Number.MAX_SAFE_INTEGER는 자바스크립트에서 안전하게 표현할 수 있는 가장 큰 정수값이다.</p>
+
+```js
+Number.MAX_SAFE_INTEGER; // -> 9007199254740991
+```
+
+### Number.MIN_SAFE_INTEGER 📍
+
+<p>Number.MIN_SAFE_INTEGER는 자바스크립트에서 안전하게 표현할 수 있는 가장 작은 정수값이다.</p>
+
+```js
+Number.MIN_SAFE_INTEGER; // -> -9007199254740991
+```
+
+<p>주로 알고리즘을 풀 때 최초의 값 비교를 위해서 많이 사용하였다.</p>
+
+```html
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>출력결과</title>
+  </head>
+  <body>
+    <script>
+      function solution(s) {
+        let answer = "",
+          max = Number.MIN_SAFE_INTEGER;
+        for (let x of s) {
+          if (x.length > max) {
+            max = x.length;
+            answer = x;
+          }
+        }
+        return answer;
+      }
+      let str = ["teacher", "time", "student", "beautiful", "good"];
+      console.log(solution(str));
+    </script>
+  </body>
+</html>
+```
+
+### 28.3 Number 메서드
+
+```
+Number.isFinite
+Number.isInteger
+Number.isNaN
+Number.isSafeInteger
+Number.prototype.toExponential
+Number.prototype.toFixed
+Number.prototype.toPrecision
+Number.prototype.toString
+```
+
+```
+prototype이 붙지 않은 메서드들은 정적 메서드이다
+해당 생성자 함수(Number)를 그대로 호출하여 사용한다
+
+prototype이 붙은 메서드의 경우 프로토타입 메서드이다
+Number와 같은 빌트인 객체가 아닌 값(또는 인스턴스)을 바탕으로 호출한다
+```
+
+```js
+Number.isNaN(10) // 가능
+10.isNaN() // 불가능
+```
+
+## 29장 Math
+
+> <a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Math">MDN: Math</a>
+
+```
+워낙 많은 프로퍼티와 메서드가 있기 때문에 전부 다루지는 않는다
+공식 문서를 통해 필요한 메서드를 훑어보기를 바란다
+```
+
+<p>표준 빌트인 객체인 Math는 수학적인 상수와 함수를 위한 프로퍼티와 메서드를 제공한다. Math는 생성자 함수가 아니다. 따라서 프로토타입을 통해 인스턴스를 생성하지 않으며, 정적 프로퍼티와 정적 메서드만을 제공한다.</p>
+
+<img width="500" src="./images/25_1.jpg" alt="빌트인 객체">
+
+### 29.1 Math 프로퍼티
+
+```
+Math.PI (파이)
+```
+
+### 29.2 Math 메서드
+
+```
+Math.abs (절대값)
+Math.round (반올림)
+Math.ceil (올림)
+Math.floor (버림)
+Math.sqrt (제곱근)
+Math.random (랜덤) 📍
+Math.max (가장 큰 수)
+Math.min (가장 작은 수)
+```
+
+### Math.random
+
+```js
+Math.random(); // 0에서 1 미만의 랜덤 실수(0.8208720231391746)
+
+/*
+1에서 10 범위의 랜덤 정수 취득
+1) Math.random으로 0에서 1 미만의 랜덤 실수를 구한 다음, 10을 곱해 0에서 10 미만의 랜덤 실수를 구한다.
+2) 0에서 10 미만의 랜덤 실수에 1을 더해 1에서 10 범위의 랜덤 실수를 구한다.
+3) Math.floor로 1에서 10 범위의 랜덤 실수의 소수점 이하를 떼어 버린 다음 정수를 반환한다.
+*/
+const random = Math.floor(Math.random() * 10 + 1);
+console.log(random); // 1에서 10 범위의 정수
+```
+
+## 30장 Date
+
+> <a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Date">MDN: Date</a>
+
+```
+워낙 많은 프로퍼티와 메서드가 있기 때문에 전부 다루지는 않는다
+공식 문서를 통해 필요한 메서드를 훑어보기를 바란다
+```
+
+<p>표준 빌트인 객체인 Date는 날짜와 시간(연, 월, 일, 시, 분, 초, 밀리초(millisecond/ms, 천분의 1초))을 위한 메서드를 제공하는 <b>① 빌트인 객체이면서 ② 생성자 함수이다. (빌트인 객체이지만, 생성자 함수가 아닌 객체와 대비된다)</b></p>
+
+<p>UTC(협정 세계시 Coordinated Universal Time)는 국제 표준시를 말한다. UTC는 GMT(그리니치 평균시 Greenwich Mean Time)로 불리기도 한다. UTC와 GMT는 초의 소수점 단위에서만 차이가 나기 때문에 일상에서는 혼용되어 사용된다. <b>기술적인 표기에서는 UTC가 사용된다.</b></p>
+
+<p>KST(한국 표준시 Korea Standard Time)는 UTC에 9시간을 더한 시간이다. 즉, KST는 UTC보다 9시간이 빠르다. 예를 들어, UTC 00:00 AM은 KST 09:00 AM이다.</p>
+
+### 30.1 Date 생성자 함수
+
+<p>Date는 생성자 함수다. Date 생성자 함수로 생성한 Date 객체<b>(인스턴스)</b>는 내부적으로 날짜와 시간을 나타내는 정수값을 갖는다. 이 값은 <b>1970년 1월 1일 00:00:00(UTC)</b>을 기점으로 Date 객체가 나타내는 날짜와 시간까지의 밀리초를 나타낸다. 예를 들어, 모든 시간의 기점인 1970년 1월 1일 0시를 나타내는 Date 객체는 내부적으로 정수값 0 을 가지며, 1970년 1월 1일 0시를 기점으로 하루가 지난 1970년 1월 2일 0시를 나타내는 Date 객체는 내부적으로 정수값 86,400,000(24h * 60m * 60s * 1000ms)을 갖늗다.</p>
+
+<p>Date 생성자 함수로 생성한 Date 객체는 기본적으로 ① 현재 날짜와 ② 시간을 나타내는 정수값을 가진다. Date 생성자 함수로 객체를 생성하는 방법은 다음과 같이 4가지가 있다.</p>
+
+```
+new Date() 📍
+new Date(milliseconds)
+new Date(dateString)
+new Date(year, month[, day, hour, minute, second, millisecond])
+```
+
+### new Date()
+
+<p>Date 생성자 함수를 인수 없이 new 연산자와 함께 호출하면 현재 날짜와 시간을 가지는 Date 객체를 반환한다. Date 객체는 내부적으로 날짜와 시간을 나타내는 정수값을 갖지만 Date 객체를 콘솔에 출력하면 기본적으로 날짜와 시간 정보를 출력한다.</p>
+
+```js
+console.log(new Date()); // 2021-08-14T06:35:49.148Z
+```
+
+<p>Date 생성자 함수를 new 연산자 없이 호출하면 Date 객체를 반환하지 않고 날짜와 시간 정보를 나타내는 <b>문자열</b>을 반환한다.</p>
+
+```js
+console.log(Date()); // Sat Aug 14 2021 15:35:29 GMT+0900 (대한민국 표준시)
+```
+
+<p>차이점 보기</p>
+
+```js
+const date1 = new Date();
+
+console.log(typeof date1); // object
+
+const date2 = Date();
+
+console.log(typeof date2); // string
+```
+
+### 30.2 Date 메서드
+
+```
+Date.now
+Date.parse
+Date.UTC
+
+Date.prototype.getFullYear
+Date.prototype.setFullYear
+Date.prototype.getMonth
+Date.prototype.setMonth
+Date.prototype.getDate
+Date.prototype.setDate
+Date.prototype.getHours
+Date.prototype.setHours
+Date.prototype.getMinutes
+Date.prototype.setMinutes
+Date.prototype.getSeconds
+Date.prototype.setSeconds
+Date.prototype.getMilliseconds
+Date.prototype.setMilliseconds
+
+Date.prototype.toDateString
+Date.prototype.toTimeString
+Date.prototype.toLocaleString
+Date.prototype.toLocalTimeString
+```
+
+### 30.3 Date를 활용한 시계 예제
+
+> 빌트인 오브젝트인 Date에 대한 개념을 포함하여 이것만 봐도 무방하다
+
+```js
+(function printNow() {
+  const today = new Date();
+
+  const dayNames = [
+    "(일요일)",
+    "(월요일)",
+    "(화요일)",
+    "(수요일)",
+    "(목요일)",
+    "(금요일)",
+    "(토요일)",
+  ];
+  // getDay 메서드는 해당 요일(0 ~ 6)을 나타내는 정수를 반환한다.
+  const day = dayNames[today.getDay()];
+
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const date = today.getDate();
+  let hour = today.getHours();
+  let minute = today.getMinutes();
+  let second = today.getSeconds();
+  const ampm = hour >= 12 ? "PM" : "AM";
+
+  // 12시간제로 변경
+  hour %= 12;
+  hour = hour || 12; // hour가 0이면 12를 재할당
+
+  // 10미만인 분과 초를 2자리로 변경
+  minute = minute < 10 ? "0" + minute : minute;
+  second = second < 10 ? "0" + second : second;
+
+  const now = `${year}년 ${month}월 ${date}일 ${day} ${hour}:${minute}:${second} ${ampm}`;
+
+  console.log(now);
+
+  // 1초마다 printNow 함수를 재귀 호출한다. 41.2.1절 "setTimeout / clearTimeout" 참고
+  setTimeout(printNow, 1000);
+})();
+
+/*
+2021년 8월 14일 (토요일) 3:41:00 PM
+2021년 8월 14일 (토요일) 3:41:01 PM
+2021년 8월 14일 (토요일) 3:41:02 PM
+2021년 8월 14일 (토요일) 3:41:03 PM
+2021년 8월 14일 (토요일) 3:41:04 PM
+2021년 8월 14일 (토요일) 3:41:05 PM
+2021년 8월 14일 (토요일) 3:41:06 PM
+2021년 8월 14일 (토요일) 3:41:07 PM
+*/
 ```
