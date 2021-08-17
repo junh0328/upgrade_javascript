@@ -1,4 +1,12 @@
-const str = "Hello World";
+const users = [
+  { id: 1, name: "Kim" },
+  { id: 2, name: "Lee" },
+  { id: 3, name: "Park" },
+  { id: 4, name: "Choi" },
+];
+console.log("before find: ", users);
 
-// 인덱스 10부터 5개의 부분 문자열을 반환한다.
-console.log(str.substr(0, 5)); // -> Hello
+/* find 고차함수를 통해 프로퍼티인 id, name을 각각 변경 */
+users.find((user) => user.id === 1).id = 10;
+users.find((user) => user.id === 10).name = "진짜";
+console.log("after changin properties : ", users);

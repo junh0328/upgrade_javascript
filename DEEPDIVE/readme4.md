@@ -789,16 +789,14 @@ initialState.mainPosts = initialState.mainPosts.concat(
 <p><b>함수형 프로그래밍</b>은 순수 함수와 보조 함수의 조합을 통해 로직 내에 존재하는 조건문과 반복문을 제거하여 복잡성을 해결하고 변수의 사용을 억젲하여 상태 변경을 피하려는 프로그래밍 패러다임이다. 함수형 프로그래밍은 순수 함수를 통해 부수 효과를 최대한 억제하여 오류를 피하고 프로그램의 안정성을 높이려는 노력의 일환이라고 할 수 있다.</p>
 
 ```
-Array.prototype.sort
-Array.prototype.forEach
-Array.prototype.map
-Array.prototype.filter
-Array.prototype.reduce
-Array.prototype.some
-Array.prototype.every
-Array.prototype.find
-Array.prototype.findIndex
-Array.prototype.flatMap
+Array.prototype.sort 📍
+Array.prototype.forEach 📍
+Array.prototype.map 📍
+Array.prototype.filter 📍
+Array.prototype.reduce 📍
+Array.prototype.some 📍
+Array.prototype.every 📍
+Array.prototype.find 📍
 ```
 
 <details>
@@ -1054,19 +1052,209 @@ if (!Array.prototype.forEach) {
 
 ### Array.prototype.map
 
+<p>map 메서드는 자신을 호출한 배열의 모든 요소를 순회하면서 인수로 전달받은 콜백 함수를 반복 호출한다. 그리고 콜백 함수의 반환값들로 구성된 새로운 배열을 반환한다. <b>이때 원본 배열은 변경되지 않는다(부수 효과가 없다)</b></p>
+
+```js
+const numbers = [1, 4, 9];
+
+// map 메서드는 numbers 배열의 모든 요소를 순회하면서 콜백 함수를 반복 호출한다.
+// 그리고 콜백 함수의 반환값들로 구성된 새로운 배열을 반환한다.
+const roots = numbers.map((item) => Math.sqrt(item));
+
+// 위 코드는 다음과 같다.
+// const roots = numbers.map(Math.sqrt);
+
+// map 메서드는 새로운 배열을 반환한다
+console.log(roots); // [ 1, 2, 3 ]
+// map 메서드는 원본 배열을 변경하지 않는다
+console.log(numbers); // [ 1, 4, 9 ]
+```
+
+<p><B>①forEach 메서드와 ②map 메서드의 공통점은 자신을 호출한 배열의 모든 요소를 순회하면서 인수로 전달받은 콜백 함수를 반복 호출한다는 것이다.</B> 하지만 <B>①forEach 메서드는 언제나 undefined를 반환하고</B> <B>②map 메서드는 콜백 함수의 반환값들로 구성된 새로운 배열을 반환</B>한다는 것이다. 즉 <b>forEach 메서드는 단순히 반복문을 대체하기 위한 고차 함수이고 Map 메서드는 요소값을 다른 값으로 매핑한 새로운 배열을 생성하기 위한 고차 함수다.</b></p>
+
+<p>map 메서드를 호출한 배열과 map 메서드가 생성하여 반환한 배열은 1:1 매핑한다. forEach 메서드와 마찬가지로 map 메서드의 콜백 함수는 map 메서드를 호출한 배열의 요소값과 인덱스, map 메서드를 호출한 배열 자체, 즉 this를 순차적으로 받을 수 있다. 다시 말해, ① map 메서드를 호출한 배열의 요소값 ② 인덱스 ③ 호출한 배열 자기 자신(this)를 순차적으로 전달한다.</p>
+
+```js
+// map 메서드는 콜백 함수를 호출하면서 3개(요소값, 인덱스, this)의 인수를 전달한다.
+[1, 2, 3].map((item, index, arr) => {
+  console.log(
+    `요소값: ${item}, 인덱스: ${index}, this: ${JSON.stringify(arr)}`
+  );
+  return item;
+});
+/*
+요소값: 1, 인덱스: 0, this: [1,2,3]
+요소값: 2, 인덱스: 1, this: [1,2,3]
+요소값: 3, 인덱스: 2, this: [1,2,3]
+*/
+```
+
 ### Array.prototype.filter
+
+<p>filter 메서드는 자신을 호출한 배열의 모든 요소를 순회하면서 인수로 전달받은 콜백 함수를 반복 호출한다. 그리고 <b>콜백 함수의 반환값이 true (truthy)인 요소로만 구성된 새로운 배열을 바환한다. 이때 원본 배열을 변경되지 않는다.</b></p>
+
+```js
+const numbers = [1, 2, 3, 4, 5];
+
+// filter 메서드는 numbers 배열의 모든 요소를 순회하면서 콜백 함수를 반복 호출한다.
+// 그리고 콜백 함수의 반환값이 true인 요소로만 구성된 새로운 배열을 반환한다.
+// 다음의 경우 numbers 배열에서 홀수인 요소만을 필터링한다(1은 true로 평가된다).
+const odds = numbers.filter((item) => item % 2);
+console.log(odds); // [1, 3, 5]
+```
+
+<p>filter 메서드는 자신을 호출한 배열의 모든 요소를 순회하면서 인수로 전달받은 콜백 함수를 호출한다. filter 메서드가 생성하여 반환한 새로운 배열의 length 프로퍼티 값은 filter 메서드를 호출한 배열의 length 프로퍼티 값과 같거나 작다.</p>
+
+<p>filter 메서드는 filter 메서드를 호출한 ① 배열의 요소값 ② 인덱스 ③ filter 메서드를 호출한 배열(this)을 순차적으로 전달한다.</p>
+
+```js
+// filter 메서드는 콜백 함수를 호출하면서 3개(요소값, 인덱스, this)의 인수를 전달한다.
+[1, 2, 3].filter((item, index, arr) => {
+  console.log(
+    `요소값: ${item}, 인덱스: ${index}, this: ${JSON.stringify(arr)}`
+  );
+  return item % 2;
+});
+/*
+요소값: 1, 인덱스: 0, this: [1,2,3]
+요소값: 2, 인덱스: 1, this: [1,2,3]
+요소값: 3, 인덱스: 2, this: [1,2,3]
+*/
+```
+
+<p>filter 메서드를 사용해 특정 요소를 제거할 경우 특정 요소가 중복되어 있다면 중복된 요소가 모두 제거된다. 특정 요소를 하나만 제거하려면 indexOf 메서드를 통해 특정 요소의 인덱스를 취득한 다음 spilce 메서드를 사용한다.</p>
 
 ### Array.prototype.reduce
 
-### Array.prototype.some
+<p>reduce 메서드는 자신을 호출한 배열을 모든 요소를 순회하며 인수로 전달받은 콜백 함수를 반복 호출한다. 그리고 콜백 함수의 반환값을 다음 순회 시에 콜백 함수의 첫 번째 인수로 전달하면서 콜백 함수를 호출하여 <b>하나의 결과값을 만들어 반환한다. 이떼 원본 배열은 변경되지 않는다</b></p>
 
-### Array.prototype.every
+<p>reduce 메서드는 첫 번째 인수로 콜백 함수, 두 번째 인수로 초기값을 전달받는다. reduce 메서드의 콜백 함수에는 4개의 인수 <b>① 초기값 또는 콜백 함수의 이전 반환값 ② reduce 메서드를 호출한 배열의 요소값 ③ 인덱스 ④ reduce 메서드를 호출한 배열 자체(this)</b>가 전달된다</p>
+
+```js
+// [1, 2, 3, 4]의 모든 요소의 누적을 구한다.
+const sum = [1, 2, 3, 4].reduce(
+  (accumulator, currentValue, index, array) => accumulator + currentValue,
+  0
+);
+
+console.log(sum); // 10
+```
+
+|     구분     | accumulator(초기값) | currentValue(배열의 요소값) | index | 자기자신(array) |       콜백 함수의 반환값        |
+| :----------: | :-----------------: | :-------------------------: | :---: | :-------------: | :-----------------------------: |
+| 첫 번째 순회 |     0 (초기값)      |              1              |   0   |    [1,2,3,4]    | 1 (accumulator + currentValue)  |
+| 두 번째 순회 |          1          |              2              |   1   |    [1,2,3,4]    | 3 (accumulator + currentValue)  |
+| 세 번째 순회 |          3          |              3              |   2   |    [1,2,3,4]    | 6 (accumulator + currentValue)  |
+| 4 번째 순회  |          6          |              4              |   3   |    [1,2,3,4]    | 10 (accumulator + currentValue) |
+
+<p>이처럼 reduce 메서드는 초기값과 배열의 첫 번째 요소값을 콜백 함수에게 인수로 전달하면서 호출하고 다음 순회에는 콜백 함수의 반환값과 두 번째 요소 값을 콜백 함수의 인수로 전달하면서 호출한다. 이러한 과정을 반복하여 <b>reduce 메서드는 하나의 결과값을 반환한다.</b></p>
+
+<p>주의할 것은 두 번째 인수로 전달하는 초기값이 옵션이라는 것이다. 즉 reduce 메서드의 두 번째 인수로 전달하는 초기값은 생략할 수 있다.</p>
+
+```js
+// reduce 메서드의 두 번째 인수, 즉 초기값을 생략했다.
+const sum = [1, 2, 3, 4].reduce((acc, cur) => acc + cur);
+console.log(sum); // 10
+```
+
+<p>하지만 reduce 메서드를 호출할 때는 언제나 초기값을 전달하는 것이 안전하다. 빈 배열로 reduce 메서드를 호출할 경우 에러가 나기 때문이다</p>
+
+```js
+const sum = [].reduce((acc, cur) => acc + cur);
+// TypeError: Reduce of empty array with no initial value
+```
+
+<p>초기값을 전달할 경우 에러가 나지 않는다.</p>
+
+```js
+const sum = [].reduce((acc, cur) => acc + cur, 0);
+console.log(sum); // 0
+```
+
+<p>객체의 특정 프로퍼티 값을 합산하는 경우네느 반드시 초기값을 전달해야 한다.</p>
+
+```js
+const products = [
+  { id: 1, price: 100 },
+  { id: 2, price: 200 },
+  { id: 3, price: 300 },
+];
+
+/*
+1번째 순회 : acc => 0,   cur => { id: 1, price: 100 }
+2번째 순회 : acc => 100, cur => { id: 2, price: 200 }
+3번째 순회 : acc => 300, cur => { id: 3, price: 300 }
+*/
+const priceSum = products.reduce((acc, cur) => acc + cur.price, 0);
+
+console.log(priceSum); // 600
+```
+
+### Array.prototype.some (조건에 만족하는 truthy한 값이 하나라도 있으면 true를 반환)
+
+<p>some 메서드는 자신을 호출한 배열의 요소를 순회하면서 인수로 전달된 콜백 함수를 호출한다. 이때 some 메서드는 콜백 함수의 반환값이 단 한번이라도 참이면 true, 모두 거짓이면 false를 반환한다. <b>단, some 메서드를 호출한 배열이 빈 배열인 경우 언제나 false를 반환하므로 주의하기 바란다.</b></p>
+
+```js
+// 배열의 요소 중에 10보다 큰 요소가 1개 이상 존재하는지 확인
+[5, 10, 15].some((item) => item > 10); // -> true
+
+// 배열의 요소 중에 0보다 작은 요소가 1개 이상 존재하는지 확인
+[5, 10, 15].some((item) => item < 0); // -> false
+
+// 배열의 요소 중에 'banana'가 1개 이상 존재하는지 확인
+["apple", "banana", "mango"].some((item) => item === "banana"); // -> true
+
+// some 메서드를 호출한 배열이 빈 배열인 경우 언제나 false를 반환한다.
+[].some((item) => item > 3); // -> false
+```
+
+### Array.prototype.every (모두 truthy한 값이라면 true를 반환)
+
+<p>every 메서드는 자신을 호출한 배열의 요소를 순회하면서 인수로 전달된 콜백 함수를 호출한다. 이때 <b>콜백 함수의 반환값이 모두 참이면 true, 단 한 번이라도 거짓이면 false를 반환한다.</b></p>
+
+```js
+// 배열의 모든 요소가 3보다 큰지 확인
+[5, 10, 15].every((item) => item > 3); // -> true
+
+// 배열의 모든 요소가 10보다 큰지 확인
+[5, 10, 15].every((item) => item > 10); // -> false
+
+// every 메서드를 호출한 배열이 빈 배열인 경우 언제나 true를 반환한다.
+[].every((item) => item > 3); // -> true
+```
 
 ### Array.prototype.find
 
-### Array.prototype.findIndex
+<p>ES6에서 도입된 find 메서드는 자신을 호출한 배열의 요소를 순회하면서 인수로 전달된 콜백 함수를 호출하여 반환값이 true인 첫 번째 요소를 반환한다. 콜백 함수의 반환값이 true인 요소가 존재하지 않는다면 undefined를 반환한다.</p>
 
-### Array.prototype.flatMap
+```js
+const users = [
+  { id: 1, name: "Lee" },
+  { id: 2, name: "Kim" },
+  { id: 2, name: "Choi" },
+  { id: 3, name: "Park" },
+];
+
+// id가 2인 첫 번째 요소를 반환한다. find 메서드는 배열이 아니라 요소를 반환한다.
+users.find((user) => user.id === 2); // -> {id: 2, name: 'Kim'}
+```
+
+<p>filter 메서드는 콜백 함수의 호출 결과가 true인 요소만 추출한 새로운 배열을 반환한다. 하지만 find 메서드는 <b>콜백 함수의 반환값이 true인 첫 번째 요소를 반환하므로 find의 결과값은 배열이 아닌 해당 요소(element)값이다.</b></p>
+
+```js
+const users = [
+  { id: 1, name: "Kim" },
+  { id: 2, name: "Lee" },
+  { id: 3, name: "Park" },
+  { id: 4, name: "Choi" },
+];
+console.log("before find: ", users);
+
+/* find 고차함수를 통해 프로퍼티인 id, name을 각각 변경 */
+users.find((user) => user.id === 1).id = 10;
+users.find((user) => user.id === 10).name = "진짜";
+console.log("after changin properties : ", users);
+```
 
 </details>
 
