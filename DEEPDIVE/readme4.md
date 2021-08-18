@@ -8,7 +8,7 @@
 - [30장 Date](#30장-Date)
 - [31장 RegExp](#31장-RegExp)
 - [32장 String](#32장-String)
-- <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme4.md">다음 섹션으로</a>
+- <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme5.md">다음 섹션으로</a>
 
 ## 27장 배열
 
