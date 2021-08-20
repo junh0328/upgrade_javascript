@@ -1864,6 +1864,56 @@ Prefixer { prefix: '-webkit-' }
 
 ### 26.4 Rest 파라미터
 
+> 단어의 어원에 집중에 보자 Rest 파리미터는 '파라미터'이므로 함수에서 (...)을 통해 매개변수를 무한하게 받는다는 것을 의미한다<br/>
+> 따라서 spread 연산자와 헷갈릴만 하지 않다 오로지 함수에서만 사용되기 때문이다
+
+### 한눈에 보기
+
+```js
+function User(name, age, ...skills) {
+  // ① 암묵적으로 빈 객체를 생성
+  // this = {};
+
+  // ② this 바인딩을 통해 넘겨받은 인수 바인딩
+  this.name = name;
+  this.age = age;
+  this.skills = skills;
+
+  this.saySkill = function () {
+    console.log(skills);
+  };
+
+  // ③ 암묵적으로 전달
+  // return this;
+}
+
+const 준희 = new User("이준희", 25, "JS", "React", "typescript");
+const 준호 = new User("이준호", 25, "R", "Python");
+
+console.log(준희);
+console.log(준호);
+
+준희.saySkill();
+준호.saySkill();
+
+/*
+User {
+  name: '이준희',
+  age: 25,
+  skills: [ 'JS', 'React', 'typescript' ],
+  saySkill: [Function (anonymous)]
+}
+User {
+  name: '이준호',
+  age: 25,
+  skills: [ 'R', 'Python' ],
+  saySkill: [Function (anonymous)]
+}
+[ 'JS', 'React', 'typescript' ]
+[ 'R', 'Python' ]
+*/
+```
+
 ### 기본 문법
 
 <p>Rest 파라미터는 매개변수 이름 앞에 세개의 점 ...을 붙여서 정의한 매개변수를 의미한다. <b>Rest 파라미터는 함수에 전달된 인수들의 목록을 배열로 전달받는다.</b></p>

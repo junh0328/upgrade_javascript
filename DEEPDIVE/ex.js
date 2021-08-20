@@ -1,14 +1,14 @@
-const user = {
-  name: "junhee",
-  age: 25,
-  address: {
-    zipCode: 14063,
-    city: "Anyang",
-  },
+let user = { name: "Mike" };
+let info = { age: 30 };
+let fe = ["js", "react"];
+let lang = ["korean", "english"];
+
+console.log("before user: ", user);
+
+user = {
+  ...user,
+  ...info,
+  skills: [...fe, ...lang],
 };
 
-const {
-  address: { city },
-} = user;
-
-console.log(city);
+console.log("after user: ", user);

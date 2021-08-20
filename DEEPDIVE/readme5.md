@@ -439,6 +439,34 @@ console.log(arr); // [1, 2, 3]
 
 <p>ES6에서 도입된 스프레드 문법(spread syntax = 전개 문법) ...은 <b>하나로 뭉쳐 있는 여러 값들의 집합을 펼쳐서(전개, 분산하여, spread) 개별적인 값들의 목록으로 만든다.</b></p>
 
+### 한줄 요약
+
+```js
+let user = { name: "Mike" };
+let info = { age: 30 };
+let fe = ["js", "react"];
+let lang = ["korean", "english"];
+
+console.log("before user: ", user);
+
+user = {
+  ...user,
+  ...info,
+  skills: [...fe, ...lang],
+};
+
+console.log("after user: ", user);
+
+/*
+before user:  { name: 'Mike' }
+after user:  {
+  name: 'Mike',
+  age: 30,
+  skills: [ 'js', 'react', 'korean', 'english' ]
+}
+*/
+```
+
 <p>스프레드 문법을 사용할 수 있는 대상은</p>
 
 ```
@@ -458,15 +486,6 @@ console.log(...[1, 2, 3]); // 1 2 3
 
 // 문자열은 이터러블이다.
 console.log(..."Hello"); // H e l l o
-
-// Map과 Set은 이터러블이다.
-console.log(
-  ...new Map([
-    ["a", "1"],
-    ["b", "2"],
-  ])
-); // [ 'a', '1' ] [ 'b', '2' ]
-console.log(...new Set([1, 2, 3])); // 1 2 3
 
 /* 이터러블이 아닌 일반 객체는 스프레드 문법의 대상이 될 수 없다. */
 console.log(...{ a: 1, b: 2 });
@@ -561,6 +580,14 @@ console.log(arr); // [1, 2, 3, 4]
 ```js
 // ES6
 const arr = [...[1, 2], ...[3, 4]];
+console.log(arr); // [1, 2, 3, 4]
+```
+
+```js
+const oneTwo = [1, 2];
+const threeFour = [3, 4];
+
+const arr = [...oneTwo, ...threeFour];
 console.log(arr); // [1, 2, 3, 4]
 ```
 
