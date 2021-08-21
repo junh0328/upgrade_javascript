@@ -6,6 +6,8 @@
 
 ## 38장 브라우저 렌더링 과정
 
+> 파싱, 렌더링
+
 ```
 HTML 파싱과 DOM 생성
 CSS 파싱과 CSSOM 생성
@@ -44,6 +46,8 @@ CSS 파싱과 CSSOM 생성
 
 ### 38.1 요청과 응답
 
+> 리소스, DNS
+
 <p>브라우저의 핵심 기능은 필요한 리소스를 서버에 요청(request)하고 서버로부터 응답(response)받아 브라우저에 시각적으로 <b>렌더링</b>하는 것이다. 즉, 렌더링에 필요한 리소스(HTML, CSS, JS, 이미지, 폰트, ...)는 모두 서버에 존재하므로 필요한 리소스를 서버에 요청하고 서버가 응답한 리소스를 파싱하여 렌더링하는 것이다. </p>
 
 ```
@@ -52,6 +56,24 @@ CSS 파싱과 CSSOM 생성
 ③ URL의 호스트 이름(도메인)이 DNS를 통해 IP 주소로 변환되고 (https://159.29.1.47:8080)
 ④ 이 IP 주소를 갖는 서버에게 요청을 전송한다 GET https://159.29.1.47:8080/index.html
 ```
+
+### 리소스
+
+[리소스](https://developer.mozilla.org/ko/docs/Web/HTTP/Basics_of_HTTP/Identifying_resources_on_the_Web)
+
+<p>
+HTTP 요청 대상을 "리소스"라고 부르는데, 그에 대한 본질을 이 이상으로 정의할 수 없습니다. 그것은 문서, 사진 또는 다른 어떤 것이든 될 수 있습니다. 각 리소스는 리소스 식별을 위해 HTTP 전체에서 사용되는 Uniform Resource Identifier (URI)에 의해 식별됩니다.
+
+웹에서 리소스에 대한 식별과 위치는 대부분 단일 URL(Uniform Resource Locator, URI의 한 종류)로 제공됩니다. 그러나 때로 식별과 위치가 동일한 URI로 제공되지 않는데에는 이유가 있습니다. 요청된 리소스에 대해 클라이언트가 다른 위치에서 접근하도록 해야 할 경우, HTTP는 특정 HTTP 헤더인 Alt-Svc (en-US)을 사용합니다.
+
+</p>
+
+### DNS
+
+<p>
+DNS (Domain Name System)는 인터넷에 연결된 리소스를 위한 계층적이고 분산된 명명 시스템입니다. DNS는 도메인 이름 목록 과 연결된 리소스(예: IP 주소)를 유지 관리 합니다.
+
+DNS의 가장 두드러진 기능은 인간에게 친숙한 도메인 이름(예: mozilla.org)을 숫자 IP 주소 (예: 151.106.5.172)로 변환하는 것입니다. 도메인 이름을 적절한 IP 주소에 매핑하는 이 프로세스를 DNS 조회라고 합니다. 반대로 rDNS( 역 DNS 조회 )는 IP 주소와 연결된 도메인 이름을 확인하는 데 사용됩니다.</p>
 
 <img width="500" src="./images/35_1.jpg" alt="URI">
 
@@ -72,6 +94,8 @@ CSS 파싱과 CSSOM 생성
 <img width="400" src="./images/35_3.jpg" alt="http/2.0">
 
 ### 38.3 HTML 파싱과 DOM 생성
+
+> DOM
 
 <p>브라우저의 요청에 의해 응답한 HTML 문서는 <b>문자열로 이루어진 순수한 텍스트다.</b> 이러한 HTML 문서를 브라우저에서 시각적인 픽셀로 렌더링하려면 <b>html 문서를 브라우저가 이해할 수 있는 자료구조(객체)로 변환하여 메모리에 저장해야 한다.</b></p>
 
@@ -99,7 +123,7 @@ CSS 파싱과 CSSOM 생성
 
 <details>
 
-<img src="./images/35_4.jpeg" alt="DOM">
+<img width="600" src="./images/35_4.jpeg" alt="DOM">
 
 </details>
 
@@ -116,6 +140,8 @@ CSS 파싱과 CSSOM 생성
 > 즉, DOM은 HTML 문서를 파싱한 결과물이다
 
 ### 38.4 CSS 파싱과 CSSOM 생성
+
+> CSSOM
 
 <p>브라우저의 렌더링 엔진은 HTML을 <b>처음부터 한 줄 씩 순차적으로 파싱하여 DOM을 생성해 나간다.</b> 이처럼 렌더링 엔진은 DOM을 생성해 나가다 CSS를 로드하는 link 태그나 style 태그를 만나면 <b>DOM 생성을 일시 중단한다.</b> 그리고 link 태그의 href 어트리뷰트(속성)에 지정된 CSS 파일을 서버에 요청하여 로드한 CSS 파일이나 style 태그 내의 CSS를 HTML과 동일한 파싱 과정(바이트 > 문자 > 토큰 > 노드 > CSSOM)을 거치며 해석하여 CSSOM(CSS Object Model)을 생성한다. 이후 CSS 파싱이 완료되면 HTML 파싱이 중단된 지점부터 다시 HTML을 파싱하기 시작하여 DOM을 생성한다.</p>
 
@@ -147,6 +173,8 @@ ul {
 <img width="600" src="./images/35_5.JPG" alt="CSSOM 생성">
 
 ### 38.5 렌더 트리 생성
+
+> 렌더 트리
 
 <p>렌더링 엔진은 서버로부터 응답된 HTML과 CSS를 파싱하여 각각 DOM과 CSSOM를 생성한다. 그리고 ① DOM과 ② CSSOM은 렌더링을 위해 <b>렌더 트리(render tree)</b>로 결합된다.</p>
 
