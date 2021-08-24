@@ -1,32 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
+<html>
+  <body>
+    <div id="foo">Hello</div>
+  </body>
   <script>
-var x = 10; // 전역 변수
-
-function foo() {
-  console.log('this.y: ',this.y)
-  // 선언하지 않은 식별자에 값을 할당
-  y = 20; // window.y = 20;
-  console.log('this.y: ',this.y)
-}
-foo();
-
-console.log('window.y:',window.y)
-setTimeout(() => console.log('window.x:',window.x))
-console.log('window.y:',window.y)
-
-
-// 선언하지 않은 식별자 y를 전역에서 참조할 수 있다.
-console.log('x+y:',x + y); // 30
-
-
+    // 에러 이벤트를 강제로 발생시켜서 자바스크립트 코드가 실행되도록 한다.
+    document.getElementById(
+      "foo"
+    ).innerHTML = `<img src="x" onerror="alert(document.cookie)">`;
   </script>
-</body>
 </html>

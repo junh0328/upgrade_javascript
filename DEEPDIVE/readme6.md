@@ -3,6 +3,7 @@
 ## 목차
 
 - [38장 브라우저 렌더링 과정](#38장-브라우저-렌더링-과정)
+- [39장 DOM](#39장-DOM)
 
 ## 38장 브라우저 렌더링 과정
 
@@ -127,7 +128,7 @@ DNS의 가장 두드러진 기능은 인간에게 친숙한 도메인 이름(예
 
 </details>
 
-<p>① 서버에ㅔ 존재하던 HTML 파일이 브라우저의 요청에 의해 응답된다. 이때 서버는 브라우저가 요청한 HTML 파일을 읽어 들여 메모리에 저장한 다음 메모리에 저장된 바이트(2진수)를 인터넷을 경유하여 응답한다</p>
+<p>① 서버에 존재하던 HTML 파일이 브라우저의 요청에 의해 응답된다. 이때 서버는 브라우저가 요청한 HTML 파일을 읽어 들여 메모리에 저장한 다음 메모리에 저장된 바이트(2진수)를 인터넷을 경유하여 응답한다</p>
 
 <P>② 브라우저는 서버가 응답한 HTML 문서를 <b>바이트(2진수) 형태로</b> 응답받는다. 그리고 응답된 바이트 형태의 HTML 문서는 meta 태그의 charset 어트리뷰트에 의해 지정된 인코딩 방식(여기서는 UTF-8)을 기준으로 문자열로 변환된다. 브라우저는 이를 확인하고 문자열로 변환한다.</P>
 
@@ -275,3 +276,319 @@ ul {
 <p>async 어트리뷰트와 마찬가지로 HTML 파싱과 외부 자바스크립트 파일의 로드가 비동기적으로 동시에 진행된다. 단, <b>자바스크립트의 파싱과 실행은 HTML 파싱이 완료된 직후, 즉 DOM 생성이 완료된 직후 진행된다.</b> 따라서 DOM 생성이 완료된 이후 실행되어야 할 자바스크립트에 유용하다.</p>
 
 <img width="400" src="./images/35_11.JPG" alt="defer">
+
+## 39장 DOM
+
+```
+39.1 노드
+39.2 요소 노드 취득
+39.3 노드 탐색
+39.4 노드 정보 취득
+39.5 요소 노드의 텍스트 조작
+39.6 DOM 조작
+39.7 어트리뷰트
+39.8 스타일
+```
+
+```
+DOM은 Documnet Object Model의 약어로, HTML 파일을 파싱하여 트리구조로 나타낸 자료구조입니다
+추가적으로 문서의 계층적 구조와 정보를 표현하여 이를 제어할 수 있는 API, DOM API를 제공합니다
+
+이전부터 공부해왔던 내용이기 때문에, 각 단어의 뜻과 기존의 개념에서 헷갈렸던 부분을 위주로 정리하겠습니다
+```
+
+<p>브라우저의 렌더링 엔진은 HTML 문서를 파싱하여 브라우저가 이해할 수 있는 자료구조인 DOM을 생성한다.<b>DOM은 HTML 문서의 계층적 구조와 정보를 표현하며 이를 제어할 수 있는 API, 즉 프로퍼티와 메서드를 제공하는 트리 자료구조다.</b></p>
+
+### 39.1 노드
+
+### 39.1.1 HTML 요소와 노드 객체
+
+HTML 요소는 HTML 문서를 구성하는 개별적인 요소를 의미한다.
+
+<img width="400" src="./images/36_1.jpg" alt="HTML element">
+
+<p><b>① HTML 요소</b>는 렌더링 엔진에 의해 파싱되어 <b>② DOM을 구성하는 요소 노드 객체로 변환된다.</b> 이때 HTML 요소 어트리뷰트는 어트리뷰트 노드로, HTML 요소의 텍스트 콘텐츠는 텍스트 노드로 변환된다.</p>
+
+<img width="400" src="./images/36_2.jpg" alt="HTML element">
+
+<p>HTML 문서는 HTML 요소들의 집합으로 이뤄지며, HTML 요소는 중첩 관계를 갖는다. 이 중첩 관계에 의해 계층적인 부자(parent-child)관계가 형성된다. 이러한 HTML 요소 간의 부자 관계를 반영하여 HTML 문서의 구성 요소인 HTML요소를 개체화한 모든 노드 객체들을 <b>트리 자료 구조</b>로 구성한다.</p>
+
+### 39.1.2 노드 객체의 타입
+
+예를 들어, 다음 HTML 문서를 렌더링 엔진이 파싱한다고 생각해보자.
+
+> 바이트 > 문자 > 토큰 > 노드 > DOM
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <ul>
+      <li id="apple">Apple</li>
+      <li id="banana">Banana</li>
+      <li id="orange">Orange</li>
+    </ul>
+    <script src="app.js"></script>
+  </body>
+</html>
+```
+
+렌더링 엔진은 위 HTML 문서를 파싱하여 다음과 같이 DOM을 생성한다.
+
+<img width="600" src="./images/36_3.jpg" alt="DOM">
+
+이처럼 DOM은 노드 객체의 계층적인 구조로 구성된다. 노드 객체는 종류가 있고 상속 구조를 갖는다. 노드 객체는 총 12개의 종류(노드 타입)가 있다. 이 중에서 중요한 노드 타입은 다음과 같이 4가지다.
+
+### 문서 노드 (document node)
+
+<p>문서 노드는 <b>DOM 트리의 최상위에 존재하는 루트 노드로서 document 객체를 가리킨다.</b> document 객체는 브라우저가 렌더링한 HTML 문서 전체를 가리키는 객체로서 전역 객체 window의 document 프로퍼티에 바인딩되어 있다. 따라서 문서 노드는 window.documnet 또는 document로 참조할 수 있다.</p>
+
+<p>브라우저 환경의 모든 자바스크립트 코드는 script 태그에 의해 분리되어 있어도 하나의 전역 객체 window를 공유한다. 따라서 window의 document 프로퍼티에 바인딩되어 있는 하나의 document 객체를 바라본다. <b>즉, HTML 문서당 document 객체는 유일하다.</b></p>
+
+### 요소 노드 (element node)
+
+<p>요소 노드는 HTML 요소를 가리키는 객체다. 요소 노드는 HTML 요소 간의 중첩에 의해 부자 관계를 가지며, 이 부자 관계를 통해 정보를 구조화한다. 따라서 요소 노드는 문서의 구조를 표현한다고 할 수 있다.</p>
+
+### 어트리뷰트 노드 (attribute node)
+
+<p>어트리뷰트 노드는 HTML 요소의 어트리뷰트를 가리키는 객체다. 어트리뷰트 노드는 어트리뷰트가 지정된 HTML 요소의 요소 노드와 연결되어 있다. 단, 요소 노드는 부모 노드와 연결되어 있지만 어트리뷰트 노드는 부모 노드와 연결되어 있지 않고 요소 노드에만 연결되어 있기 때문에 어트리뷰트를 참조하거나 변경하려면 먼저 요소 노드에 접근해야 한다.</p>
+
+### 텍스트 노드 (text node)
+
+<p>텍스트 노드는 HTML 요소와 텍스트를 가리키는 객체다. 요소 노드가 문서의 구조를 표현한다면 텍스트 노드는 문서의 정보를 표현한다고 할 수 있다.</p>
+
+### 39.1.3 노드 객체의 상속 구조
+
+<p>DOM은 HTML 문서의 계층적 구조와 정보를 표현하며, 이를 제어할 수 있는 API (DOM API)를 제공하는 트리 자료구조이다. DOM을 구성하는 노드 객체는 ECMAScript 사양에 정의된 <b>표준 빌트인 객체(standard built-in objects)</b>가 아니라 브라우저 환경에서 추가적으로 제공하는 <b>호스트 객체(host objects)</b>다. 하지만 노드 객체도 자바스크립트 객체이므로 프로토타입에 의한 상속 구조를 갖는다. 노드 객체의 상속 구조는 다음과 같다.</p>
+
+<img width="600" src="./images/36_4.jpg" alt="노드 객체의 상속 구조">
+
+<p>위 그림과 같이 <b>모든 노드 객체는 ① Object ② EvnetTarget ③ Node 인터페이스를 상속받는다.</b> 예를 들어 input 요소를 파싱하여 객체화한 input 요소 노드 객체는 HTMLInputElement > HTMLElement > Element > Node > EventTarget > Object의 prototype에 바인딩되어 있는 프로토타입 객체를 상속받는다. 즉 input 요소 노드 객체는 프로토타입 체인에 있는 모든 프로토타입의 프로퍼티나 메서드를 상속받아 사용할 수 있다.</p>
+
+<p>배열이 객체인 동시에 배열인 것처럼 input 요소 노드 객체도 다음과 같이 다양한 특성을 갖는 객체이며, 이러한 특성을 나타내는 기능들을 상속을 통해 제공받는다.</p>
+
+| input 요소 노드 객체의 특성                                                | 프로토타입을 제공하는 객체 |
+| :------------------------------------------------------------------------- | :------------------------- |
+| 객체                                                                       | Object                     |
+| 이벤트를 발생시키는 객체                                                   | EventTarget                |
+| 트리 자료구조의 노드 객체                                                  | Node                       |
+| 브라우저가 렌더링할 수 있는 웹 문서의 요소(HTML, XML, SVG)를 표현하는 객체 | Element                    |
+| 웹 문서의 요소 중에서 HTML 요소를 표현하는 객체                            | HTMLElement                |
+| HTML 요소 중에서 input 요소를 표현하는 객체                                | HTMLInputElement           |
+
+### 39.2 요소 노드 취득
+
+<p>HTML의 구조나 내용 또는 스타일 등을 동적으로 조작하려면 먼저 요소 노드를 취득해야 한다. 텍스트 노드는 요소 노드의 자식 노드이고, 어트리뷰트 노드는 요소 노드와 연결되어 있기 때문에 텍스트 노드나 어트리뷰트 노드를 조작하고자 할 때도 마찬가지다.</p>
+
+<p>DOM은 요소 노드를 취득할 수 있는 다양한 메서드를 제공한다.</p>
+
+### id를 이용한 요소 노드 취득
+
+```
+Document.prototype.getElementById
+```
+
+### 태그 이름을 이용한 요소 노드 취득
+
+```
+Document.prototype.getElementsByTagName
+Element.prototype.getElementsByTagName
+```
+
+```
+document.getElementsByTagName('li') (o)
+$fruits..getElementsByTagName('li') (o)
+```
+
+### class를 이용한 요소 노드 취득
+
+```
+Document.prototype.getElementsByClassName
+Element.prototype.getElementsByClassName
+```
+
+### CSS 선택자를 이용한 요소 노드 취득
+
+CSS 선택자는 스타일을 적용하고자 하는 HTML 요소를 특정할 때 사용하는 문법이다.
+
+```
+Document.prototype.querySelector
+Element.prototype.querySelector
+```
+
+```css
+/* 전체 선택자: 모든 요소를 선택 */
+* {
+  ...;
+}
+/* 태그 선택자: 모든 p 태그 요소를 모두 선택 */
+p {
+  ...;
+}
+/* id 선택자: id 값이 'foo'인 요소를 모두 선택 */
+#foo {
+  ...;
+}
+/* class 선택자: class 값이 'foo'인 요소를 모두 선택 */
+.foo {
+  ...;
+}
+/* 어트리뷰트 선택자: input 요소 중에 type 어트리뷰트 값이 'text'인 요소를 모두 선택 */
+input[type="text"] {
+  ...;
+}
+/* 후손 선택자: div 요소의 후손 요소 중 p 요소를 모두 선택 */
+div p {
+  ...;
+}
+/* 자식 선택자: div 요소의 자식 요소 중 p 요소를 모두 선택 */
+div > p {
+  ...;
+}
+/* 인접 형제 선택자: p 요소의 형제 요소 중에 p 요소 바로 뒤에 위치하는 ul 요소를 선택 */
+p + ul {
+  ...;
+}
+/* 일반 형제 선택자: p 요소의 형제 요소 중에 p 요소 뒤에 위치하는 ul 요소를 모두 선택 */
+p ~ ul {
+  ...;
+}
+/* 가상 클래스 선택자: hover 상태인 a 요소를 모두 선택 */
+a:hover {
+  ...;
+}
+/* 가상 요소 선택자: p 요소의 콘텐츠의 앞에 위치하는 공간을 선택 일반적으로 content 프로퍼티와 함께 사용된다. */
+p::before {
+  ...;
+}
+```
+
+HTML 문서의 모든 요소 노드를 취득하려면 querySelectorAll 메서드의 인수로 전체 선택자 '\*'를 전달한다
+
+```js
+// 모든 요소 노드를 탐색하여 반환한다.
+const $all = document.querySelectorAll("*");
+// -> NodeList(8) [html, head, body, ul, li#apple, li#banana, li#orange, script]
+```
+
+### 39.3 노드 탐색
+
+### 39.4 노드 정보 취득
+
+### 39.5 요소 노드의 텍스트 조작
+
+### 39.6 DOM 조작
+
+<p>DOM 조작은 새로운 노드를 생성하여 DOM에 추가하거나 기존 노드를 삭제 또는 교체하는 것을 말한다. <b>DOM 조작에 의해 DOM에 새로운 노드가 추가되거나 삭제되면 리플로우와 리페인트가 발생하는 원인이 되므로 성능에 영향을 준다. 따라서 복잡한 콘텐츠를 다루는 DOM 조작은 성능 최적화를 위해 주의해서 다루어야 한다.</b></p>
+
+### innerHTML
+
+```
+Element.prototype.innerHTML
+```
+
+<p>Element.prototype.innerHTML 프로퍼티는 setter와 getter 모두 존재하는 접근자 프로퍼티로서 요소 노드(element node)의 HTML 마크업을 취득하거나 변경한다. 요소 노드의 innerHTML 프로퍼티를 참조하면 요소 노드의 콘텐츠 영역(시작 태그와 종료 태그 사이)내에 포함된 모든 HTML 마크업을 문자열로 반환한다.</p>
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello <span>world!</span></div>
+  </body>
+  <script>
+    // #foo 요소의 콘텐츠 영역 내의 HTML 마크업을 문자열로 취득한다.
+    console.log(document.getElementById("foo").innerHTML);
+    // "Hello <span>world!</span>"
+  </script>
+</html>
+```
+
+<p>요소 노드의 innerHTML 프로퍼티에 문자열을 할당하면 요소 노드의 모든 자식 노드가 제거되고 할당한 문자열에 포함되어 있는 HTML 마크업이 파싱되어 요소 노드의 자식 노드로 DOM에 반영된다.</p>
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello <span>world!</span></div>
+  </body>
+  <script>
+    // HTML 마크업이 파싱되어 요소 노드의 자식 노드로 DOM에 반영된다.
+    document.getElementById("foo").innerHTML = "Hi <span>there!</span>";
+  </script>
+</html>
+```
+
+<img width="400" src="./images/36_5.png" alt="innerHTML">
+
+<p>이처럼 innerHTML 프로퍼티를 사용하면 HTML 마크업 문자열로 간단히 DOM 조작이 가능하다</p>
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li class="apple">Apple</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById("fruits");
+
+    // 노드 추가
+    $fruits.innerHTML += '<li class="banana">Banana</li>';
+
+    // 노드 교체
+    $fruits.innerHTML = '<li class="orange">Orange</li>';
+
+    // 노드 삭제
+    $fruits.innerHTML = "";
+  </script>
+</html>
+```
+
+<img width="400" src="./images/36_6.png" alt="innerHTML">
+
+### XSS (Cross-Site Scripting Attacks)
+
+<p>요소 노드의 innerHTML 프로퍼티에 할당한 HTML 마크업 문자열은 렌더링 엔진에 의해 파싱되어 요소 노드의 자식으로 DOM에 반영된다. 이때 사용자로부터 입력받은 데이터를 그대로 innerHTML 프로퍼티에 할당하는 것은 <B>크로스 사이트 스크립팅 공격(XSS: Cross-Site Scripting Attacks)에 취약하므로 위험하다.</B> HTML 마크업 내에 자바스크립트 악성 코드가 포함되어 있다면 파싱 과정에서 그대로 실행될 가능성이 있기 때문이다.</p>
+
+<p>innerHTML 프로퍼티로 스크립트 태그를 삽입하여 자바스크립트가 실행되도록 하는 예제를 살펴보자</p>
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello</div>
+  </body>
+  <script>
+    // innerHTML 프로퍼티로 스크립트 태그를 삽입하여 자바스크립트가 실행되도록 한다.
+    // HTML5는 innerHTML 프로퍼티로 삽입된 script 요소 내의 자바스크립트 코드를 실행하지 않는다.
+    document.getElementById('foo').innerHTML
+      = '<script>alert(document.cookie)</script>';
+  </script>
+</html>
+```
+
+<p>다음의 간단한 크로스 스크립팅 공격은 모던 브라우저에서도 동작한다</p>
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello</div>
+  </body>
+  <script>
+    // 에러 이벤트를 강제로 발생시켜서 자바스크립트 코드가 실행되도록 한다.
+    document.getElementById(
+      "foo"
+    ).innerHTML = `<img src="x" onerror="alert(document.cookie)">`;
+  </script>
+</html>
+```
+
+### 39.7 어트리뷰트
+
+### 39.8 스타일
