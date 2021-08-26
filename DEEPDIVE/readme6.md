@@ -4,6 +4,7 @@
 
 - [38장 브라우저 렌더링 과정](#38장-브라우저-렌더링-과정)
 - [39장 DOM](#39장-DOM)
+- [40장 이벤트](#40장-이벤트)
 
 ## 38장 브라우저 렌더링 과정
 
@@ -339,11 +340,15 @@ HTML 요소는 HTML 문서를 구성하는 개별적인 요소를 의미한다.
 
 렌더링 엔진은 위 HTML 문서를 파싱하여 다음과 같이 DOM을 생성한다.
 
-<img width="600" src="./images/36_3.jpg" alt="DOM">
+<img width="600" src="./images/36_3.JPG" alt="DOM">
 
 이처럼 DOM은 노드 객체의 계층적인 구조로 구성된다. 노드 객체는 종류가 있고 상속 구조를 갖는다. 노드 객체는 총 12개의 종류(노드 타입)가 있다. 이 중에서 중요한 노드 타입은 다음과 같이 4가지다.
 
 ### 문서 노드 (document node)
+
+```
+<!DOCTYPE>
+```
 
 <p>문서 노드는 <b>DOM 트리의 최상위에 존재하는 루트 노드로서 document 객체를 가리킨다.</b> document 객체는 브라우저가 렌더링한 HTML 문서 전체를 가리키는 객체로서 전역 객체 window의 document 프로퍼티에 바인딩되어 있다. 따라서 문서 노드는 window.documnet 또는 document로 참조할 수 있다.</p>
 
@@ -351,13 +356,32 @@ HTML 요소는 HTML 문서를 구성하는 개별적인 요소를 의미한다.
 
 ### 요소 노드 (element node)
 
+```
+<html> <head> <meta> <link> <body> <ul> <li> <script>
+```
+
 <p>요소 노드는 HTML 요소를 가리키는 객체다. 요소 노드는 HTML 요소 간의 중첩에 의해 부자 관계를 가지며, 이 부자 관계를 통해 정보를 구조화한다. 따라서 요소 노드는 문서의 구조를 표현한다고 할 수 있다.</p>
 
 ### 어트리뷰트 노드 (attribute node)
 
+```
+charset="UTF"
+
+rel="stylesheet"
+...
+
+id="apple"
+```
+
 <p>어트리뷰트 노드는 HTML 요소의 어트리뷰트를 가리키는 객체다. 어트리뷰트 노드는 어트리뷰트가 지정된 HTML 요소의 요소 노드와 연결되어 있다. 단, 요소 노드는 부모 노드와 연결되어 있지만 어트리뷰트 노드는 부모 노드와 연결되어 있지 않고 요소 노드에만 연결되어 있기 때문에 어트리뷰트를 참조하거나 변경하려면 먼저 요소 노드에 접근해야 한다.</p>
 
 ### 텍스트 노드 (text node)
+
+```
+APPLE
+BANANA
+ORANGE
+```
 
 <p>텍스트 노드는 HTML 요소와 텍스트를 가리키는 객체다. 요소 노드가 문서의 구조를 표현한다면 텍스트 노드는 문서의 정보를 표현한다고 할 수 있다.</p>
 
@@ -365,7 +389,7 @@ HTML 요소는 HTML 문서를 구성하는 개별적인 요소를 의미한다.
 
 <p>DOM은 HTML 문서의 계층적 구조와 정보를 표현하며, 이를 제어할 수 있는 API (DOM API)를 제공하는 트리 자료구조이다. DOM을 구성하는 노드 객체는 ECMAScript 사양에 정의된 <b>표준 빌트인 객체(standard built-in objects)</b>가 아니라 브라우저 환경에서 추가적으로 제공하는 <b>호스트 객체(host objects)</b>다. 하지만 노드 객체도 자바스크립트 객체이므로 프로토타입에 의한 상속 구조를 갖는다. 노드 객체의 상속 구조는 다음과 같다.</p>
 
-<img width="600" src="./images/36_4.jpg" alt="노드 객체의 상속 구조">
+<img width="600" src="./images/36_4.JPG" alt="노드 객체의 상속 구조">
 
 <p>위 그림과 같이 <b>모든 노드 객체는 ① Object ② EvnetTarget ③ Node 인터페이스를 상속받는다.</b> 예를 들어 input 요소를 파싱하여 객체화한 input 요소 노드 객체는 HTMLInputElement > HTMLElement > Element > Node > EventTarget > Object의 prototype에 바인딩되어 있는 프로토타입 객체를 상속받는다. 즉 input 요소 노드 객체는 프로토타입 체인에 있는 모든 프로토타입의 프로퍼티나 메서드를 상속받아 사용할 수 있다.</p>
 
@@ -421,49 +445,66 @@ Element.prototype.querySelector
 ```
 
 ```css
-/* 전체 선택자: 모든 요소를 선택 */
+/* 전체 선택자: 📍모든 요소를 선택 */
 * {
   ...;
 }
-/* 태그 선택자: 모든 p 태그 요소를 모두 선택 */
+/* 태그 선택자: 모든 p 태그 요소를 📍모두 선택 */
 p {
   ...;
 }
-/* id 선택자: id 값이 'foo'인 요소를 모두 선택 */
+/* id 선택자: id 값이 'foo'인 요소를 📍모두 선택 */
 #foo {
   ...;
 }
-/* class 선택자: class 값이 'foo'인 요소를 모두 선택 */
+/* class 선택자: class 값이 'foo'인 요소를 📍모두 선택 */
 .foo {
   ...;
 }
-/* 어트리뷰트 선택자: input 요소 중에 type 어트리뷰트 값이 'text'인 요소를 모두 선택 */
+/* 어트리뷰트 선택자: input 요소 중에 type 어트리뷰트 값이 'text'인 요소를 📍모두 선택 */
 input[type="text"] {
   ...;
 }
-/* 후손 선택자: div 요소의 후손 요소 중 p 요소를 모두 선택 */
+/* 후손 선택자: div 요소의 후손 요소 중 p 요소를 📍모두 선택 */
 div p {
   ...;
 }
-/* 자식 선택자: div 요소의 자식 요소 중 p 요소를 모두 선택 */
+/* 자식 선택자: div 요소의 자식 요소 중 p 요소를 📍모두 선택 */
 div > p {
   ...;
 }
-/* 인접 형제 선택자: p 요소의 형제 요소 중에 p 요소 바로 뒤에 위치하는 ul 요소를 선택 */
+/* 인접 형제 선택자: p 요소의 형제 요소 중에 p 요소 📍바로 뒤에 위치하는 ul 요소를 선택 */
 p + ul {
   ...;
 }
-/* 일반 형제 선택자: p 요소의 형제 요소 중에 p 요소 뒤에 위치하는 ul 요소를 모두 선택 */
+/* 일반 형제 선택자: p 요소의 형제 요소 중에 p 요소 뒤에 위치하는 ul 요소를 📍모두 선택 */
 p ~ ul {
   ...;
 }
-/* 가상 클래스 선택자: hover 상태인 a 요소를 모두 선택 */
+/* 가상 클래스 선택자: hover 상태인 a 요소를 📍모두 선택 */
 a:hover {
   ...;
 }
 /* 가상 요소 선택자: p 요소의 콘텐츠의 앞에 위치하는 공간을 선택 일반적으로 content 프로퍼티와 함께 사용된다. */
 p::before {
   ...;
+}
+
+/* 부모 선택자: 이 코드에서는 중첩된 바로 위의 부모 선택자인 a를 참조한다 */
+a {
+  color: blue;
+  &:hover {
+    color: green;
+  }
+}
+
+/* 컴파일 시 다음과 같이 실행된다 */
+
+a {
+  color: blue;
+}
+a:hover {
+  color: green;
 }
 ```
 
@@ -477,13 +518,316 @@ const $all = document.querySelectorAll("*");
 
 ### 39.3 노드 탐색
 
+<p>요소 노드를 취득한 다음, 취득한 요소 노드를 기점으로 DOM 트리의 노드를 옮겨 다니며 <b>① 부모, ② 형제, ③ 자식 노드</b> 등을 탐색해야 할 때가 있다.</p>
+
+```html
+<ul id="fruits">
+  <li class="apple">Apple</li>
+  <li class="banana">Banana</li>
+  <li class="orange">Orange</li>
+</ul>
+```
+
+DOM 트리 상의 노드를 탐색할 수 있도록 Node, Element 인터페이스는 트리 탐색 프로퍼티를 제공한다.
+
+<img src="./images/36_7.jpg" alt="트리 노드 탐색 프로퍼티">
+
+Node.prototype에 의해
+
+```
+① parentNode (부모 노드)
+② previousSibling (이전 형제 노드)
+③ firstChild (자식 노드 중 첫 번째)
+④ childNodes (자식 노드 전부)
+```
+
+프로퍼티가 제공된다.
+
+Element.prototype에 의해
+
+```
+① previousElementSibling (이전 형제 노드의 요소)
+② nextElementSibling (다음 형제 노드의 요소)
+③ children (자식 요소)
+```
+
+프로퍼티가 제공된다
+
+<p>노드 탐색 프로퍼티는 모두 접근자 프로퍼티다. <b>단, 노드 탐색 프로퍼티는 참조만 가능한 읽기 전용 접근자 프로퍼티다.</b> 읽기 전용 접근자 프로퍼티에 값을 할당하면 아무런 에러 없이 무시된다</p>
+
+### 자식 노드 탐색
+
+자식 노드를 탐색하기 위해서는 다음과 같은 노드 탐색 프로퍼티를 사용한다.
+
+| 프로퍼티                            | 설명                                                                                                      |
+| :---------------------------------- | :-------------------------------------------------------------------------------------------------------- |
+| Node.prototype.childNodes           | 자식 노드를 모두 탐색하여 NodeList에 담아 반환한다. 요소 노드뿐만 아니라 텍스트 노드도 포함될 수 있다.    |
+| Element.prototype.children          | 자식 노드 중에서 요소 노두만 모두 탐색하여 HTMLCollection에 담아 반환한다. 텍스트 노드가 포함되지 않는다. |
+| Node.prototype.firstChild           | 첫 번째 자식 노드를 반환한다. 텍스트 노드이거나 요소 노드를 반환한다.                                     |
+| Node.prototype.lastChild            | 마지막 자식 노드를 반환한다. 텍스트 노드이거나 요소 노드를 반환한다.                                      |
+| Element.prototype.firstElementChild | 첫 번째 자식 요소 노드를 반환한다. 요소 노드를 반환한다.                                                  |
+| Element.prototype.lastElementChild  | 마지막 자식 요소 노드를 반환한다. 요소 노드를 반환한다.                                                   |
+
+### 자식 노드 확인
+
+```
+Node.prototype.hasChildNodes >> (boolean)
+```
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li class="apple">Apple</li>
+      <li class="banana">Banana</li>
+      <li class="orange">Orange</li>
+    </ul>
+  </body>
+  <script>
+    // 노드 탐색의 기점이 되는 #fruits 요소 노드를 취득한다.
+    const $fruits = document.getElementById("fruits");
+
+    // #fruits 요소의 모든 자식 노드를 탐색한다.
+    // childNodes 프로퍼티가 반환한 NodeList에는 요소 노드뿐만 아니라 텍스트 노드도 포함되어 있다.
+    console.log($fruits.childNodes);
+    // NodeList(7) [text, li.apple, text, li.banana, text, li.orange, text]
+    console.log($fruits.hasChildNodes());
+
+    // #fruits 요소의 모든 자식 노드를 탐색한다.
+    // children 프로퍼티가 반환한 HTMLCollection에는 요소 노드만 포함되어 있다.
+    console.log($fruits.children);
+    // HTMLCollection(3) [li.apple, li.banana, li.orange]
+
+    // #fruits 요소의 첫 번째 자식 노드를 탐색한다.
+    // firstChild 프로퍼티는 텍스트 노드를 반환할 수도 있다.
+    console.log($fruits.firstChild); // #text
+
+    // #fruits 요소의 마지막 자식 노드를 탐색한다.
+    // lastChild 프로퍼티는 텍스트 노드를 반환할 수도 있다.
+    console.log($fruits.lastChild); // #text
+
+    // #fruits 요소의 첫 번째 자식 노드를 탐색한다.
+    // firstElementChild 프로퍼티는 요소 노드만 반환한다.
+    console.log($fruits.firstElementChild); // li.apple
+
+    // #fruits 요소의 마지막 자식 노드를 탐색한다.
+    // lastElementChild 프로퍼티는 요소 노드만 반환한다.
+    console.log($fruits.lastElementChild); // li.orange
+  </script>
+</html>
+```
+
+### 형제 노드 탐색
+
+| 프로퍼티                          | 설명                                                                                                                            |
+| :-------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| Node.prototype.previousSibling    | 부모 노드가 같은 형제 노드 중에서 자신의 이전 형제 노드를 탐색하여 반환한다. 요소 노드뿐만 아니라 텍스트 노드도 포함될 수 있다. |
+| Node.prototype.nextSibling        | 부모 노드가 같은 형제 노드 중에서 자신의 다음 형제 노드를 탐색하여 반환한다. 요소 노드뿐만 아니라 텍스트 노드도 포함될 수 있다. |
+| Element.prototype.previousSibling | 부모 노드가 같은 형제 노드 중에서 자신의 이전 형제 요소 노드를 탐색하여 반환한다. 요소 노드만 포함될 수 있다.                   |
+| Element.prototype.nextSibling     | 부모 노드가 같은 형제 노드 중에서 자신의 다음 형제 요소 노드를 탐색하여 반환한다. 요소 노드만 포함될 수 있다.                   |
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li class="apple">Apple</li>
+      <li class="banana">Banana</li>
+      <li class="orange">Orange</li>
+    </ul>
+  </body>
+  <script>
+    // 노드 탐색의 기점이 되는 #fruits 요소 노드를 취득한다.
+    const $fruits = document.getElementById("fruits");
+
+    // #fruits 요소의 첫 번째 자식 노드를 탐색한다.
+    // firstChild 프로퍼티는 요소 노드뿐만 아니라 텍스트 노드를 반환할 수도 있다.
+    const { firstChild } = $fruits;
+    console.log(firstChild); // #text
+
+    // #fruits 요소의 첫 번째 자식 노드(텍스트 노드)의 다음 형제 노드를 탐색한다.
+    // nextSibling 프로퍼티는 요소 노드뿐만 아니라 텍스트 노드를 반환할 수도 있다.
+    const { nextSibling } = firstChild;
+    console.log(nextSibling); // li.apple
+
+    // li.apple 요소의 이전 형제 노드를 탐색한다.
+    // previousSibling 프로퍼티는 요소 노드뿐만 아니라 텍스트 노드를 반환할 수도 있다.
+    const { previousSibling } = nextSibling;
+    console.log(previousSibling); // #text
+
+    // #fruits 요소의 첫 번째 자식 요소 노드를 탐색한다.
+    // firstElementChild 프로퍼티는 요소 노드만 반환한다.
+    const { firstElementChild } = $fruits;
+    console.log(firstElementChild); // li.apple
+
+    // #fruits 요소의 첫 번째 자식 요소 노드(li.apple)의 다음 형제 노드를 탐색한다.
+    // nextElementSibling 프로퍼티는 요소 노드만 반환한다.
+    const { nextElementSibling } = firstElementChild;
+    console.log(nextElementSibling); // li.banana
+
+    // li.banana 요소의 이전 형제 요소 노드를 탐색한다.
+    // previousElementSibling 프로퍼티는 요소 노드만 반환한다.
+    const { previousElementSibling } = nextElementSibling;
+    console.log(previousElementSibling); // li.apple
+  </script>
+</html>
+```
+
+### 부모 노드 탐색
+
+```
+Node.prototype.parentNode
+```
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li class="apple">Apple</li>
+      <li class="banana">Banana</li>
+      <li class="orange">Orange</li>
+    </ul>
+  </body>
+  <script>
+    // 노드 탐색의 기점이 되는 .banana 요소 노드를 취득한다.
+    const $banana = document.querySelector(".banana");
+
+    // .banana 요소 노드의 부모 노드를 탐색한다.
+    console.log($banana.parentNode); // ul#fruits
+  </script>
+</html>
+```
+
 ### 39.4 노드 정보 취득
+
+노드 객체에 대한 정보를 취득하려면 다음과 같은 노드 정보 프로퍼티를 사용한다.
+
+| 프로퍼티                | 설명                                                                                          |
+| :---------------------- | :-------------------------------------------------------------------------------------------- |
+| Node.prototype.nodeType | 노드 객체의 종류, 즉 노드 타입을 나타내는 상수를 반환한다                                     |
+| -                       | 요소 노드일 때 (1) / 텍스트 노드일 때 (3)/ 문서 노드일 때 (9)                                 |
+| Node.prototype.nodeName | 노드의 이름을 문자열로 반환한다.                                                              |
+| -                       | 요소 노드일 떄 (대문자 문자열 UL/ LI) / 텍스트 노드일 떄 (#text) / 문서 노드일 때 (#document) |
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello</div>
+  </body>
+  <script>
+    // 문서 노드의 노드 정보를 취득한다.
+    console.log(document.nodeType); // 9
+    console.log(document.nodeName); // #document
+
+    // 요소 노드의 노드 정보를 취득한다.
+    const $foo = document.getElementById("foo");
+    console.log($foo.nodeType); // 1
+    console.log($foo.nodeName); // DIV
+
+    // 텍스트 노드의 노드 정보를 취득한다.
+    const $textNode = $foo.firstChild;
+    console.log($textNode.nodeType); // 3
+    console.log($textNode.nodeName); // #text
+  </script>
+</html>
+```
 
 ### 39.5 요소 노드의 텍스트 조작
 
+```
+① nodeValue
+② textContext
+③ innerText
+```
+
+### nodeValue
+
+Node.prototype.nodeValue 프로퍼티는 setter와 getter가 모두 존재하는 접근자 프로퍼티다. 따라서 nodeValue 프로퍼티는 참조와 할당이 모두 가능하다.
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello</div>
+  </body>
+  <script>
+    // 문서 노드의 nodeValue 프로퍼티를 참조한다.
+    console.log(document.nodeValue); // null
+
+    // 요소 노드의 nodeValue 프로퍼티를 참조한다.
+    const $foo = document.getElementById("foo");
+    console.log($foo.nodeValue); // null
+
+    // 텍스트 노드의 nodeValue 프로퍼티를 참조한다.
+    const $textNode = $foo.firstChild;
+    console.log($textNode.nodeValue); // Hello
+  </script>
+</html>
+```
+
+값을 할당하기 위해서는 다음과 같은 순서의 처리가 필요하다
+
+```
+① 텍스트를 변경할 요소 노드를 취득한 다음, 취득한 요소 노드의 텍스트 노드를 탐색한다.
+② 탐색한 텍스트 노드의 nodeValue 프로퍼티를 사용하여 텍스트 노드의 값을 변경한다.
+```
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello</div>
+  </body>
+  <script>
+    // 1. #foo 요소 노드의 자식 노드인 텍스트 노드를 취득한다.
+    const $textNode = document.getElementById("foo").firstChild;
+
+    // 2. nodeValue 프로퍼티를 사용하여 텍스트 노드의 값을 변경한다.
+    $textNode.nodeValue = "World";
+
+    console.log($textNode.nodeValue); // World
+  </script>
+</html>
+```
+
+### textContext
+
+nodeValue와 다른점은 참조를 하기로 결정한 요소를 기준으로 자손(자식과 손자) 노드의 모든 텍스트를 취득하거나 변경한다. 이때 HTML 마크업은 무시된다.
+
+> 자식 요소 노드가 없고 텍스트만 존재한다면 nodeValue와 textContext 프로퍼티는 같은 결과를 반환한다.
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello <span>world!</span></div>
+  </body>
+  <script>
+    // #foo 요소 노드의 텍스트를 모두 취득한다. 이때 HTML 마크업은 무시된다.
+    console.log(document.getElementById("foo").textContent); // Hello world!
+  </script>
+</html>
+<!-- 
+foo를 기준으로 자손이므로 #foo의 자식인 텍스트 노드 Hello와
+손자인 <span>world!</span>의 텍스트노드 world! 까지 취득하였다
+ -->
+```
+
+### innerText
+
+textContext 프로퍼티와 유사한 동작을 하는 innerText 프로퍼티가 있다. innerText 프로퍼티는 다음과 같은 이유로 사용하지 않는 것이 좋다.
+
 ### 39.6 DOM 조작
 
-<p>DOM 조작은 새로운 노드를 생성하여 DOM에 추가하거나 기존 노드를 삭제 또는 교체하는 것을 말한다. <b>DOM 조작에 의해 DOM에 새로운 노드가 추가되거나 삭제되면 리플로우와 리페인트가 발생하는 원인이 되므로 성능에 영향을 준다. 따라서 복잡한 콘텐츠를 다루는 DOM 조작은 성능 최적화를 위해 주의해서 다루어야 한다.</b></p>
+```
+innerHTML
+insertAdjacentHTML
+```
+
+<p>DOM 조작은 새로운 노드를 생성하여 DOM에 추가하거나 기존 노드를 삭제 또는 교체하는 것을 말한다. <b>DOM 조작에 의해 DOM에 새로운 노드가 추가되거나 삭제되면 ① 리플로우와 ② 리페인트가 발생하는 원인이 되므로 성능에 영향을 준다. 따라서 복잡한 콘텐츠를 다루는 DOM 조작은 성능 최적화를 위해 주의해서 다루어야 한다.</b></p>
 
 ### innerHTML
 
@@ -589,6 +933,769 @@ Element.prototype.innerHTML
 </html>
 ```
 
+### ① 노드 생성과 추가
+
+innerHTML 프로퍼티와 insertAdjacentHTML 메서드는 HTML 마크업 문자열을 파싱하여 노드를 생성하고 DOM에 반영한다. DOM은 노드를 직접 ① 생성 ② 삽입 ③ 삭제 ④ 치환 하는 메서드도 제공한다.
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById("fruits");
+
+    // 1. 요소 노드 생성
+    const $li = document.createElement("li");
+
+    // 2. 텍스트 노드 생성
+    const textNode = document.createTextNode("Banana");
+
+    // 3. 텍스트 노드를 $li 요소 노드의 자식 노드로 추가
+    $li.appendChild(textNode);
+
+    // 4. $li 요소 노드를 #fruits 요소 노드의 마지막 자식 노드로 추가
+    $fruits.appendChild($li);
+  </script>
+</html>
+```
+
+### ② 복수의 노드 생성과 추가
+
+forEach 고차함수를 사용하여 여러 개의 요소 노드를 생성하여 DOM에 추가할 수 있다.
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits"></ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById("fruits");
+
+    ["Apple", "Banana", "Orange"].forEach((text) => {
+      // 1. 요소 노드 생성
+      const $li = document.createElement("li");
+
+      // 2. 텍스트 노드 생성
+      const textNode = document.createTextNode(text);
+
+      // 3. 텍스트 노드를 $li 요소 노드의 자식 노드로 추가
+      $li.appendChild(textNode);
+
+      // 4. $li 요소 노드를 #fruits 요소 노드의 마지막 자식 노드로 추가
+      $fruits.appendChild($li);
+    });
+  </script>
+</html>
+```
+
+1. GET 요청을 통해 서버에서 해당 .html 파일을 불러올 때는 요소 노드 내부에 텍스트 노드가 없으므로, 아무값도 보이지 않는다
+
+<img width="500" src="./images/36_8.png" alt="Preview"/>
+
+2. 하지만 브라우저의 렌더링 엔진에 의해 해당 파일이 파싱되면서, scipt 코드를 만나 자바스크립트 엔진에게 권한을 넘겨주고 파일에 동적으로 노드를 추가하였다
+
+3. 우리 눈에는 마치 원래 들어있는 것처럼 보이지만, 실제로는 자바스크립트 엔진에 의해 동적으로 추가된 요소임을 알 수 있다
+
+### ③ 지정한 위치에 노드 삽입
+
+```
+Node.prototype.insertBefore(newNode, childNode) 메서드를 통해 첫 번째 인수로 전달받은 노드(newNode)를 두 번째 인수로 전달받은 노드 앞에 삽입할 수 있다.
+```
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+      <li>Banana</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById("fruits");
+
+    // 요소 노드 생성
+    const $li = document.createElement("li");
+
+    // 텍스트 노드를 $li 요소 노드의 마지막 자식 노드로 추가
+    $li.appendChild(document.createTextNode("Orange"));
+
+    // $li 요소 노드를 #fruits 요소 노드의 마지막 자식 요소(Banana) 앞에 삽입
+    $fruits.insertBefore($li, $fruits.lastElementChild);
+    // Apple - Orange - Banana
+  </script>
+</html>
+```
+
+### ④ 노드 복사
+
+```
+Node.prototype.cloneNode([dee: true | false]) 메서드는 노드의 사본을 생성하여 반환한다
+
+true 이면 노드를 깊은 복사하여 모든 자손 노드가 포함된 사본을 생성한다
+false 이면 노드를 얕은 복사하여 노드 자신만의 사본을 생성한다.
+```
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById("fruits");
+    const $apple = $fruits.firstElementChild;
+
+    // $apple 요소를 얕은 복사하여 사본을 생성. 텍스트 노드가 없는 사본이 생성된다.
+    const $shallowClone = $apple.cloneNode();
+    // 사본 요소 노드에 텍스트 추가
+    $shallowClone.textContent = "Banana";
+    // 사본 요소 노드를 #fruits 요소 노드의 마지막 노드로 추가
+    $fruits.appendChild($shallowClone);
+
+    // #fruits 요소를 깊은 복사하여 모든 자손 노드가 포함된 사본을 생성
+    const $deepClone = $fruits.cloneNode(true);
+    // 사본 요소 노드를 #fruits 요소 노드의 마지막 노드로 추가
+    $fruits.appendChild($deepClone);
+  </script>
+</html>
+```
+
+### ⑤ 노드 교체
+
+```
+Node.prototype.replaceChild(newChild, oldChild) 메서드는 자신을 호출한 노드의 자식 노드를 다른 노드로 교체한다
+```
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById("fruits");
+
+    // 기존 노드와 교체할 요소 노드를 생성
+    const $newChild = document.createElement("li");
+    $newChild.textContent = "Banana";
+
+    // #fruits 요소 노드의 첫 번째 자식 요소 노드를 $newChild 요소 노드로 교체
+    $fruits.replaceChild($newChild, $fruits.firstElementChild);
+  </script>
+</html>
+```
+
+### ⑥ 노드 삭제
+
+```
+Node.prototype.removeChild(child) 메서드는 child 매개변수에 인수로 전달한 노드를 DOM에서 삭제합니다
+```
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+      <li>Banana</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById("fruits");
+
+    // #fruits 요소 노드의 마지막 요소를 DOM에서 삭제
+    $fruits.removeChild($fruits.lastElementChild);
+  </script>
+</html>
+```
+
 ### 39.7 어트리뷰트
 
-### 39.8 스타일
+### 어트리뷰트 노드와 attributes 프로퍼티
+
+HTML 문서의 구성 요소인 HTML 요소는 여러 개의 어트리뷰트(속성)을 가질 수 있다.
+
+```html
+<input id="user" type="text" value="junhee" />
+```
+
+어트리뷰트의 종류는 다음과 같다
+
+```
+① 글로벌 어트리뷰트 (id, class, style, title, lang, tabindex, draggable, hidden)
+② 이벤트 핸들러 어트리뷰트 (onclick, onchange, onfocus, onblur, oninput, onkeypress,
+onkeydown, onkeyup, onmouseover, onsubmit, onload 등)
+③ 특정 HTML 요소에만 사용 가능한 어트리뷰트 (input >> type, value, checked)
+```
+
+HTML 문서가 파싱될 때 HTML 요소의 어트리뷰트는 어트리뷰트 노드로 변환되어 요소 노드와 연결된다. 이때 HTML 어트리뷰트 하나당 어트리뷰트 노드가 생성된다.
+
+따라서 요소 노드의 모든 어트리뷰트 노드는 요소 노드의
+
+```
+Element.prototype.attributes 프로퍼티로 취득할 수 있다. (읽기 전용 접근자 프로퍼티이다)
+```
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <input id="user" type="text" value="ungmo2" />
+    <script>
+      // 요소 노드의 attribute 프로퍼티는 요소 노드의 모든 어트리뷰트 노드의 참조가 담긴 NamedNodeMap 객체를 반환한다.
+      const { attributes } = document.getElementById("user");
+      console.log(attributes);
+      // NamedNodeMap {0: id, 1: type, 2: value, id: id, type: type, value: value, length: 3}
+
+      // 어트리뷰트 값 취득
+      console.log(attributes.id.value); // user
+      console.log(attributes.id); // id="user"
+
+      console.log(attributes.type.value); // text
+      console.log(attributes.type); // type="text"
+
+      console.log(attributes.value.value); // ungmo2
+      console.log(attributes.value); // value="ungmo2"
+    </script>
+  </body>
+</html>
+```
+
+### HTML 어트리뷰트 조작
+
+```
+Element.prototype.getAttributes/setAttribute
+```
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <input id="user" type="text" value="ungmo2" />
+    <script>
+      const $input = document.getElementById("user");
+
+      // value 어트리뷰트 값을 취득
+      const inputValue = $input.getAttribute("value");
+      console.log(inputValue); // ungmo2
+
+      // value 어트리뷰트 값을 변경
+      $input.setAttribute("value", "foo");
+      console.log($input.getAttribute("value")); // foo
+    </script>
+  </body>
+</html>
+```
+
+### HTML 어트리뷰트 vs DOM 프로퍼티
+
+<p>HTML 어트리뷰트의 역할은 HTML 요소의 초기 상태를 지정하는 것이다. 즉, HTML 어트리뷰트 값은 HTML 요소의 초기 상태를 의미하며 이는 변하지 않는다.</p>
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <input id="user" type="text" value="ungmo2" />
+    <script>
+      const $input = document.getElementById("user");
+
+      // attributes 프로퍼티에 저장된 value 어트리뷰트 값
+      console.log($input.getAttribute("value")); // ungmo2
+
+      // 요소 노드의 value 프로퍼티에 저장된 value 어트리뷰트 값
+      console.log($input.value); // ungmo2
+    </script>
+  </body>
+</html>
+```
+
+<p>하지만 첫 렌더링 이후 사용자가 input 요소에 무언가를 입력하기 시작하면 상황이 달라진다. 요소 노드는 상태(state)를 가지고 있다.</p>
+
+<p>사용자가 input 요소의 입력 필드에 'foo'라는 값을 입력하는 경우를 생각해보자. 이때 input 요소 노드는 사용자의 입력에 의해 변경된 최상 상태("foo")를 관리해야 하는 것은 물론, HTML 어트리뷰트로 지정한 초기 상태("ungmo2")도 관리해야 한다. 초기 상태 값을 관리하지 않으면 웹페이지를 처음 표시하거나 새로고침할 때 초기 상태를 표시할 수 없다.</p>
+
+<p>이처럼 <b>요소 노드는 2개의 상태, 즉 ① 초기 상태와 ② 최신 상태를 관리해야 한다. 요소 노드의 초기 상태는 ① 어트리뷰트 노드가 관리하며, 요소 노드의 최신 상태는 ② DOM 프로퍼티가 관리한다.</b></p>
+
+### 어트리뷰트 노드
+
+<p>HTML 어트리뷰트로 지정한 HTML 요소의 초기 상태는 어트리뷰트 노드에서 관리한다. 사용자의 입력에 의해 상태가 변경되어도 변하지 않고 HTML 어트리뷰트로 지정한 HTML 요소의 초기 상태를 그대로 유지한다. 어트리뷰트 노드가 관리하는 초기 상태 값을 취득하거나 변경하려면 getAttributes/setAttributes 메서드를 사용한다.</p>
+
+```js
+// attributes 프로퍼티에 저장된 value 어트리뷰트 값을 취득한다. 결과는 언제나 동일하다.
+document.getElementById("user").getAttribute("value"); // ungmo2
+```
+
+setAttributes 메서드는 어트리뷰트 노드에서 관리하는 HTML 요소에 지정한 어트리뷰트 값, 즉 초기 상태 값을 변경한다.
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <input id="user" type="text" value="ungmo2" />
+    <script>
+      // HTML 요소에 지정한 어트리뷰트 값, 즉 초기 상태 값을 변경한다.
+      document.getElementById("user").setAttribute("value", "foo");
+    </script>
+  </body>
+</html>
+```
+
+<img width="500" src="./images/36_10.png" alt="setAttributes 메서드">
+
+### DOM 프로퍼티
+
+<p>사용자가 입력한 최신 상태는 HTML 어트리뷰트에 대응하는 요소 노드의 DOM 프로퍼티가 관리한다. DOM 프로퍼티는 사용자의 입력에 의한 상태 변화에 반응하여 언제나 최신 상태를 유지한다.</p>
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <input id="user" type="text" value="ungmo2" />
+    <script>
+      const $input = document.getElementById("user");
+
+      // 사용자가 input 요소의 입력 필드에 값을 입력할 때마다 input 요소 노드의
+      // value 프로퍼티 값, 즉 최신 상태 값을 취득한다. value 프로퍼티 값은 사용자의 입력에
+      // 의해 동적으로 변경된다.
+      $input.oninput = () => {
+        console.log("value 프로퍼티 값", $input.value);
+      };
+
+      // getAttribute 메서드로 취득한 HTML 어트리뷰트 값, 즉 초기 상태 값은 변하지 않고 유지된다.
+      console.log("value 어트리뷰트 값", $input.getAttribute("value"));
+    </script>
+  </body>
+</html>
+```
+
+<img width="500" src="./images/36_11.png" alt="DOM 프로퍼티와 어트리뷰트 노드">
+
+```
+① 처음 실행할 때는 어트리뷰트 노드에 의해 관리되는 상태를 감지하여 16번째 줄의 코드로 실행되었다
+② 이후 실행은 최신 상태를 관리하는 DOM 프로퍼티에 의해 관리되므로 12번째 줄의 코드로 실행된다
+```
+
+## 40장 이벤트
+
+### 40.1 이벤트 드리븐 프로그래밍
+
+<p>브라우저는 처리해야 할 특정 사건이 발생하면 이를 감지하여 이벤트(=evnet)를 발생(=trigger)시킨다. 예를들어, 클릭, 키보드 입력, 마우스 이동 등이 일어나면 브라우저는 이를 감지하여 특정한 타입의 이벤트를 발생시킨다. <b>만약 애플리케이션이 특정 타입 이벤트에 대해 반응하여 어떤 일을 하고 싶다면 해당 타입의 이벤트가 발생했을 때 호출될 함수를 브라우저에게 알려 호출을 위임한다.</b> 이때 호출될 함수를 <b>① 이벤트 핸들러(= event handler)</b> 라 하고, 이벤트가 발생했을 때 브라우저에게 이벤트 핸들러의 호출을 위임하는 것을 <b>② 이벤트 핸들러 등록</b>이라 한다. </p>
+
+<p>예를 들어, 사용자가 버튼을 클릭했을 때 함수를 호출하여 어떤 처리를 하고 싶다고 가정해보자. 이때 문제는 <b>'언제 함수를 호출해야 하는가'</b>다. 사용자가 언제 버튼을 클릭할지 알 수 없으므로 언제 함수를 호출해야 할 지 알 수 없기 때문이다.</p>
+
+<p>다행히 브라우저는 사용자의 버튼을 감지하여 클릭 이벤트를 발생할 수 있다. 함수를 언제 호출할지 알 수 없으므로 개발자가 명시적으로 호출하는 것이 아니라 <b>브라우저에게 함수 호출을 위임하는 것</b>이다. 이렇게 프로그램의 흐름을 이벤트 중심으로 제어하는 프로그래밍 방식을 <b>이벤트 드리븐 프로그래밍(= event-driven programming)</b>이라 한다.</p>
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <button>Click me!</button>
+    <script>
+      const $button = document.querySelector("button");
+
+      /*
+      이벤트를 발생시키는 방법은 총 3가지이다.
+      이에 대해서는 뒤에서 알아본다
+      */
+
+      $button.onclick = () => {
+        alert("button click");
+      };
+    </script>
+  </body>
+</html>
+```
+
+### 40.2 이벤트 타입
+
+<p>이벤트 타입은 이벤트의 종류를 나타내는 문자열이다. 상세 목록은 MDN의 Event reference에서 확인할 수 있다.</p>
+
+[MDN: Event Reference](https://developer.mozilla.org/en-US/docs/Web/Events)
+
+### 마우스 이벤트
+
+| 이벤트 타입 | 이벤트 발생 시점                                      |
+| :---------- | :---------------------------------------------------- |
+| click       | 마우스 버튼을 클릭했을 때                             |
+| dbclick     | 마우스 버튼을 더블 클릭했을 때                        |
+| mousedown   | 마우스 버튼을 누르고 있을 때                          |
+| mouseup     | 누르고 있던 마우스 버튼을 뗄 때                       |
+| mousemove   | 마우스 커서를 움직일 때                               |
+| mouseenter  | 마우스 커서를 HTML 요소 안으로 이동했을 때 (버블링 x) |
+| mouseover   | 마우스 커서를 HTML 요소 안으로 이동했을 때 (버블링 o) |
+| mouseleave  | 마우스 커서를 HTML 요소 밖으로 이동했을 때(버블링x)   |
+| mouseout    | 마우스 커서를 HTML 요소 밖으로 이동했을 때(버블링o)   |
+
+### 키보드 이벤트
+
+| 이벤트 타입 | 이벤트 발생 시점                            |
+| :---------- | :------------------------------------------ |
+| keydown     | 키를 누르고 있을 때                         |
+| keypress    | 키를 누르고 뗏을 때 (폐지되었으므로 사용 x) |
+| keyup       | 누르고 있던 키를 뗄 때                      |
+
+### 포커스 이벤트
+
+| 이벤트 타입 | 이벤트 발생 시점                     |
+| :---------- | :----------------------------------- |
+| focus       | 요소가 포커스를 얻었을 때 (버블링 x) |
+| blur        | 요소가 포커스를 잃었을 때 (버블링 x) |
+| focusin     | 요소가 포커스를 얻었을 때 (버블링 o) |
+| foucusout   | 요소가 포커스를 잃었을 때 (버블링 o) |
+
+### 폼 이벤트
+
+| 이벤트 타입 | 이벤트 발생 시점                            |
+| :---------- | :------------------------------------------ |
+| submit      | form을 submit할 때 (버튼 또는 키)           |
+| reset       | reset 버튼을 클릭할 때 (최근에는 사용 안함) |
+
+### 값 변경 이벤트
+
+| 이벤트 타입 | 이벤트 발생 시점                                          |
+| :---------- | :-------------------------------------------------------- |
+| input       | input 또는 textarea 요소의 값이 변경되었을 때             |
+| change      | select box, checkbox, radio button의 상태가 변경되었을 때 |
+
+### DOM 뮤테이션 이벤트
+
+| 이벤트 타입      | 이벤트 발생 시점                                            |
+| :--------------- | :---------------------------------------------------------- |
+| DOMContentLoaded | HTML 문서의 로드와 파싱이 완료되어 DOM 생성이 완료되었을 때 |
+
+### 뷰 이벤트
+
+| 이벤트 타입 | 이벤트 발생 시점                                                |
+| :---------- | :-------------------------------------------------------------- |
+| resize      | 브라우저 윈도우의 크기를 리사이즈할 때 연속적으로 발생          |
+| scroll      | 웹피이지(document) 또는 HTML 요소를 스코롤할 때 연속적으로 발생 |
+
+### 리소스 이벤트
+
+| 이벤트 타입 | 이벤트 발생 시점                                           |
+| :---------- | :--------------------------------------------------------- |
+| load        | DOMContentLoaded 이후, 모든 리소스의 로딩이 완료되었을 때  |
+| unload      | 리소스가 언로드 될 때 (주로 새로운 웹페이지를 요청한 경우) |
+| abort       | 리소스 로딩이 중단되었을 때                                |
+| error       | 리소스 로딩이 실패했을 때                                  |
+
+### 40.3 이벤트 핸들러 등록
+
+<p>이벤트 핸들러는 <b>특정 이벤트가 발생했을 때 브라우저에 호출을 위임한 함수다. 다시 말해, 이벤트가 발생하면 브라우저에 호출될 함수가 이벤트 핸들러다.</b></p>
+
+<p>이벤트가 발생했을 때 브라우저에게 이벤트 핸들러의 호출을 위임하는 것을 <b>이벤트 핸들러 등록</b>이라 한다. 이벤트 핸들러를 등록하는 방법은 3가지다.</p>
+
+```
+① 이벤트 핸들러 어트리뷰트 방식
+② 이벤트 핸들러 프로퍼티 방식
+③ addEventListener 메서드 방식
+```
+
+### ① 이벤트 핸들러 어트리뷰트 방식
+
+<p>이벤트 핸들러 어트리뷰트 방식은 ① on 접두사와 ② 이벤트 종류를 나타내는 이벤트 타입으로 이루어져 있다.</p>
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <button onclick="sayHi('Lee')">Click me!</button>
+    <script>
+      function sayHi(name) {
+        console.log(`Hi! ${name}.`);
+      }
+    </script>
+  </body>
+</html>
+```
+
+<p>이벤트 핸들러 어트리뷰트 방식으로 함수를 호출할 때는 반드시 참조 형식이 아닌(sayHi), 함수 호출문(sayHi('Lee')) 형태로 호출해야 한다.</p>
+
+```html
+<!-- 이벤트 핸들러에 인수를 전달하기 곤란하다. -->
+<button onclick="sayHi">Click me!</button>
+```
+
+<p>핸들러 내부에 한가지의 코드만 사용할 수 있는 것은 아니다.</p>
+
+```html
+<button onclick="console.log('Hi! '); console.log('Lee');">Click me!</button>
+```
+
+### ② 이벤트 핸들러 프로퍼티 방식
+
+<p>이벤트 핸들러 프로퍼티 방식은  ① on 접두사와 ② 이벤트 종류를 나타내는 이벤트 타입으로 이루어져 있다는 것에서 이벤트 핸들러 어트리뷰트 방식과 유사하다. 하지만 요소의 어트리뷰트 내에서 직접 호출하는 것이 아닌, <b>이벤트 핸들러 프로퍼티에 함수를 바인딩하면 이벤트 핸들러가 등록되는 형식이다.</b></p>
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <!-- 
+    ① 이벤트 핸들러 어트리뷰트 방식
+    <button onclick="sayHi('Lee')">Click me!</button>
+     -->
+    <button>Click me!</button>
+    <script>
+      const $button = document.querySelector("button");
+
+      // 이벤트 핸들러 프로퍼티에 이벤트 핸들러를 바인딩 (익명 함수로 가능)
+      $button.onclick = function () {
+        console.log("button click");
+      };
+    </script>
+  </body>
+</html>
+```
+
+<p>하지만 이벤트 핸들러 프로퍼티에 하나의 이벤트 핸들러만 바인딩할 수 있다는 단점이 있다. 하나의 이벤트 핸들러에 두 개의 핸들러를 바인딩할 경우 재할당을 통해 마지막으로 바인딩 된 핸들러 함수가 호출된다.</p>
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <button>Click me!</button>
+    <em></em>
+
+    <script>
+      const $button = document.querySelector("button");
+      const $em = document.querySelector("em");
+
+      // 이벤트 핸들러 프로퍼티 방식은 하나의 이벤트에 하나의 이벤트 핸들러만을 바인딩할 수 있다.
+      // 첫 번째로 바인딩된 이벤트 핸들러는 두 번째 바인딩된 이벤트 핸들러에 의해 재할당되어
+      // 실행되지 않는다.
+      $button.onclick = function () {
+        $em.innerHTML = "Button Cliked 1";
+      };
+
+      // 두 번째로 바인딩된 이벤트 핸들러
+      $button.onclick = function () {
+        $em.innerHTML = "Button Cliked 2";
+      };
+    </script>
+  </body>
+</html>
+```
+
+[📍 codepen.io](https://codepen.io/pen)
+
+<img width="400" src="./images/37_1.png" alt="이벤트 핸들러 프로퍼티 방식"/>
+
+### ③ addEventListener 메서드 방식
+
+<p>addEventListener 메서드 방식은 추가적으로 파라미터에 버블링과 캡처링 여부를 넣어줄 수 있다. 생략하거나 false를 지정하면 버블링 단계에서 이벤트를 캐치하고, true를 지정하면 캡처링 단계에서 이벤트를 캐치한다.</p>
+
+```html
+<html>
+  <body>
+    <button>Click me!</button>
+    <em></em>
+
+    <script>
+      const $button = document.querySelector("button");
+      const $em = document.querySelector("em");
+
+      $button.addEventListener("click", function () {
+        $em.innerHTML = "Button Cliked 1";
+      });
+
+      $button.addEventListener("click", function () {
+        $em.innerHTML = "Button Cliked 2";
+      });
+    </script>
+  </body>
+</html>
+```
+
+addEventListener 메서드는 하나 이상의 이벤트 핸들러를 등록할 수 있다. 이때 등록한 이벤트 핸들러는 순서대로 호출된다.
+
+```
+Button Cliked 1
+Button Cliked 2
+```
+
+### 40.4 이벤트 핸들러 제거
+
+③ addEventListener 메서드로 등럭한 이벤트 핸들러를 제거하려면
+
+```
+EventTarget.prototype.removeEventListener 메서드를 사용한다.
+```
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <button>Click me!</button>
+    <script>
+      const $button = document.querySelector("button");
+
+      const handleClick = () => console.log("button click");
+
+      // 이벤트 핸들러 등록
+      $button.addEventListener("click", handleClick);
+
+      // 이벤트 핸들러 제거
+      // addEventListener 메서드에 전달한 인수와 removeEventListener 메서드에
+      // 전달한 인수가 일치하지 않으면 이벤트 핸들러가 제거되지 않는다.
+      $button.removeEventListener("click", handleClick, true); // 실패
+      $button.removeEventListener("click", handleClick); // 성공
+    </script>
+  </body>
+</html>
+```
+
+<p>익명 함수를 사용하여 이벤트 핸들러로 등록한 경우 제거할 수 없으므로, 이벤트 핸들러를 제거하려면 이벤트 핸들러의 참조를 변수나 자료구조에 저장하고 있어야 한다.</p>
+
+```js
+// 이벤트 핸들러 등록
+$button.addEventListener("click", () => console.log("button click"));
+// 등록한 이벤트 핸들러를 참조할 수 없으므로 제거할 수 없다
+```
+
+```js
+// 기명 함수를 이벤트 핸들러로 등록
+$button.addEventListener("click", function foo() {
+  console.log("button click");
+  // 이벤트 핸들러를 제거한다. 따라서 이벤트 핸들러는 단 한 번만 호출된다.
+  $button.removeEventListener("click", foo);
+});
+```
+
+<p>② 이벤트 핸들러 프로퍼티 방식으로 등록한 이벤트 핸들러는 removeEventListener 메서드로 제거할 수 없다. 등록한 이벤트 핸들러를 제거하려면 이벤트 핸들러 프로퍼티에 null을 할당한다.</p>
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <button>Click me!</button>
+    <script>
+      const $button = document.querySelector("button");
+
+      const handleClick = () => console.log("button click");
+
+      // 이벤트 핸들러 프로퍼티 방식으로 이벤트 핸들러 등록
+      $button.onclick = handleClick;
+
+      // removeEventListener 메서드로 이벤트 핸들러를 제거할 수 없다.
+      $button.removeEventListener("click", handleClick);
+
+      // 이벤트 핸들러 프로퍼티에 null을 할당하여 이벤트 핸들러를 제거한다.
+      $button.onclick = null;
+    </script>
+  </body>
+</html>
+```
+
+### 40.5 이벤트 객체
+
+<p>이벤트가 발생하면 이벤트에 관련한 다양한 정보를 담고 있는 <b>이벤트 객체가 동적으로 생성된다. 생성된 이벤트 객체는 이벤트 핸들러의 첫 번째 인수로 전달된다.</b></p>
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <p>클릭하세요. 클릭한 곳의 좌표가 표시됩니다.</p>
+    <em class="message"></em>
+    <script>
+      const $msg = document.querySelector(".message");
+
+      // 클릭 이벤트에 의해 생성된 이벤트 객체는 이벤트 핸들러의 첫 번째 인수로 전달된다.
+      function showCoords(e) {
+        $msg.textContent = `clientX: ${e.clientX}, clientY: ${e.clientY}`;
+      }
+
+      /*
+        마치 생성자 함수나 클래스 선언문에서 this를 바인딩하는 것과 같은 느낌입니다
+      */
+
+      document.onclick = showCoords;
+    </script>
+  </body>
+</html>
+```
+
+[codepen.io](https://codepen.io/junh0328/pen/gORbNWQ)
+
+<p>클릭 이벤트에 의해 생성된 이벤트 객체는 이벤트 핸들러의 첫 번째 인수로 전달되어 매개변수 e에 암묵적으로 할당된다. <b>이는 브라우저가 이벤트 핸들러를 정의할 때 객체를 인수로 전달하기 때문이다. 따라서 이벤트 객체를 전달받으려면 이벤트 핸들러를 정의할 때 이벤트 객체가 전달받을 매개변수를 명시적으로 선언해야 한다.</b> 위 예제어서 e라는 이름으로 매개변수를 선언했으나 다른 이름을 사용하여도 상관없다.</p>
+
+<p>① 이벤트 핸들러 어트리뷰트 방식으로 이벤트 핸들러를 등록했다면 event라는 변수를 선언하여 인벤트 객체를 전달해야 한다. onclick 이벤트 핸들러의 첫 번째 매개변수의 이름이 event로 암묵적으로 명명되기 때문이다.</p>
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <!-- 이벤트 핸들러 어트리뷰트 방식의 경우 event가 아닌 다른 이름으로는 이벤트 객체를
+전달받지 못한다. -->
+  <body onclick="showCoords(event)">
+    <p>클릭하세요. 클릭한 곳의 좌표가 표시됩니다.</p>
+    <em class="message"></em>
+    <script>
+      const $msg = document.querySelector(".message");
+
+      // 클릭 이벤트에 의해 생성된 이벤트 객체는 이벤트 핸들러의 첫 번째 인수로 전달된다.
+      function showCoords(e) {
+        $msg.textContent = `clientX: ${e.clientX}, clientY: ${e.clientY}`;
+      }
+    </script>
+  </body>
+</html>
+```
+
+### 이벤트 객체의 공통 프로퍼티
+
+<p>Event 인터페이스, 즉 Event.prototype에 정의되어 있는 이벤트 관련 프로퍼티는 UIEvent, CustomEvent, MouseEvent 등 모든 파생 이벤트 객체에 상속된다. 즉, Event 인터페이스의 이벤트 관련 프로퍼티는 모든 이벤트 객체가 상속받는 공통 프로퍼티다. 이벤트 객체의 공통 프로퍼티는 다음과 같다.</p>
+
+| 공통 프로퍼티 | 설명                                                         | 타입          |
+| :------------ | :----------------------------------------------------------- | :------------ |
+| type          | 이벤트 타입                                                  | string        |
+| target        | 이벤트를 발생시킨 DOM 요소                                   | DOM 요소 노드 |
+| currentTarget | 이벤트 핸들러가 바인딩된 DOM 요소                            | DOM 요소      |
+| eventPhase    | 이벤트 전파 단계                                             | number        |
+| -             | 0: 이벤트 없음, 1: 캡처링 단계, 2: 타깃 단계, 3: 버블링 단계 | -             |
+| bubbles       | 이벤트를 버블링으로 전파하는지 여부                          | boolean       |
+
+예를 들어, 체크박스 요소의 체크 상태가 변경되면 현재 체크 상태를 출력해보도록 하자
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <input type="checkbox" />
+    <em class="message">off</em>
+    <script>
+      const $checkbox = document.querySelector("input[type=checkbox]");
+      const $msg = document.querySelector(".message");
+
+      // change 이벤트가 발생하면 Event 타입의 이벤트 객체가 생성된다.
+      $checkbox.onchange = (e) => {
+        // e.target은 change 이벤트를 발생시킨 DOM 요소 $checkbox를 가리키고
+        // e.target.checked는 체크박스 요소의 현재 체크 상태를 나타낸다.
+        $msg.textContent = e.target.checked ? "on" : "off";
+      };
+    </script>
+  </body>
+</html>
+```
+
+```
+① 사용자의 입력에 의해 체크박스 요소의 체크 상태가 변경되면 checked 프로퍼티의 값이 변경되고 change 이벤트가 발생한다
+② 이때 Event 타입의 이벤트 객체가 생성된다
+③ 이벤트 객체의 target 프로퍼티는 이벤트를 발생시킨 객체(checked)를 나타낸다
+④ checked 프로퍼티는 현재의 체크 상태를 나타내게 된다
+```

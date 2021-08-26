@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html>
-  <body>
-    <div id="foo">Hello</div>
-  </body>
+<body>
+  <input type="checkbox" >
+  <em class="message">off</em>
   <script>
-    // 에러 이벤트를 강제로 발생시켜서 자바스크립트 코드가 실행되도록 한다.
-    document.getElementById(
-      "foo"
-    ).innerHTML = `<img src="x" onerror="alert(document.cookie)">`;
+    const $checkbox = document.querySelector('input[type=checkbox]');
+    const $msg = document.querySelector('.message');
+
+    // change 이벤트가 발생하면 Event 타입의 이벤트 객체가 생성된다.
+    $checkbox.onchange = e => {
+      console.log(Object.getPrototypeOf(e) === Event.prototype); // true
+
+      // e.target은 change 이벤트를 발생시킨 DOM 요소 $checkbox를 가리키고
+      // e.target.checked는 체크박스 요소의 현재 체크 상태를 나타낸다.
+      $msg.textContent = e.target.checked ? 'on' : 'off';
+    };
   </script>
+</body>
 </html>
