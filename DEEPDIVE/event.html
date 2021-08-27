@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Event Delegation</title>
+	<link rel="stylesheet" href="../reset.css">
+	<style>
+		body {
+			display: flex;
+			align-items: center;
+			justify-content: center;																						
+		}
+		@keyframes pointer-ani {
+			0% { transform: scale(0); }
+			50% { transform: scale(1); }
+			100% { transform: scale(1.5); opacity: 0; }
+		}
+		.pointer {
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 60px;
+			height: 60px;
+			margin: -30px 0 0 -30px;
+			border-radius: 50%;
+			background: url('../images/ilbuni2.png') no-repeat 0 0 / cover;
+			transform: scale(0);
+			animation: pointer-ani 0.5s linear;
+		}
+		.menu {
+			display: flex;
+			margin-top: -10vh;
+			padding: 2em;
+			border-radius: 20px;
+			background: #eee;
+		}
+		.menu-btn {
+			display: inline-flex;
+			align-items: center;
+			margin: 0 1em;
+			padding: 0.5em 1em 0.5em 0.5em;
+			border: 5px solid white;
+			border-radius: 20px;
+			outline: 0;
+			font: 900 1.2rem NotoSans;
+			background: linear-gradient(0deg, rgba(223,210,0,1) 0%, rgba(255,240,0,1) 24%, rgba(255,240,0,1) 70%, rgba(255,255,255,1) 100%);
+			box-shadow: rgba(0,0,0,0.1) 0 0 0 1px inset;
+		}
+		.btn-label {
+			text-shadow: rgba(255,255,255,1) 0 1px 0;
+			/*pointer-events: none;*/
+		}
+		.icon {
+			width: 60px;
+			/*pointer-events: none;*/
+		}
+	</style>
+	<script src="IlbuniPointer.js"></script>
+	<script>
+		window.addEventListener('DOMContentLoaded', () => new IlbuniPointer());
+	</script>
+</head>
+<body>
+	<div class="menu">
+		<button class="menu-btn" data-value="1">
+			<img class="icon" src="./images//pepsi.png" alt="">
+			<span class="btn-label">일분이 1</span>
+		</button>
+		<button class="menu-btn" data-value="2">
+			<img class="icon" src="./images//coca.png"  alt="">
+			<span class="btn-label">일분이 2</span>
+		</button>
+		<button class="menu-btn" data-value="3">
+			<img class="icon" src="./images//pepsi.png"  alt="">
+			<span class="btn-label">일분이 3</span>
+		</button>
+	</div>
+
+	<script>
+		const menu = document.querySelector('.menu');
+
+		function clickHandler(event) {
+			let elem = event.target;
+			while (!elem.classList.contains('menu-btn')) {
+				elem = elem.parentNode;
+
+				if (elem.nodeName == 'BODY') {
+					elem = null;
+					return;
+				}
+			}
+
+			console.log(elem.dataset.value);
+		}
+
+		menu.addEventListener('click', clickHandler);
+	</script>
+</body>
+</html>

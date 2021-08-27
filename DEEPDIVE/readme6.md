@@ -391,7 +391,7 @@ ORANGE
 
 <img width="600" src="./images/36_4.JPG" alt="노드 객체의 상속 구조">
 
-<p>위 그림과 같이 <b>모든 노드 객체는 ① Object ② EvnetTarget ③ Node 인터페이스를 상속받는다.</b> 예를 들어 input 요소를 파싱하여 객체화한 input 요소 노드 객체는 HTMLInputElement > HTMLElement > Element > Node > EventTarget > Object의 prototype에 바인딩되어 있는 프로토타입 객체를 상속받는다. 즉 input 요소 노드 객체는 프로토타입 체인에 있는 모든 프로토타입의 프로퍼티나 메서드를 상속받아 사용할 수 있다.</p>
+<p>위 그림과 같이 <b>모든 노드 객체는 ① Object ② EventTarget ③ Node 인터페이스를 상속받는다.</b> 예를 들어 input 요소를 파싱하여 객체화한 input 요소 노드 객체는 HTMLInputElement > HTMLElement > Element > Node > EventTarget > Object의 prototype에 바인딩되어 있는 프로토타입 객체를 상속받는다. 즉 input 요소 노드 객체는 프로토타입 체인에 있는 모든 프로토타입의 프로퍼티나 메서드를 상속받아 사용할 수 있다.</p>
 
 <p>배열이 객체인 동시에 배열인 것처럼 input 요소 노드 객체도 다음과 같이 다양한 특성을 갖는 객체이며, 이러한 특성을 나타내는 기능들을 상속을 통해 제공받는다.</p>
 
@@ -530,7 +530,7 @@ const $all = document.querySelectorAll("*");
 
 DOM 트리 상의 노드를 탐색할 수 있도록 Node, Element 인터페이스는 트리 탐색 프로퍼티를 제공한다.
 
-<img src="./images/36_7.jpg" alt="트리 노드 탐색 프로퍼티">
+<img width="500" src="./images/36_7.jpg" alt="트리 노드 탐색 프로퍼티">
 
 Node.prototype에 의해
 
@@ -1283,6 +1283,337 @@ setAttributes 메서드는 어트리뷰트 노드에서 관리하는 HTML 요소
 ① 처음 실행할 때는 어트리뷰트 노드에 의해 관리되는 상태를 감지하여 16번째 줄의 코드로 실행되었다
 ② 이후 실행은 최신 상태를 관리하는 DOM 프로퍼티에 의해 관리되므로 12번째 줄의 코드로 실행된다
 ```
+
+### HTML 어트리뷰트와 DOM 프로퍼티의 대응 관계
+
+<p>대부분의 HTML 어트리뷰트는 HTML 어트리뷰트 이름과 동일한 DOM 프로퍼티와 1:1로 대응한다. 단, 다음과 같이 HTML 어트리뷰트와 DOM 프로퍼티가 언제나 1:1로 대응아흔 것은 아니며, HTML 어트리뷰트 이름과 DOM 프로퍼티 키가 반드시 일치하는 것도 아니다.</p>
+
+- id 어트리뷰트(속성)과 id 프로퍼티는 1:1 대응하며, 동일한 값으로 연동한다
+- input 요소의 value 어트리뷰트는 value 프로퍼티와 1:1로 대응한다. 하지만 value 어트리뷰트는 <b>초기 상태를,</b> value 프로퍼티는 <b>최신 상태를 갖는다</b>
+- class 어트리뷰트는 ① className, ② classList 프로퍼티와 대응한다
+- for 어트리뷰트는 htmlFor 프로퍼티와 1:1 대응한다.
+- td 요소의 colspan 어트리뷰트는 대응하는 프로퍼티가 존재하지 않는다.
+- textContext 프로퍼티는 대응하는 어트리뷰트가 존재하지 않는다.
+- 어트리뷰트 이름은 대소문자를 구별하지 않지만 대응하는 프로퍼티 키는 카멜 케이스를 따른다.(maxlength > maxLength)
+
+### DOM 프로퍼티 값의 타입
+
+<p>getAttribute 메서드로 취득한 어트리뷰트 값은 언제나 문자열이다. 하지만 DOM 프로퍼티로 취득한 최신 상태 값은 문자열이 아닐 수 있다. (checkbox 요소의 checked 타입의 경우)</p>
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <input type="checkbox" checked />
+    <script>
+      const $checkbox = document.querySelector("input[type=checkbox]");
+
+      // getAttribute 메서드로 취득한 어트리뷰트 값은 언제나 문자열이다.
+      console.log($checkbox.getAttribute("checked")); // ''
+
+      // DOM 프로퍼티로 취득한 최신 상태 값은 문자열이 아닐 수도 있다.
+      console.log($checkbox.checked); // true
+    </script>
+  </body>
+</html>
+```
+
+### data 어트리뷰트와 dataset 프로퍼티
+
+<p>data 어트리뷰트와 dataset 프로퍼티를 사용하면 HTML 요소에 정의한 사용자 정의 어트리뷰트와 자바스크립트 간에 데이터를 교환할 수 있다. data 어트리뷰트는 <b>data-</b> 접두사 다음에 임의의 이름을 붙여 사용한다.</p>
+
+> 요소 변경하기
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul class="users">
+      <li id="1" data-user-id="7621" data-role="admin">Lee</li>
+      <li id="2" data-user-id="9524" data-role="subscriber">Kim</li>
+    </ul>
+    <script>
+      const users = [...document.querySelector(".users").children];
+
+      // user-id가 '7621'인 요소 노드를 취득한다.
+      const user = users.find((user) => user.dataset.userId === "7621");
+      // user-id가 '7621'인 요소 노드에서 data-role의 값을 취득한다.
+      console.log(user.dataset.role); // "admin"
+
+      // user-id가 '7621'인 요소 노드의 data-role 값을 변경한다.
+      user.dataset.role = "subscriber";
+      // dataset 프로퍼티는 DOMStringMap 객체를 반환한다.
+      console.log(user.dataset); // DOMStringMap {userId: "7621", role: "subscriber"}
+    </script>
+  </body>
+</html>
+```
+
+<p>data 어트리뷰트 값은 <b>HTMLElement.datase</b> 프로퍼티로 취득할 수 있다. dataset 프로퍼티는 HTML 요소의 모든 data 어트리뷰트의 정보를 제공하는 <b>DOMStringMap </b>객체를 반환한다. DOMStringMap 객체는 data 어트리뷰트의 data- 접두사 다음에 붙인 임의의 이름 (ex: data-role)을 카멜 케이스로 변환한 프로퍼티를 가지고 있다. 이 프로퍼티로 data 어트리뷰트의 값을 취득하거나 변경할 수 있다.</p>
+
+> 요소 추가하기
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul class="users">
+      <li id="1" data-user-id="7621">Lee</li>
+      <li id="2" data-user-id="9524">Kim</li>
+    </ul>
+    <script>
+      const users = [...document.querySelector(".users").children];
+
+      // user-id가 '7621'인 요소 노드를 취득한다.
+      const user = users.find((user) => user.dataset.userId === "7621");
+
+      // user-id가 '7621'인 요소 노드에 새로운 data 어트리뷰트를 추가한다.
+      user.dataset.role = "admin";
+      console.log(user.dataset);
+      /*
+    DOMStringMap {userId: "7621", role: "admin"}
+    -> <li id="1" data-user-id="7621" data-role="admin">Lee</li>
+    */
+    </script>
+  </body>
+</html>
+```
+
+### 39.8 스타일
+
+```
+① 인라인 스타일 조작
+② 클래스 조작
+③ 요소에 적용되어 있는 CSS 스타일 참조
+```
+
+### ① 인라인 스타일 조작
+
+```
+HTMLElement.prototype.style 프로퍼티는 setter와 getter 모두 존재하는 접근자 프로퍼티로서
+요소 노드의 인라인 스타일을 취득하거나 추가 또는 변경할 수 있다.
+```
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div style="color: red">Hello World</div>
+    <script>
+      const $div = document.querySelector("div");
+
+      // 인라인 스타일 취득
+      console.log($div.style); // CSSStyleDeclaration { 0: "color", ... }
+
+      // 인라인 스타일 변경
+      $div.style.color = "blue";
+
+      // 인라인 스타일 추가
+      $div.style.width = "100px";
+      $div.style.height = "100px";
+      $div.style.backgroundColor = "yellow";
+    </script>
+  </body>
+</html>
+```
+
+케밥 케이스의 CSS 프로퍼티를 그대로 사용하려면 마침표 표기법 대신 대괄호 표기법을 사용한다
+
+```js
+$div.style["background-color"] = "yellow";
+```
+
+### ② 클래스 조작
+
+(.)으로 시작하는 클래스 선택자를 사용하여 CSS class를 미리 정의한 다음, HTML 요소의 어트리뷰트(속성) 값을 변경하여 HTML 요소의 스타일을 변경할 수도 있다.
+
+class 어트리뷰트에 대응하는 DOM 프로퍼티는 class가 아니라 className과 classList다. <b>자바스크립트에서 class는 예약어이기 때문이다.</b>
+
+### className
+
+```
+Element.prototype.className 프로퍼티는 setter와 getter 모두 존재하는 접근자 프로퍼티로서 HTML 요소의 class 어트리뷰트 값을 취득하거나 변경한다
+```
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .box {
+        width: 100px;
+        height: 100px;
+        background-color: antiquewhite;
+      }
+      .red {
+        color: red;
+      }
+      .blue {
+        color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box red">Hello World</div>
+    <script>
+      const $box = document.querySelector(".box");
+
+      // .box 요소의 class 어트리뷰트 값을 취득
+      console.log($box.className); // 'box red'
+
+      // .box 요소의 class 어트리뷰트 값 중에서 'red'만 'blue'로 변경
+      $box.className = $box.className.replace("red", "blue");
+    </script>
+  </body>
+</html>
+```
+
+### classList
+
+```
+Element.prototype.classList 프로퍼티는 class 어트리뷰트의 정보를 담은 DOMTokenList 객체를 반환한다
+```
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .box {
+        width: 100px;
+        height: 100px;
+        background-color: antiquewhite;
+      }
+      .red {
+        color: red;
+      }
+      .blue {
+        color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box red">Hello World</div>
+    <script>
+      const $box = document.querySelector(".box");
+      // .box 요소의 class 어트리뷰트 정보를 담은 DOMTokenList 객체를 취득
+      // classList가 반환하는 DOMTokenList 객체는 HTMLCollection과 NodeList와 같이
+      // 노드 객체의 상태 변화를 실시간으로 반영하는 살아 있는(live) 객체다.
+      console.log($box.classList);
+      // DOMTokenList(2) [length: 2, value: "box blue", 0: "box", 1: "blue"]
+
+      // .box 요소의 class 어트리뷰트 값 중에서 'red'만 'blue'로 변경
+      $box.classList.replace("red", "blue");
+    </script>
+  </body>
+</html>
+```
+
+classList의 DOMTokenList 객체는 유사 배열 객체이면서 이터러블이다. 따라서 추가적으로 다양한 메서드를 제공한다
+
+```
+① add(...className)
+② remove(...className)
+③ item(index)
+④ contains(className)
+⑤ replace(oldClassName, newClassName)
+⑥ toggle(className [,force])
+```
+
+### ① add(...className)
+
+```js
+$box.classList.add("foo"); // -> class="box red foo"
+$box.classList.add("bar", "baz"); // -> class="box red foo bar baz"
+```
+
+### ② remove(...className)
+
+```js
+$box.classList.remove("foo"); // -> class="box red bar baz"
+$box.classList.remove("bar", "baz"); // -> class="box red"
+$box.classList.remove("x"); // -> class="box red"
+```
+
+### ③ item(index)
+
+```js
+$box.classList.item(0); // -> "box"
+$box.classList.item(1); // -> "red"
+```
+
+### ④ contains(className)
+
+```js
+$box.classList.contains("box"); // -> true
+$box.classList.contains("blue"); // -> false
+```
+
+### ⑤ replace(oldClassName, newClassName)
+
+```js
+$box.classList.replace("red", "blue"); // -> class="box blue"
+```
+
+### ⑥ toggle(className [,force])
+
+```js
+// class 어트리뷰트에 강제로 'foo' 클래스를 추가
+$box.classList.toggle("foo", true); // -> class="box blue foo"
+// class 어트리뷰트에서 강제로 'foo' 클래스를 제거
+$box.classList.toggle("foo", false); // -> class="box blue"
+```
+
+### ③ 요소에 적용되어 있는 CSS 스타일 참조
+
+<p>style 프로퍼티는 인라인 스타일만 반환한다. 따라서 클래스르 적용한 스타일이나 상속을 통해 암묵적으로 적용된 style 프로퍼티로 참조할 수 없다.</p>
+
+<p>따라서 HTML 요소에 적용되어 있는 모든 CSS 스타일을 참조해야 할 경우 <b>getComputedStyle</b> 메서드를 사용한다.</p>
+
+<details>
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        color: red;
+      }
+      .box {
+        width: 100px;
+        height: 50px;
+        background-color: cornsilk;
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">Box</div>
+    <script>
+      const $box = document.querySelector(".box");
+
+      // .box 요소에 적용된 모든 CSS 스타일을 담고 있는 CSSStyleDeclaration 객체를 취득
+      const computedStyle = window.getComputedStyle($box);
+      console.log(computedStyle); // CSSStyleDeclaration
+
+      // 임베딩 스타일
+      console.log(computedStyle.width); // 100px
+      console.log(computedStyle.height); // 50px
+      console.log(computedStyle.backgroundColor); // rgb(255, 248, 220)
+      console.log(computedStyle.border); // 1px solid rgb(0, 0, 0)
+
+      // 상속 스타일(body -> .box)
+      console.log(computedStyle.color); // rgb(255, 0, 0)
+
+      // 기본 스타일
+      console.log(computedStyle.display); // block
+    </script>
+  </body>
+</html>
+```
+
+</details>
 
 ## 40장 이벤트
 

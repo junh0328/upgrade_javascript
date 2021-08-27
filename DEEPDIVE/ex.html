@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html>
-<body>
-  <input type="checkbox" >
-  <em class="message">off</em>
-  <script>
-    const $checkbox = document.querySelector('input[type=checkbox]');
-    const $msg = document.querySelector('.message');
+  <body>
+    <ul class="users">
+      <li id="1" data-user-id="7621" data-role="admin">Lee</li>
+      <li id="2" data-user-id="9524" data-role="subscriber">Kim</li>
+    </ul>
+    <script>
+      const users = [...document.querySelector(".users").children];
 
-    // change 이벤트가 발생하면 Event 타입의 이벤트 객체가 생성된다.
-    $checkbox.onchange = e => {
-      console.log(Object.getPrototypeOf(e) === Event.prototype); // true
+      // user-id가 '7621'인 요소 노드를 취득한다.
+      const user = users.find((user) => user.dataset.userId === "7621");
+      // user-id가 '7621'인 요소 노드에서 data-role의 값을 취득한다.
+      console.log(user.dataset.role); // "admin"
 
-      // e.target은 change 이벤트를 발생시킨 DOM 요소 $checkbox를 가리키고
-      // e.target.checked는 체크박스 요소의 현재 체크 상태를 나타낸다.
-      $msg.textContent = e.target.checked ? 'on' : 'off';
-    };
-  </script>
-</body>
+      // user-id가 '7621'인 요소 노드의 data-role 값을 변경한다.
+      user.dataset.role = "subscriber";
+      // dataset 프로퍼티는 DOMStringMap 객체를 반환한다.
+      console.log(user.dataset); // DOMStringMap {userId: "7621", role: "subscriber"}
+    </script>
+  </body>
 </html>
