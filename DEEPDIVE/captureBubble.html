@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  body {
+    width: 100%;
+    height: 100vh;
+  }
+
+  div {
+    background-color: hotpink;
+  }
+</style>
+<body>
+  <div>Click me</div>
+</body>
+<script>
+  const html = document.querySelector('html')
+  const body = document.querySelector('body')
+  const div = document.querySelector('div')
+
+  /* 
+  addEventListener의 [useCapture] 옵션은 기본적으로 false > 즉, 이벤트는 버블링 시 작용한다
+  DIV
+  BODY
+  HTML
+  */
+
+  // default (버블링으로 이벤트 진행)
+
+  html.addEventListener('click', () => console.log('HTML'))
+  body.addEventListener('click', () => console.log('BODY'))
+  div.addEventListener('click', () => console.log('DIV'))
+
+  /*
+  하지만 addEventListener의 [useCapture] 값으로 true를 준다면 캡처링 단계로 작용한다
+  HTML
+  BODY
+  DIV
+  */
+
+  // true (캡처링으로 이벤트 진행)
+
+  // html.addEventListener('click', () => console.log('HTML'), true)
+  // body.addEventListener('click', () => console.log('BODY'), true)
+  // div.addEventListener('click', () => console.log('DIV'))
+
+</script>
+</html>
+
+<!-- 김버그 님의 예제 코드 [https://www.youtube.com/watch?v=7gKtNC3b_S8&list=PLz33gzRxuWIAsQaxKYqHMjuqZkY3fCdVv&index=1] -->

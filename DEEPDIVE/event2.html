@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body{
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      
+    }
+    .one {
+      width: 500px;
+      background-color: orange;
+      padding: 50px;
+      margin: auto;
+    }
+
+    .two {
+      
+      width: 300px;
+      background-color: tomato;
+      padding: 40px;
+      margin: auto;
+    }
+
+    .three {
+      width: 100px;
+      background-color: crimson;
+      padding: 30px;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="one">
+    DIV1
+    <div class="two">
+      DIV2
+      <div class="three">DIV3</div>
+    </div>
+  </div>
+  <script>
+    const divs = document.querySelectorAll('div');
+
+    divs.forEach((div, i) => div.addEventListener('click', e => {
+      // console.log(`DIV${i+1} clicked!`)
+      // e.stopPropagation();
+      // console.log(`div${i+1},누구 때문에 실행이 되었나?`,e.target.className) // 우리가 클릭한 요소 (누구 때문에 실행이 되었나?)
+      console.log(`div${i+1},이벤트의 주인은?`,e.currentTarget.className)    // 해당 이벤트의 주인 (제일 밑, 부모)
+    }))
+  </script>
+</body>
+</html>
+
+
+<!-- 화라리님의 예제 코드 [https://www.youtube.com/watch?v=ktqUrPxgQvo&list=PLz33gzRxuWIAsQaxKYqHMjuqZkY3fCdVv&index=3] -->
