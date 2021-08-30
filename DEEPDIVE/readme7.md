@@ -62,6 +62,8 @@ console.log(timeId);
 clearTimeout(timerId);
 ```
 
+#### 브라우저에서 보기
+
 <img width="400" src="./images/38_1.png" alt="setTimeout id값">
 
 ### setInterval/ clearInterval
@@ -85,6 +87,8 @@ const timeoutId = setInterval(() => {
 
 console.log("timeoutId: ", timeoutId);
 ```
+
+### Node.js 환경에서 보기
 
 <img width="400" src="./images/38_2.png" alt="setInterval id 객체">
 
@@ -164,7 +168,7 @@ scroll, resize, mousemove 같은 이벤트는 짧은 시간 간격으로 연속�
 [코드종님의 유튜브 강의](https://www.youtube.com/watch?v=TZCiv_c5q8s)
 
 - 마지막 이벤트(space)를 바탕으로 일정 시간이 지나야 다시 호출할 수 있게 하는 것이 디바운스다
-- 마지막 이벤트를 발생한 이후(빨간색) 일정 시간이 지나 회복이된 상태(초록색)에서 새로운 이벤트를 다시 실행할 수 있다.
+- 마지막 이벤트를 발생한 이후(빨간색) 일정 시간이 지나 회복된 상태(초록색)에서 새로운 이벤트를 다시 실행할 수 있다.
 
 텍스트 입력 필드에서 input 이벤트가 짧은 시간 간격으로 연속해서 발생하는 경우, 디바운스를 통해 Ajax와 같은 요청의 빈도를 줄여 서버에 부하를 줄일 수 있다.
 
@@ -212,6 +216,8 @@ scroll, resize, mousemove 같은 이벤트는 짧은 시간 간격으로 연속�
 스로틀은 짧은 시간 간격으로 연속해서 발생하는 이벤트를 그룹화해서 일정 시간 단위로 이벤트 핸들러가 호출되도록 호출 주기를 만든다.
 
 <img src="./images/throttle.gif" alt="쓰로틀">
+
+[코드종님의 유튜브 강의](https://www.youtube.com/watch?v=TZCiv_c5q8s)
 
 - 이벤트를 지속적으로 발생시키고 있다고 하더라도 위에 설정된 300ms의 시간을 간격으로 두고 이벤트를 발생시킨다
 - 쓰로틀에서 지정한 delay(300ms)의 사이에 발생하는 이벤트들은 무시된다
@@ -300,3 +306,9 @@ scroll, resize, mousemove 같은 이벤트는 짧은 시간 간격으로 연속�
 [Lodash 공식문서](https://lodash.com/docs/4.17.15#debounce)
 
 예제를 통해서는 throttle과 debounce에 관해 직접 선언하고 호출했지만, lodash 등을 통해서 더 안전한 코드를 제공받을 수 있다
+
+### 레퍼런스
+
+[코드종님의 유튜브 강의](https://www.youtube.com/watch?v=TZCiv_c5q8s)
+
+> 해당 게임 예제는 유튜브 링크를 통해 들어가서 직접 구현해볼 수 있습니다
