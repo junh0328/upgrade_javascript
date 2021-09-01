@@ -1,14 +1,12 @@
-let user = { name: "Mike" };
-let info = { age: 30 };
-let fe = ["js", "react"];
-let lang = ["korean", "english"];
+function foo() {
+  console.log("foo");
+}
 
-console.log("before user: ", user);
+function bar() {
+  console.log("bar");
+}
 
-user = {
-  ...user,
-  ...info,
-  skills: [...fe, ...lang],
-};
-
-console.log("after user: ", user);
+// 타이머 함수 setTimeout은 일정 시간이 경과한 이후에 콜백 함수 foo를 호출한다.
+// 타이머 함수 setTimeout은 bar 함수를 블로킹하지 않는다.
+setTimeout(foo, 3 * 1000);
+bar();

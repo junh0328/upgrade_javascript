@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+// // case 1
+// console.log(1);
+// setTimeout(() => console.log(2), 1000);
+
+// // case 2
+// // 1 출력 > 1초 쉬고 2를 출력 그리고 그 후 3을 입력하고 싶을 때
+// console.log(1);
+// setTimeout(() => console.log(2), 1000);
+// console.log(3);
+
+// // case 3
+// // 0초를 준다면?
+// console.log(1);
+// setTimeout(() => console.log(2), 0);
+// console.log(3);
+
+// // case 4
+
+console.log(1);
+setTimeout(() => console.log(2), 3000);
+setTimeout(() => console.log(3), 2000);
+setTimeout(() => console.log(4), 1000);
+console.log(5);
+  </script>
+</body>
+</html>
