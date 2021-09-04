@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <pre></pre>
+  <script>
+    const xhr = new XMLHttpRequest();
+
+    xhr.open('POST', '/todos')
+
+    xhr.setRequestHeader('content-type', 'application/json');
+
+    // 해당 액션이 db.json에 생성된 후에 다시 한번 해당 url로 접근한다면 
+    // Error: Insert failed, duplicate id (유효하지 않은 id 값) 이라는 에러가 뜬다
+    xhr.send(JSON.stringify({ id: 4, content: 'Angular', completed: false }));
+
+
+    xhr.onload = () => {
+      if(xhr.status === 200 || xhr.status === 201){
+        document.querySelector('pre').innerHTML= xhr.response
+      } else {
+        console.error('Error', xhr.status, xhr.statusText)
+      }
+    }
+  </script>
+</body>
+</html>

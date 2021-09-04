@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <pre></pre>
+  <script>
+    const xhr = new XMLHttpRequest();
+
+    xhr.open('PUT', '/todos/4')
+
+    xhr.setRequestHeader('content-type', 'application/json')
+
+    xhr.send(JSON.stringify({ id: 4, content: 'REACT', completed: true}))
+
+    xhr.onload = () => {
+      if(xhr.status === 200) {
+        document.querySelector('pre').innerHTML = xhr.response
+      } else{
+        console.error('Error', xhr.status, xhr.statusText)
+      }
+    }
+  </script>
+</body>
+</html>
