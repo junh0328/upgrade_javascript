@@ -5,6 +5,7 @@
 - [41장 타이머](#41장-타이머)
 - [42장 비동기 프로그래밍](#42장-비동기-프로그래밍)
 - [43장 Ajax](#43장-Ajax)
+- [44장 REST API](#44장-REST-API)
 
 ## 41장 타이머
 
@@ -961,3 +962,321 @@ xhr.onreadystatechange = () => {
   }
 };
 ```
+
+## 44장 REST API
+
+REST(REpressentational State Transfer)는 HTTP/1.0과 1.1의 스펙 작성에 참혀했고 아파치 HTTP 서버 프로젝트의 공동 설립자인 [로이 필딩](https://ko.wikipedia.org/wiki/REST)의 2000년 논문에서 처음 소개되었다.
+
+발표 당시의 웹이 HTTP를 제대로 사용하지 못하고 있는 상황을 보고 HTTP의 장점을 최대한 활용할 수 있는 아키텍처로서 REST를 소개했고 이는 HTTP 프로토콜을 의도에 맞게 디자인하도록 유도하고 있다. REST의 기본 원칙을 성실히 지킨 서비스 디자인을 'RESTful'이라고 표현한다.
+
+즉, REST는 HTTP를 기반으로 클라이언트가 서버의 리소스에 접근하는 방식을 규정한 아키텍처고, REST API는 REST를 기반으로 서비스 API를 구현한 것을 의미한다.
+
+### 44.1 REST API의 구성
+
+REST API는 ① 자원(resource), ② 행위 (verb), ③ 표현 (representations)의 3가지 요소로 구성된다.
+
+REST는 자체 표현 구조로 구성되어 REST API 만으로 HTTP 요청의 내용을 이해할 수 있다.
+
+| 구성 요소             | 내용                           | 표현 방법        |
+| :-------------------- | :----------------------------- | :--------------- |
+| 자원(resource)        | 자원                           | URI(엔드 포인트) |
+| 행위(verb)            | 자원에 대한 행위               | HTTP 요청 메서드 |
+| 표현(representations) | 자원에 대한 행위의 구체적 내용 | 페이로드         |
+
+### 44.2 REST API 설계 원칙
+
+REST에서 가장 중요한 기본적인 원칙은 두 가지다.
+
+① URI는 리소스를 표현하는데 집중해야 한다
+② 행위에 대한 정의는 HTTP 요청 메서드를 통해 해야 한다
+
+위 두 규칙이 RESTful API를 설계하는 중심 규칙이다.
+
+#### URI는 리소스를 표현해야 한다
+
+URI는 리소스를 표현하는 데 중점을 두어야 한다. 리소스를 식별할 수 있는 이름은 ① 동사보다는 ② 명사를 사용한다.
+
+따라서 리소스 이름에 get 같은 행위에 대한 표현이 들어가서는 안 된다.
+
+```
+# bad
+GET /getTodos/1
+GET /todos/show/1
+
+# good
+GET /todos/1
+```
+
+#### 리소스에 대한 행위는 HTTP 요청 메서드로 표현한다
+
+| HTTP 요청 메서드 | 종류           | 목적                  | 페이로드 |
+| :--------------- | :------------- | :-------------------- | :------- |
+| GET              | index/retrieve | 모든/특정 리소스 취득 | x        |
+| POST             | create         | 리소스 생성           | o        |
+| PUT              | replace        | 리소스의 전체 교체    | o        |
+| PATCH            | modify         | 리소스 일부 수정      | o        |
+| DELETE           | delete         | 모든/특정 리소스 삭제 | x        |
+
+리소스에 대한 행위는 ① HTTP 요청 메서드를 통해 표현하며 ② URI에 표현하지 않는다. 행위(HTTP 요청 메서드)를 통해 리소스에 대한 명확히 표시를 해야 한다.
+
+```
+# bad
+GET /todos/delete/1
+
+# good
+DELETE /todos/1
+```
+
+### 44.3 실습
+
+HTTP 요청을 전송하고 응답을 받으려면 서버가 필요하다. JSON Server를 사용해 가상 REST API 서버를 구축하여 HTTP 요청을 전송하고 응답을 받는 실습을 해보자
+
+[코드 보기](https://github.com/junh0328/upgrade_javascript/tree/master/json-server-exam)
+
+```
+$ mkdir json-server-exam
+
+$ cd json-server-exam
+
+$ npm init -y
+
+$ yarn add json-server --save-dev
+```
+
+정적으로 생성해 둔 기본적인 db 구조는 다음과 같다.
+
+```
+{
+  "todos": [
+    {
+      "id": 1,
+      "content": "HTML",
+      "completed": true
+    },
+    {
+      "id": 2,
+      "content": "CSS",
+      "completed": false
+    },
+    {
+      "id": 3,
+      "content": "Javascript",
+      "completed": true
+    }
+  ]
+}
+```
+
+> 객체 형식이 아닌, 직렬화된 JSON 포맷 형식이다
+
+### GET 요청 (전체)
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <pre></pre>
+    <script>
+      const xhr = new XMLHttpRequest();
+
+      xhr.open("GET", "/todos");
+
+      xhr.send();
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          document.querySelector("pre").innerHTML = xhr.response;
+        } else {
+          console.error("Error", xhr.status, xhr.statusText);
+        }
+      };
+    </script>
+  </body>
+</html>
+```
+
+<img width="500" src="./images/get.gif" alt="RESTAPI">
+
+### GET 요청 (일부)
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <pre></pre>
+    <script>
+      const xhr = new XMLHttpRequest();
+
+      xhr.open("GET", "/todos/1");
+
+      xhr.send();
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          console.log("status:", xhr.status);
+          console.log("response:", xhr.response);
+          console.log("responseText:", xhr.responseText);
+          console.log("responseURL:", xhr.responseURL);
+          const result = (document.querySelector(
+            "pre"
+          ).innerHTML = `<h1>${xhr.response}</h1>`);
+        } else {
+          console.error("Error", xhr.status, xhr.statusText);
+        }
+      };
+    </script>
+  </body>
+</html>
+```
+
+<img width="500" src="./images/get_one.gif" alt="RESTAPI">
+
+### POST 요청
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <pre></pre>
+    <script>
+      const xhr = new XMLHttpRequest();
+
+      xhr.open("POST", "/todos");
+
+      xhr.setRequestHeader("content-type", "application/json");
+
+      // 해당 액션이 db.json에 생성된 후에 다시 한번 해당 url로 접근한다면
+      // Error: Insert failed, duplicate id (유효하지 않은 id 값) 이라는 에러가 뜬다
+      xhr.send(JSON.stringify({ id: 4, content: "Angular", completed: false }));
+
+      xhr.onload = () => {
+        if (xhr.status === 200 || xhr.status === 201) {
+          document.querySelector("pre").innerHTML = xhr.response;
+        } else {
+          console.error("Error", xhr.status, xhr.statusText);
+        }
+      };
+    </script>
+  </body>
+</html>
+```
+
+<img width="500" src="./images/post.gif" alt="RESTAPI">
+
+### PATCH 요청
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <pre></pre>
+    <script>
+      const xhr = new XMLHttpRequest();
+
+      xhr.open("PATCH", "/todos/4");
+
+      xhr.setRequestHeader("content-type", "application/json");
+
+      xhr.send(JSON.stringify({ completed: false }));
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          document.querySelector("pre").innerHTML = xhr.response;
+        } else {
+          console.error("Error", xhr.status, xhr.statusText);
+        }
+      };
+    </script>
+  </body>
+</html>
+```
+
+<img width="500" src="./images/patch.gif" alt="RESTAPI">
+
+### PUT 요청
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <pre></pre>
+    <script>
+      const xhr = new XMLHttpRequest();
+
+      xhr.open("PUT", "/todos/4");
+
+      xhr.setRequestHeader("content-type", "application/json");
+
+      xhr.send(JSON.stringify({ id: 4, content: "REACT", completed: true }));
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          document.querySelector("pre").innerHTML = xhr.response;
+        } else {
+          console.error("Error", xhr.status, xhr.statusText);
+        }
+      };
+    </script>
+  </body>
+</html>
+```
+
+<img width="500" src="./images/put.gif" alt="RESTAPI">
+
+### DELETE 요청
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <pre></pre>
+    <script>
+      const xhr = new XMLHttpRequest();
+
+      xhr.open("DELETE", "/todos/4");
+
+      xhr.send();
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          document.querySelector("pre").innerHTML = xhr.response;
+        } else {
+          console.error("Error", xhr.status, xhr.statusText);
+        }
+      };
+    </script>
+  </body>
+</html>
+```
+
+<img width="500" src="./images/delete.gif" alt="RESTAPI">
