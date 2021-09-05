@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <pre></pre>
+  <script>
+
+// 화면에 렌더링을 위한 함수
+const render = res => {
+  const result = JSON.stringify(res, null, 2);
+  document.querySelector('pre').innerHTML=result;
+}
+// GET 요청을 위한 비동기 함수
+const promiseGet = url => {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    xhr.send();
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        // 성공적으로 응답을 전달받으면 resolve 함수를 호출한다.
+        resolve(JSON.parse(xhr.response));
+      } else {
+        // 에러 처리를 위해 reject 함수를 호출한다.
+        reject(new Error(xhr.status));
+      }
+    };
+  });
+};
+
+// promiseGet 함수는 프로미스를 반환한다.
+promiseGet('https://jsonplaceholder.typicode.com/posts/1')
+.then((res) => render(res))
+
+
+  </script>
+</body>
+</html>

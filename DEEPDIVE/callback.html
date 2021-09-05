@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+const get = (url, callback) => {
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', url);
+  xhr.send();
+
+  xhr.onload = () => {
+    if (xhr.status === 200) {
+      callback(JSON.parse(xhr.response));
+    } else {
+      console.error(`${xhr.status} ${xhr.statusText}`);
+    }
+  };
+};
+
+const url = 'https://jsonplaceholder.typicode.com';
+
+// id가 1인 post의 userId를 취득
+const result = get(`${url}/posts/1`, ({ userId }) => {
+  console.log(userId); // 1
+  // post의 userId를 사용하여 user 정보를 취득
+  get(`${url}/users/${userId}`, userInfo => {
+    console.log(userInfo); // {id: 1, name: "Leanne Graham", username: "Bret",...}
+  });
+});
+
+  </script>
+</body>
+</html>
