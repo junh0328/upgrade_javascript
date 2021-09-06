@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <pre></pre>
+  <script>
+    async function fetchTodo() {
+      const url = "https://jsonplaceholder.typicode.com/todos/1";
+
+      const response = await fetch(url);
+      const todo = await response.json();
+      console.log(todo);
+      const result = JSON.stringify(todo, null, 2)
+      document.querySelector('pre').innerHTML=result
+      // {userId: 1, id: 1, title: 'delectus aut autem', completed: false}
+    }
+    fetchTodo();
+  </script>
+</body>
+</html>

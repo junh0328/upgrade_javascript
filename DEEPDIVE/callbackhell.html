@@ -7,35 +7,40 @@
   <title>Document</title>
 </head>
 <body>
+  <pre></pre>
   <script>
-// GET 요청을 위한 비동기 함수
-const get = (url) => {
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", url);
-  xhr.send();
-
-  xhr.onload = () => {
-    if (xhr.status === 200) {
-      // 서버의 응답을 콘솔에 출력한다.
-      console.log(JSON.parse(xhr.response));
-    } else {
-      console.error(`${xhr.status} ${xhr.statusText}`);
+    // pre 사이에 렌더링 하기 위한 동기 함수
+    const render = res => {
+      // res > 객체 형식
+      console.log('typeof res:',typeof res)
+      console.log(res)
+      // result > 문자 형식
+      const result = JSON.stringify(res, null, 2)
+      console.log('typeof result:',typeof result)
+      document.querySelector('pre').innerHTML=result
     }
-  };
-};
 
-// id가 1인 post를 취득
-const response_data = get("https://jsonplaceholder.typicode.com/posts/1");
-/*
-{
-  "userId": 1,
-  "id": 1,
-  "title": "sunt aut facere ...",
-  "body": "quia et suscipit ..."
-}
-*/
-console.log("response_data:", response_data);
+    // GET 요청을 위한 비동기 함수
+    const get = (url) => {
+      return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", url);
+      xhr.send();
 
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          // 서버의 응답을 콘솔에 출력한다.
+          resolve(JSON.parse(xhr.response));
+        } else {
+          reject(`${xhr.status} ${xhr.statusText}`);
+        }
+      };
+    })
+    };
+
+    // id가 1인 post를 취득
+    get("https://jsonplaceholder.typicode.com/posts/1")
+    .then(res => render(res))
   </script>
 </body>
 </html>

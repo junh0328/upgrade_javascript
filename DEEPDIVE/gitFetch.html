@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <pre></pre>
+  <script>
+    const getGithubUserName = async (id) => {
+      const res = await fetch(`https://api.github.com/users/${id}`); // ①
+      const { name } = await res.json(); 
+      name ? document.querySelector('pre').innerHTML= `찾은 이름은 ${name}입니다 😁` : document.querySelector('pre').innerHTML = '존재하지 않는 사용자입니다 🥲'
+    };
+
+    const result = window.prompt('찾고 싶은 사용자의 id를 입력하세요');
+    if(result)getGithubUserName(result);
+
+  </script>
+</body>
+</html>
