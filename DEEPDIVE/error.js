@@ -1,11 +1,6 @@
-console.log("[Start]");
-
 try {
-  foo();
+  // 에러 객체를 던지면 catch 코드 블록이 실행되기 시작한다.
+  throw new Error("something wrong");
 } catch (error) {
-  console.error("[에러 발생]", error);
-  // [에러 발생] ReferenceError: foo is not defined
+  console.log(error);
 }
-
-// 발생한 에러에 적절한 대응을 하면 프로그램이 강제 종료되지 않는다.
-console.log("[End]");
