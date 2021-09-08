@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <button type="button" class="click1">click1</button>
+  <button type="button" class="click2">click2</button>
+  <button type="button" class="click3">click3</button>
+  <script>
+    document.querySelector('.click1').onmouseup = function(){
+      console.log('mouse up!')
+    }
+
+    document.querySelector('.click2').ondblclick = function(){
+      console.log('db clicked!')
+    }
+
+    document.querySelector('.click3').onclick = function(){
+      console.log('click!')
+    }
+  </script>
+</body>
+</html>

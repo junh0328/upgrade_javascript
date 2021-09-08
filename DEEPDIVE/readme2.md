@@ -9,7 +9,9 @@
 - [21장 빌트인 객체](#21장-빌트인-객체)
 - [22장 this](#22장-this)
 - [23장 실행 컨텍스트](#23장-실행-컨텍스트)
-- <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme3.md">다음 섹션으로</a>
+
+- <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme.md">🔙 이전 섹션으로</a>
+- <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme3.md">🔜 다음 섹션으로</a>
 
 ## 17장 생성자 함수에 의한 객체 생성
 

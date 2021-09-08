@@ -6,6 +6,9 @@
 - [39장 DOM](#39장-DOM)
 - [40장 이벤트](#40장-이벤트)
 
+- <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme5.md">🔙 이전 섹션으로</a>
+- <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme7.md">🔜 다음 섹션으로</a>
+
 ## 38장 브라우저 렌더링 과정
 
 > 파싱, 렌더링

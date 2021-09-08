@@ -7,7 +7,8 @@
 - [35장 스프레드 문법](#35장-스프레드-문법)
 - [36장 디스트럭처링 할당](#36장-디스트럭처링-할당)
 
-- <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme6.md">다음 섹션으로</a>
+- <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme4.md">🔙 이전 섹션으로</a>
+- <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme6.md">🔜 다음 섹션으로</a>
 
 ## 33장 Symbol
 

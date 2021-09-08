@@ -9,6 +9,9 @@
 - [45장 프로미스](#45장-프로미스)
 - [46장 제너레이터와 async/await](#46장-제너레이터와-async/await)
 
+- <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme6.md">🔙 이전 섹션으로</a>
+- <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme8.md">🔜 다음 섹션으로</a>
+
 ## 41장 타이머
 
 ### 41.1 호출 스케쥴링

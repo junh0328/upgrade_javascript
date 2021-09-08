@@ -1,12 +1,32 @@
-function foo() {
-  console.log("foo");
-}
+var foo;
+console.log(typeof foo); // undefined
 
-function bar() {
-  console.log("bar");
-}
+foo = 3;
+console.log(typeof foo); // number
 
-// 타이머 함수 setTimeout은 일정 시간이 경과한 이후에 콜백 함수 foo를 호출한다.
-// 타이머 함수 setTimeout은 bar 함수를 블로킹하지 않는다.
-setTimeout(foo, 3 * 1000);
-bar();
+foo = "Hello";
+console.log(typeof foo); // string
+
+foo = true;
+console.log(typeof foo); // boolean
+
+foo = null;
+console.log(typeof foo); // object
+
+foo = Symbol(); // 심벌
+console.log(typeof foo); // symbol
+
+foo = {}; // 객체
+console.log(typeof foo); // object
+
+foo = []; // 배열
+console.log(typeof foo); // object
+
+foo = function () {}; // 함수
+console.log(typeof foo); // function
+
+let foo2 = 10;
+console.log(foo2);
+
+const foo3 = 20;
+console.log(foo3);

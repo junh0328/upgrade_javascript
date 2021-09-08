@@ -5,7 +5,9 @@
 - [24장 클로저](#24장-클로저)
 - [25장 클래스](#25장-클래스)
 - [26장 ES6 함수의 추가 기능](#26장-ES6-함수의-추가-기능)
-- <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme4.md">다음 섹션으로</a>
+
+- <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme2.md">🔙 이전 섹션으로</a>
+- <a href="https://github.com/junh0328/upgrade_javascript/blob/master/DEEPDIVE/readme4.md">🔜 다음 섹션으로</a>
 
 ## 24장 클로저
 
